@@ -19,10 +19,6 @@ import java.util.List;
 
 public class Candidate extends User {
 
-    private String firstName;
-
-    private String lastName;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profile_details_id")
     private ProfileDetails profileDetails;
@@ -78,21 +74,7 @@ public class Candidate extends User {
     private List<Project> projects;
 
     // Getter and Setter methods
-    public String getFirstName() {
-        return firstName;
-    }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public ProfileDetails getProfileDetails() {
         return profileDetails;

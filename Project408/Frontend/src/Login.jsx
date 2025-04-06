@@ -14,34 +14,43 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-      
-        // Demo kullanıcı bilgileri
-        const demoEmail = 'demo@example.com';
-        const demoPassword = 'password123';
-      
-        if (email === demoEmail && password === demoPassword) {
-          console.log('Login başarılı!');
-          navigate('/dashboard');
-        } else {
-          setError('Invalid email or password');
+        setError('');
+
+        try {
+            const response = await fetch('http://localhost:9090/login/auth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Giriş başarılı!', data);
+
+                // Token'ı localStorage’a kaydet
+                localStorage.setItem('token', data.token);
+
+                // Yönlendirme
+                navigate('/dashboard');
+            } else {
+                const errorText = await response.text();
+                console.error('Sunucu hatası:', errorText);
+                setError('Invalid email or password');
+            }
+        } catch (err) {
+            console.error('Bağlantı hatası:', err);
+            setError('Sunucuya ulaşılamadı');
         }
-      };
-
-      const handleSubmit2 = (e) => {
-        e.preventDefault();
-        if (email === demoEmail && password === demoPassword) {
-          console.log('Login başarılı! Dashboard’a yönlendiriliyor...');
-          navigate('/dashboard');
-        } else {
-          setError('Invalid email or password');
-        }
-      };
-      
+    };
 
 
-  return (
+
+
+    return (
     <div className="flex min-h-screen font-sans">
       {/* Left: Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center px-10 md:px-20 bg-white">
