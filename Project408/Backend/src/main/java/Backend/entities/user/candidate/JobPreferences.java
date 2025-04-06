@@ -9,8 +9,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "job_preferences")
@@ -35,4 +34,53 @@ public class JobPreferences extends BaseEntity {
 
     @Column(name = "expected_salary")
     private String expectedSalary;
+
+
+    public List<JobPositions> getPreferredPositions() {
+        return preferredPositions;
+    }
+
+    public void setPreferredPositions(List<JobPositions> preferredPositions) {
+        this.preferredPositions = preferredPositions;
+    }
+
+    public WorkType getPreferredWorkType() {
+        return preferredWorkType;
+    }
+
+    public void setPreferredWorkType(WorkType preferredWorkType) {
+        this.preferredWorkType = preferredWorkType;
+    }
+
+    public int getMinWorkHour() {
+        return minWorkHour;
+    }
+
+    public void setMinWorkHour(int minWorkHour) {
+        this.minWorkHour = minWorkHour;
+    }
+
+    public int getMaxWorkHour() {
+        return maxWorkHour;
+    }
+
+    public void setMaxWorkHour(int maxWorkHour) {
+        this.maxWorkHour = maxWorkHour;
+    }
+
+    public boolean isCanTravel() {
+        return canTravel;
+    }
+
+    public void setCanTravel(boolean canTravel) {
+        this.canTravel = canTravel;
+    }
+
+    public String getExpectedSalary() {
+        return expectedSalary;
+    }
+
+    public void setExpectedSalary(String expectedSalary) {
+        this.expectedSalary = expectedSalary;
+    }
 }

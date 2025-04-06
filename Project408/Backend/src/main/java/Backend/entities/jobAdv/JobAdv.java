@@ -11,8 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "job_advs")
@@ -59,5 +58,101 @@ public class JobAdv extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "job_position_id")
     private List<JobPositions> jobPositions;
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Employer getCreatedEmployer() {
+        return createdEmployer;
+    }
+
+    public void setCreatedEmployer(Employer createdEmployer) {
+        this.createdEmployer = createdEmployer;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getMinSalary() {
+        return minSalary;
+    }
+
+    public void setMinSalary(Double minSalary) {
+        this.minSalary = minSalary;
+    }
+
+    public Double getMaxSalary() {
+        return maxSalary;
+    }
+
+    public void setMaxSalary(Double maxSalary) {
+        this.maxSalary = maxSalary;
+    }
+
+    public LocalDate getLastDate() {
+        return lastDate;
+    }
+
+    public void setLastDate(LocalDate lastDate) {
+        this.lastDate = lastDate;
+    }
+
+    public boolean isTravelRest() {
+        return travelRest;
+    }
+
+    public void setTravelRest(boolean travelRest) {
+        this.travelRest = travelRest;
+    }
+
+    public boolean isLicense() {
+        return license;
+    }
+
+    public void setLicense(boolean license) {
+        this.license = license;
+    }
+
+    public JobCondition getJobCondition() {
+        return jobCondition;
+    }
+
+    public void setJobCondition(JobCondition jobCondition) {
+        this.jobCondition = jobCondition;
+    }
+
+    public JobQualification getJobQualification() {
+        return jobQualification;
+    }
+
+    public void setJobQualification(JobQualification jobQualification) {
+        this.jobQualification = jobQualification;
+    }
+
+    public List<Benefit> getBenefits() {
+        return benefits;
+    }
+
+    public void setBenefits(List<Benefit> benefits) {
+        this.benefits = benefits;
+    }
+
+    public List<JobPositions> getJobPositions() {
+        return jobPositions;
+    }
+
+    public void setJobPositions(List<JobPositions> jobPositions) {
+        this.jobPositions = jobPositions;
+    }
 }
     

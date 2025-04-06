@@ -6,8 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "technical_skills")
@@ -26,4 +25,36 @@ public class TechnicalSkill extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "job_qualification_id")
     private JobQualification jobQualification;
+
+    public String getPositionName() {
+        return positionName;
+    }
+
+    public void setPositionName(String positionName) {
+        this.positionName = positionName;
+    }
+
+    public SkillLevel getSkillLevel() {
+        return skillLevel;
+    }
+
+    public void setSkillLevel(SkillLevel skillLevel) {
+        this.skillLevel = skillLevel;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public JobQualification getJobQualification() {
+        return jobQualification;
+    }
+
+    public void setJobQualification(JobQualification jobQualification) {
+        this.jobQualification = jobQualification;
+    }
 }

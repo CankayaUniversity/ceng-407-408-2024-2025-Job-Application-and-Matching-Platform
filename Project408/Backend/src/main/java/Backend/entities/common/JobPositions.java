@@ -6,8 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "job_positions")
@@ -20,4 +19,20 @@ public class JobPositions extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "custom_job_position_id")
     private CustomJobPosition customJobPosition;
+
+    public JobPosition getPositionType() {
+        return positionType;
+    }
+
+    public void setPositionType(JobPosition positionType) {
+        this.positionType = positionType;
+    }
+
+    public CustomJobPosition getCustomJobPosition() {
+        return customJobPosition;
+    }
+
+    public void setCustomJobPosition(CustomJobPosition customJobPosition) {
+        this.customJobPosition = customJobPosition;
+    }
 }

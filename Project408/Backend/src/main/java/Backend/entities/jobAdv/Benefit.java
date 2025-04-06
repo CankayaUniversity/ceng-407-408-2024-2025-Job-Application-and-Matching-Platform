@@ -6,8 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "benefit")
@@ -23,4 +22,28 @@ public class Benefit extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "job_adv_id")
     private JobAdv jobAdv;
+
+    public BenefitType getBenefitType() {
+        return benefitType;
+    }
+
+    public void setBenefitType(BenefitType benefitType) {
+        this.benefitType = benefitType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public JobAdv getJobAdv() {
+        return jobAdv;
+    }
+
+    public void setJobAdv(JobAdv jobAdv) {
+        this.jobAdv = jobAdv;
+    }
 }

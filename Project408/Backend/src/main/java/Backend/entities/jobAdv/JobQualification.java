@@ -11,8 +11,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "job_qualifications")
@@ -45,4 +44,68 @@ public class JobQualification extends BaseEntity {
 
     @OneToOne(mappedBy = "jobQualification")
     private JobAdv jobAdv;
+
+    public DegreeType getDegreeType() {
+        return degreeType;
+    }
+
+    public void setDegreeType(DegreeType degreeType) {
+        this.degreeType = degreeType;
+    }
+
+    public JobExperience getJobExperience() {
+        return jobExperience;
+    }
+
+    public void setJobExperience(JobExperience jobExperience) {
+        this.jobExperience = jobExperience;
+    }
+
+    public int getExperienceYears() {
+        return experienceYears;
+    }
+
+    public void setExperienceYears(int experienceYears) {
+        this.experienceYears = experienceYears;
+    }
+
+    public MilitaryStatus getMilitaryStatus() {
+        return militaryStatus;
+    }
+
+    public void setMilitaryStatus(MilitaryStatus militaryStatus) {
+        this.militaryStatus = militaryStatus;
+    }
+
+    public List<TechnicalSkill> getTechnicalSkills() {
+        return technicalSkills;
+    }
+
+    public void setTechnicalSkills(List<TechnicalSkill> technicalSkills) {
+        this.technicalSkills = technicalSkills;
+    }
+
+    public List<SocialSkill> getSocialSkills() {
+        return socialSkills;
+    }
+
+    public void setSocialSkills(List<SocialSkill> socialSkills) {
+        this.socialSkills = socialSkills;
+    }
+
+    public List<LanguageProficiency> getLanguageProficiencies() {
+        return languageProficiencies;
+    }
+
+    public void setLanguageProficiencies(List<LanguageProficiency> languageProficiencies) {
+        this.languageProficiencies = languageProficiencies;
+    }
+
+    public JobAdv getJobAdv() {
+        return jobAdv;
+    }
+
+    public void setJobAdv(JobAdv jobAdv) {
+        this.jobAdv = jobAdv;
+    }
 }

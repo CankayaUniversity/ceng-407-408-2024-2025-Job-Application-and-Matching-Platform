@@ -6,8 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "language_proficiencies")
@@ -31,4 +30,44 @@ public class LanguageProficiency extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "listening_level")
     private LanguageLevel listeningLevel;
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public LanguageLevel getReadingLevel() {
+        return readingLevel;
+    }
+
+    public void setReadingLevel(LanguageLevel readingLevel) {
+        this.readingLevel = readingLevel;
+    }
+
+    public LanguageLevel getWritingLevel() {
+        return writingLevel;
+    }
+
+    public void setWritingLevel(LanguageLevel writingLevel) {
+        this.writingLevel = writingLevel;
+    }
+
+    public LanguageLevel getSpeakingLevel() {
+        return speakingLevel;
+    }
+
+    public void setSpeakingLevel(LanguageLevel speakingLevel) {
+        this.speakingLevel = speakingLevel;
+    }
+
+    public LanguageLevel getListeningLevel() {
+        return listeningLevel;
+    }
+
+    public void setListeningLevel(LanguageLevel listeningLevel) {
+        this.listeningLevel = listeningLevel;
+    }
 }

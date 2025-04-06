@@ -8,8 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "job_conditions")
@@ -35,4 +34,52 @@ public class JobCondition extends BaseEntity {
 
     @OneToOne(mappedBy = "jobCondition")
     private JobAdv jobAdv;
+
+    public WorkType getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(WorkType workType) {
+        this.workType = workType;
+    }
+
+    public EmploymentType getEmploymentType() {
+        return employmentType;
+    }
+
+    public void setEmploymentType(EmploymentType employmentType) {
+        this.employmentType = employmentType;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    public int getMinWorkHours() {
+        return minWorkHours;
+    }
+
+    public void setMinWorkHours(int minWorkHours) {
+        this.minWorkHours = minWorkHours;
+    }
+
+    public int getMaxWorkHours() {
+        return maxWorkHours;
+    }
+
+    public void setMaxWorkHours(int maxWorkHours) {
+        this.maxWorkHours = maxWorkHours;
+    }
+
+    public JobAdv getJobAdv() {
+        return jobAdv;
+    }
+
+    public void setJobAdv(JobAdv jobAdv) {
+        this.jobAdv = jobAdv;
+    }
 }

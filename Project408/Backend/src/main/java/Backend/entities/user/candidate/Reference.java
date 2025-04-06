@@ -5,11 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "references")
+@Table(name = "references_info")
 public class Reference extends BaseEntity {
 
     @Column(name = "reference_name", nullable = false)
@@ -27,4 +26,43 @@ public class Reference extends BaseEntity {
     @Column(name = "reference_years_worked")
     private String referenceYearsWorked;
 
+    public String getReferenceName() {
+        return referenceName;
+    }
+
+    public void setReferenceName(String referenceName) {
+        this.referenceName = referenceName;
+    }
+
+    public String getReferenceJobTitle() {
+        return referenceJobTitle;
+    }
+
+    public void setReferenceJobTitle(String referenceJobTitle) {
+        this.referenceJobTitle = referenceJobTitle;
+    }
+
+    public String getReferenceCompany() {
+        return referenceCompany;
+    }
+
+    public void setReferenceCompany(String referenceCompany) {
+        this.referenceCompany = referenceCompany;
+    }
+
+    public String getReferenceContactInfo() {
+        return referenceContactInfo;
+    }
+
+    public void setReferenceContactInfo(String referenceContactInfo) {
+        this.referenceContactInfo = referenceContactInfo;
+    }
+
+    public String getReferenceYearsWorked() {
+        return referenceYearsWorked;
+    }
+
+    public void setReferenceYearsWorked(String referenceYearsWorked) {
+        this.referenceYearsWorked = referenceYearsWorked;
+    }
 }
