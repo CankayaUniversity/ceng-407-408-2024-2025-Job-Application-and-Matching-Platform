@@ -2,6 +2,7 @@ package Backend.entities.common;
 
 import Backend.core.enums.JobPosition;
 import Backend.entities.BaseEntity;
+import Backend.entities.jobAdv.JobAdv;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,11 @@ public class JobPositions extends BaseEntity {
     @JoinColumn(name = "custom_job_position_id")
     private CustomJobPosition customJobPosition;
 
+    @ManyToOne
+    @JoinColumn(name = "job_adv_id") // Veritabanındaki yabancı anahtar
+    private JobAdv jobAdv;
+
+
     public JobPosition getPositionType() {
         return positionType;
     }
@@ -34,5 +40,13 @@ public class JobPositions extends BaseEntity {
 
     public void setCustomJobPosition(CustomJobPosition customJobPosition) {
         this.customJobPosition = customJobPosition;
+    }
+
+    public JobAdv getJobAdv() {
+        return jobAdv;
+    }
+
+    public void setJobAdv(JobAdv jobAdv) {
+        this.jobAdv = jobAdv;
     }
 }

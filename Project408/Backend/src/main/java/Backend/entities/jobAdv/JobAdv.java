@@ -55,9 +55,9 @@ public class JobAdv extends BaseEntity {
     @JoinColumn(name = "benefit_id")
     private List<Benefit> benefits;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "job_position_id")
+    @OneToMany(mappedBy = "jobAdv", cascade = CascadeType.ALL)
     private List<JobPositions> jobPositions;
+
 
     public Company getCompany() {
         return company;

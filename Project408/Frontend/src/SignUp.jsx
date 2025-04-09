@@ -14,8 +14,8 @@ export default function SignUp() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: "",
-    surname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: ""
   });
@@ -32,7 +32,7 @@ export default function SignUp() {
   
     try {
       const response = await axios.post(
-        "http://localhost:9090/api/auth/register", // backend endpoint'in
+        "http://localhost:9090/login/canRegister", // backend endpoint'in
         formData
       );
       console.log("✅ Kayıt başarılı:", response.data);
@@ -67,15 +67,15 @@ export default function SignUp() {
           <form onSubmit={handleSubmit} className="space-y-6">
   {/* Name */}
   <div className="flex flex-col">
-    <label htmlFor="name" className="text-sm font-semibold text-gray-800 mb-1">
+    <label htmlFor="firstName" className="text-sm font-semibold text-gray-800 mb-1">
       Name
     </label>
     <input
       type="text"
-      id="name"
-      name="name"
+      id="firstName"
+      name="firstName"
       placeholder="Enter your Name"
-      value={formData.name}
+      value={formData.firstName}
       onChange={handleChange}
       className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
     />
@@ -88,10 +88,10 @@ export default function SignUp() {
     </label>
     <input
       type="text"
-      id="surname"
-      name="surname"
+      id="lastName"
+      name="lastName"
       placeholder="Enter your Surname"
-      value={formData.surname}
+      value={formData.lastName}
       onChange={handleChange}
       className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
     />
