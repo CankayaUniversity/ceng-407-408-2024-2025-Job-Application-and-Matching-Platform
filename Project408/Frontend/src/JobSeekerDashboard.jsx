@@ -1,214 +1,201 @@
+// GÜNCELLENMİŞ: Sağ panelin inputları profileData yapısına bağlandı
 import { FaBell, FaSearch } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import axios from "axios";
 
 export default function JobSeekerDashboard() {
-
-  const [phone, setPhone] = useState("");
-  const [biography, setBiography] = useState("");
-  const [experiences, setExperiences] = useState([{ company: "", title: "" }]);
-  const [educations, setEducations] = useState([
-    { school: '', department: '', startDate: '', endDate: '', isOngoing: false }
-  ]);
-  const [skills, setSkills] = useState([""]);
-  const [languages, setLanguages] = useState([""]);
-  const [certificates, setCertificates] = useState([
-    { name: '', url: '' }
-  ]);
-  const [exams, setExams] = useState([
-    { name: '', year: '', score: '', rank: '' }
-  ]);
-  const [documents, setDocuments] = useState([]);
-  const [projects, setProjects] = useState([
-    { name: '', description: '', startDate: '', endDate: '', isOngoing: false }
-  ]);
-
-  const [userInfo, setUserInfo] = useState({
-    name: 'İrem',
-    jobTitle: 'Software Engineer',
-    nationality: '',
-    isWorking: '',
-    phone: '',
-    city: '',
-    gender: '',
-    militaryStatus: '',
-    disabilityStatus: '',
-    maritalStatus: '',
-    drivingLicense: '',
-    profilePrivacy: 'Visible to everyone',
-    github: '',
-    portfolio: '',
-    jobPreferences: '',
-    references: '',
-    hobbies: ''
+  const [profileData, setProfileData] = useState({
+    profileDetails: {
+      aboutMe: '',
+      nationality: '',
+      gender: '',
+      militaryStatus: '',
+      militaryDefermentDate: '',
+      disabilityStatus: '',
+      maritalStatus: '',
+      currentEmploymentStatus: false,
+      drivingLicense: false,
+      isPrivateProfile: false,
+      profilePicture: '',
+      birthDate: '',
+      firstName: '',
+      jobTitle: ''
+    },
+    socialLinks: {
+      githubUrl: '',
+      linkedinUrl: '',
+      websiteUrl: '',
+      blogUrl: '',
+      otherLinksUrl: '',
+      otherLinksDescription: ''
+    },
+    contactInformation: {
+      phoneNumber: '',
+      country: '',
+      city: ''
+    },
+    jobPreferences: {
+      preferredPositions: [{ positionType: '' }],
+      preferredWorkType: '',
+      minWorkHour: 0,
+      maxWorkHour: 0,
+      canTravel: false,
+      expectedSalary: ''
+    },
+    references: [
+      {
+        referenceName: '',
+        referenceCompany: '',
+        referenceJobTitle: '',
+        referenceContactInfo: '',
+        referenceYearsWorked: ''
+      }
+    ],
+    languageProficiency: [
+      {
+        language: '',
+        readingLevel: '',
+        writingLevel: '',
+        speakingLevel: '',
+        listeningLevel: ''
+      }
+    ],
+    hobbies: [
+      {
+        hobbyName: '',
+        description: ''
+      }
+    ],
+    education: {
+      degreeType: '',
+      associateDepartment: '',
+      associateStartDate: '',
+      associateEndDate: '',
+      associateIsOngoing: false,
+      bachelorDepartment: '',
+      bachelorStartDate: '',
+      bachelorEndDate: '',
+      bachelorIsOngoing: false,
+      masterDepartment: '',
+      masterStartDate: '',
+      masterEndDate: '',
+      masterIsOngoing: false,
+      masterThesisTitle: '',
+      masterThesisDescription: '',
+      masterThesisUrl: '',
+      doctorateDepartment: '',
+      doctorateStartDate: '',
+      doctorateEndDate: '',
+      doctorateIsOngoing: false,
+      doctorateThesisTitle: '',
+      doctorateThesisDescription: '',
+      doctorateThesisUrl: '',
+      isDoubleMajor: false,
+      doubleMajorDepartment: '',
+      doubleMajorStartDate: '',
+      doubleMajorEndDate: '',
+      doubleMajorIsOngoing: false,
+      isMinor: false,
+      minorDepartment: '',
+      minorStartDate: '',
+      minorEndDate: '',
+      minorIsOngoing: false
+    },
+    certifications: [
+      {
+        certificationName: '',
+        certificationUrl: '',
+        certificateValidityDate: '',
+        issuedBy: ''
+      }
+    ],
+    workExperiences: [
+      {
+        companyName: '',
+        industry: '',
+        jobTitle: '',
+        jobDescription: '',
+        employmentType: '',
+        startDate: '',
+        endDate: '',
+        isGoing: false
+      }
+    ],
+    examsAndAchievements: [
+      {
+        examName: '',
+        examYear: '',
+        examScore: '',
+        examRank: ''
+      }
+    ],
+    uploadedDocuments: [
+      {
+        documentName: '',
+        documentType: '',
+        documentCategory: '',
+        documentUrl: '',
+        isPrivate: false
+      }
+    ],
+    skills: [
+      {
+        skillName: '',
+        skillLevel: ''
+      }
+    ],
+    projects: [
+      {
+        projectName: '',
+        projectDescription: '',
+        projectStartDate: '',
+        projectEndDate: '',
+        projectStatus: '',
+        isPrivate: false,
+        company: ''
+      }
+    ]
   });
-  
-  
-  
 
-  const handleUserInfoChange = (field, value) => {
-    setUserInfo({ ...userInfo, [field]: value });
-  };
-  
-  const handleSaveUserInfo = () => {
-    console.log('👤 User Info:', userInfo);
-  };
-  
-
-
-  const handleExperienceChange = (index, field, value) => {
-    const updated = [...experiences];
-    updated[index][field] = value;
-    setExperiences(updated);
-  };
-
-  const handleAddExperience = () => {
-    setExperiences([...experiences, { company: '', title: '' }]);
-  };
-
-  const handleSaveExperiences = () => {
-    console.log('📌 Work Experiences:', experiences);
-  };
-
-
-  const handleEducationChange = (index, field, value) => {
-    const updated = [...educations];
-    updated[index][field] = value;
-    setEducations(updated);
-  };
-  
-  const handleAddEducation = () => {
-    setEducations([
-      ...educations,
-      { school: '', department: '', startDate: '', endDate: '', isOngoing: false }
-    ]);
-  };
-  
-  const handleSaveEducation = () => {
-    console.log('🎓 Education Info:', educations);
-  };
-
-
-  // Skills
-  const handleSkillChange = (index, value) => {
-    const updated = [...skills];
-    updated[index] = value;
-    setSkills(updated);
-  };
-
-  const handleAddSkill = () => {
-    setSkills([...skills, ""]);
-  };
-
-  const handleSaveSkills = () => {
-    console.log("🛠️ Skills:", skills);
-  };
-
-  // Languages
-  const handleLanguageChange = (index, value) => {
-    const updated = [...languages];
-    updated[index] = value;
-    setLanguages(updated);
-  };
-
-  const handleAddLanguage = () => {
-    setLanguages([...languages, ""]);
-  };
-
-  const handleSaveLanguages = () => {
-    console.log("🗣️ Languages:", languages);
-  };
-
-  // Certificates
-  const handleCertificateChange = (index, field, value) => {
-    const updated = [...certificates];
-    updated[index][field] = value;
-    setCertificates(updated);
-  };
-  
-  const handleAddCertificate = () => {
-    setCertificates([...certificates, { name: '', url: '' }]);
-  };
-  
-  const handleSaveCertificates = () => {
-    console.log("📜 Certificates:", certificates);
-  };
-
-  // Exams
-  const handleExamChange = (index, field, value) => {
-    const updated = [...exams];
-    updated[index][field] = value;
-    setExams(updated);
-  };
-  
-  const handleAddExam = () => {
-    setExams([...exams, { name: '', year: '', score: '', rank: '' }]);
-  };
-  
-  const handleSaveExams = () => {
-    console.log("🏆 Exams & Achievements:", exams);
-  };
-
-  // Documents
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setDocuments((prevDocs) => [...prevDocs, ...files]);
-  };
-  
-  const handleRemoveDocument = (index) => {
-    const updated = [...documents];
-    updated.splice(index, 1);
-    setDocuments(updated);
-  };
-  
-  const handleSaveDocuments = async () => {
-    const formData = new FormData();
-  
-    documents.forEach((doc) => {
-      formData.append("files", doc); // backend'deki field adı "files"
+  const handleProfileFieldChange = (path, value) => {
+    setProfileData((prev) => {
+      const updated = { ...prev };
+      let target = updated;
+      for (let i = 0; i < path.length - 1; i++) {
+        target = target[path[i]];
+      }
+      target[path[path.length - 1]] = value;
+      return updated;
     });
-  
+  };
+
+  const validateProfileData = () => {
+    const requiredFields = [
+      profileData.profileDetails.firstName,
+      profileData.profileDetails.jobTitle,
+      profileData.profileDetails.aboutMe,
+      profileData.contactInformation.phoneNumber,
+      profileData.education.degreeType,
+      profileData.skills[0]?.skillName,
+      profileData.projects[0]?.projectName
+    ];
+    return requiredFields.every(field => field && field.trim() !== '');
+  };
+
+  const handleSaveAllProfile = async () => {
+    if (!validateProfileData()) {
+      alert('Lütfen tüm zorunlu alanları doldurun.');
+      return;
+    }
+
     try {
-      const response = await axios.post("http://localhost:8080/api/documents/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      });
-  
-      console.log("✅ Upload success:", response.data);
+      const response = await axios.post("http://localhost:9090/api/profile/save", profileData);
+      console.log("✅ Profile saved:", response.data);
     } catch (error) {
-      console.error("❌ Upload failed:", error);
+      console.error("❌ Error saving profile:", error.response?.data || error.message);
     }
   };
-
-  // Projects
-  const handleProjectChange = (index, field, value) => {
-    const updated = [...projects];
-    updated[index][field] = value;
-    setProjects(updated);
-  };
-  
-  const handleAddProject = () => {
-    setProjects([...projects, { name: '', description: '', startDate: '', endDate: '', isOngoing: false }]);
-  };
-  
-  const handleSaveProjects = () => {
-    console.log("📁 Projects:", projects);
-  };
-  
-  
-  
-  
-
-
-  
-  
-
-
-
-
-
 
   return (
     <div className="min-h-screen bg-white font-sans">
@@ -266,49 +253,48 @@ export default function JobSeekerDashboard() {
 
     <input
       type="text"
-      value={userInfo.name}
-      onChange={(e) => handleUserInfoChange('name', e.target.value)}
+      value={profileData.profileDetails.firstName}
+      onChange={(e) => handleProfileFieldChange(['profileDetails', 'firstName'], e.target.value)}
+
       className="text-lg font-semibold mb-1 bg-transparent text-white text-center focus:outline-none"
     />
     <input
       type="text"
-      value={userInfo.jobTitle}
-      onChange={(e) => handleUserInfoChange('jobTitle', e.target.value)}
+      value={profileData.profileDetails.jobTitle}
+      onChange={(e) => handleProfileFieldChange(['profileDetails', 'jobTitle'], e.target.value)}
       className="text-sm text-gray-300 mb-6 bg-transparent text-center focus:outline-none"
     />
 
     <ul className="text-left space-y-2.5 text-sm text-gray-300">
-      {[
-        ['Nationality', 'nationality'],
-        ['Currently Working', 'isWorking'],
-        ['Phone Number', 'phone'],
-        ['Country, City', 'city'],
-        ['Gender', 'gender'],
-        ['Military Status', 'militaryStatus'],
-        ['Disability Status', 'disabilityStatus'],
-        ['Marital Status', 'maritalStatus'],
-        ['Driving License', 'drivingLicense'],
-        ['Profile Privacy', 'profilePrivacy'],
-        ['Github', 'github'],
-        ['Portfolio', 'portfolio'],
-        ['Job Preferences', 'jobPreferences'],
-        ['References', 'references'],
-        ['Hobbies', 'hobbies']
-      ].map(([label, key]) => (
-        <li key={key} className="flex flex-col gap-1">
-          <span className="text-xs font-semibold">{label}</span>
-          <input
-            type="text"
-            value={userInfo[key]}
-            onChange={(e) => handleUserInfoChange(key, e.target.value)}
-            className="bg-transparent border-b border-gray-500 text-white text-sm focus:outline-none"
-          />
-        </li>
-      ))}
-    </ul>
+  {[
+    ['Nationality', ['profileDetails', 'nationality']],
+    ['Currently Working', ['profileDetails', 'currentEmploymentStatus']],
+    ['Phone Number', ['contactInformation', 'phoneNumber']],
+    ['Country', ['contactInformation', 'country']],
+    ['City', ['contactInformation', 'city']],
+    ['Gender', ['profileDetails', 'gender']],
+    ['Military Status', ['profileDetails', 'militaryStatus']],
+    ['Disability Status', ['profileDetails', 'disabilityStatus']],
+    ['Marital Status', ['profileDetails', 'maritalStatus']],
+    ['Driving License', ['profileDetails', 'drivingLicense']],
+    ['Profile Privacy', ['profileDetails', 'isPrivateProfile']],
+    ['Github', ['socialLinks', 'githubUrl']],
+    ['Portfolio', ['socialLinks', 'websiteUrl']]
+  ].map(([label, path]) => (
+    <li key={path.join('.')} className="flex flex-col gap-1">
+      <span className="text-xs font-semibold">{label}</span>
+      <input
+        type="text"
+        value={path.reduce((acc, curr) => acc?.[curr], profileData) || ''}
+        onChange={(e) => handleProfileFieldChange(path, e.target.value)}
+        className="bg-transparent border-b border-gray-500 text-white text-sm focus:outline-none"
+      />
+    </li>
+  ))}
+</ul>
 
     <button
-      onClick={handleSaveUserInfo}
+      onClick={handleSaveAllProfile}
       className="mt-6 bg-blue-600 hover:bg-blue-700 text-white text-sm px-6 py-1.5 rounded transition"
     >
       Save
@@ -317,391 +303,215 @@ export default function JobSeekerDashboard() {
 </div>
 
 
-          {/* Sağ Panel - Bilgiler */}
-          <div className="flex-1 bg-white rounded-lg p-6 space-y-6">
-            <div className="mb-6">
-              <h3 className="font-semibold mb-2">Biography</h3>
-              <textarea
-                value={biography}
-                onChange={(e) => setBiography(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2 text-sm"
-                rows={4}
-                placeholder="Tell us about yourself..."
-              />
-              <button
-                onClick={() => console.log("Biography saved:", biography)}
-                className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              >
-                Save
-              </button>
-            </div>
-
-
-
-            <div className="space-y-6">
-
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2">Work Experiences</h3>
-
-                {experiences.map((exp, index) => (
-                  <div key={index} className="mb-4 border-b pb-4">
-                    <input
-                      type="text"
-                      placeholder="Company Name"
-                      value={exp.company}
-                      onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
-                      className="w-full border-b border-gray-300 mb-2 p-1 text-sm focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Job Title"
-                      value={exp.title}
-                      onChange={(e) => handleExperienceChange(index, 'title', e.target.value)}
-                      className="w-full border-b border-gray-300 p-1 text-sm focus:outline-none"
-                    />
-                  </div>
-                ))}
-
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={handleAddExperience}
-                    className="text-sm text-blue-600 underline"
-                  >
-                    + Add Experience
-                  </button>
-
-                  <button
-                    onClick={handleSaveExperiences}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-
-
-
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2">Education</h3>
-
-                {educations.map((edu, index) => (
-                  <div key={index} className="mb-4 border-b pb-4 space-y-2">
-                    <input
-                      type="text"
-                      placeholder="School Name"
-                      value={edu.school}
-                      onChange={(e) => handleEducationChange(index, 'school', e.target.value)}
-                      className="w-full border-b border-gray-300 p-1 text-sm focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Department"
-                      value={edu.department}
-                      onChange={(e) => handleEducationChange(index, 'department', e.target.value)}
-                      className="w-full border-b border-gray-300 p-1 text-sm focus:outline-none"
-                    />
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="Start Date"
-                        value={edu.startDate}
-                        onChange={(e) => handleEducationChange(index, 'startDate', e.target.value)}
-                        className="w-full border-b border-gray-300 p-1 text-sm focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="End Date"
-                        value={edu.endDate}
-                        onChange={(e) => handleEducationChange(index, 'endDate', e.target.value)}
-                        disabled={edu.isOngoing}
-                        className="w-full border-b border-gray-300 p-1 text-sm focus:outline-none"
-                      />
-                    </div>
-                    <label className="text-sm flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={edu.isOngoing}
-                        onChange={(e) =>
-                          handleEducationChange(index, 'isOngoing', e.target.checked)
-                        }
-                      />
-                      Ongoing
-                    </label>
-                  </div>
-                ))}
-
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={handleAddEducation}
-                    className="text-sm text-blue-600 underline"
-                  >
-                    + Add Education
-                  </button>
-
-                  <button
-                    onClick={handleSaveEducation}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-
-
-              <div className="mb-6">
-              <h3 className="font-semibold mb-2">Skills</h3>
-
-              {skills.map((skill, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  value={skill}
-                  onChange={(e) => handleSkillChange(index, e.target.value)}
-                  placeholder="Skill"
-                  className="w-full border-b border-gray-300 p-1 text-sm mb-2 focus:outline-none"
-                />
-              ))}
-
-              <div className="flex items-center gap-4">
-                <button onClick={handleAddSkill} className="text-sm text-blue-600 underline">
-                  + Add Skill
-                </button>
-                <button
-                  onClick={handleSaveSkills}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-
-            <div className="mb-6">
-            <h3 className="font-semibold mb-2">Languages</h3>
-
-            {languages.map((lang, index) => (
-              <input
-                key={index}
-                type="text"
-                value={lang}
-                onChange={(e) => handleLanguageChange(index, e.target.value)}
-                placeholder="Language"
-                className="w-full border-b border-gray-300 p-1 text-sm mb-2 focus:outline-none"
-              />
-            ))}
-
-            <div className="flex items-center gap-4">
-              <button onClick={handleAddLanguage} className="text-sm text-blue-600 underline">
-                + Add Language
-              </button>
-              <button
-                onClick={handleSaveLanguages}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-
-
-
-          <div className="mb-6">
-          <h3 className="font-semibold mb-2">Certificates</h3>
-
-          {certificates.map((cert, index) => (
-            <div key={index} className="mb-4 border-b pb-4 space-y-2">
-              <input
-                type="text"
-                placeholder="Certificate Name"
-                value={cert.name}
-                onChange={(e) => handleCertificateChange(index, 'name', e.target.value)}
-                className="w-full border-b border-gray-300 p-1 text-sm focus:outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Certificate URL (optional)"
-                value={cert.url}
-                onChange={(e) => handleCertificateChange(index, 'url', e.target.value)}
-                className="w-full border-b border-gray-300 p-1 text-sm focus:outline-none"
-              />
-            </div>
-          ))}
-
-          <div className="flex items-center gap-4">
-            <button onClick={handleAddCertificate} className="text-sm text-blue-600 underline">
-              + Add Certificate
-            </button>
-            <button
-              onClick={handleSaveCertificates}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-            >
-              Save
-            </button>
-          </div>
+      {/* Sağ Panel - Bilgiler */}
+      <div className="flex-1 bg-white rounded-lg p-6 space-y-6">
+        {/* Biography */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Biography</h3>
+          <textarea
+            value={profileData.profileDetails.aboutMe}
+            onChange={(e) => handleProfileFieldChange(['profileDetails', 'aboutMe'], e.target.value)}
+            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+            rows={4}
+            placeholder="Tell us about yourself..."
+          />
         </div>
 
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Phone Number</h3>
+          <input
+            type="text"
+            value={profileData.contactInformation.phoneNumber}
+            onChange={(e) => handleProfileFieldChange(['contactInformation', 'phoneNumber'], e.target.value)}
+            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+            placeholder="Enter phone number"
+          />
+        </div>
 
         <div className="mb-6">
-        <h3 className="font-semibold mb-2">Exams and Achievements</h3>
+          <h3 className="font-semibold mb-2">Github URL</h3>
+          <input
+            type="text"
+            value={profileData.socialLinks.githubUrl}
+            onChange={(e) => handleProfileFieldChange(['socialLinks', 'githubUrl'], e.target.value)}
+            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+            placeholder="Enter github profile url"
+          />
+        </div>
 
-        {exams.map((exam, index) => (
-          <div key={index} className="mb-4 border-b pb-4 space-y-2">
+        {/* Work Experiences */}
+        {profileData.workExperiences.map((exp, index) => (
+          <div key={index} className="mb-6 border-b pb-4">
+            <h3 className="font-semibold mb-2">Work Experience #{index + 1}</h3>
             <input
               type="text"
-              placeholder="Exam or Achievement Name"
-              value={exam.name}
-              onChange={(e) => handleExamChange(index, 'name', e.target.value)}
-              className="w-full border-b border-gray-300 p-1 text-sm focus:outline-none"
+              placeholder="Company Name"
+              value={exp.companyName}
+              onChange={(e) => {
+                const updated = [...profileData.workExperiences];
+                updated[index].companyName = e.target.value;
+                handleProfileFieldChange(['workExperiences'], updated);
+              }}
+              className="w-full border-b border-gray-300 p-1 text-sm mb-2"
             />
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Year"
-                value={exam.year}
-                onChange={(e) => handleExamChange(index, 'year', e.target.value)}
-                className="w-1/3 border-b border-gray-300 p-1 text-sm focus:outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Score (optional)"
-                value={exam.score}
-                onChange={(e) => handleExamChange(index, 'score', e.target.value)}
-                className="w-1/3 border-b border-gray-300 p-1 text-sm focus:outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Rank (optional)"
-                value={exam.rank}
-                onChange={(e) => handleExamChange(index, 'rank', e.target.value)}
-                className="w-1/3 border-b border-gray-300 p-1 text-sm focus:outline-none"
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="Job Title"
+              value={exp.jobTitle}
+              onChange={(e) => {
+                const updated = [...profileData.workExperiences];
+                updated[index].jobTitle = e.target.value;
+                handleProfileFieldChange(['workExperiences'], updated);
+              }}
+              className="w-full border-b border-gray-300 p-1 text-sm"
+            />
           </div>
         ))}
 
-        <div className="flex items-center gap-4">
-          <button onClick={handleAddExam} className="text-sm text-blue-600 underline">
-            + Add Exam or Achievement
-          </button>
-          <button
-            onClick={handleSaveExams}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-          >
-            Save
-          </button>
+        {/* Education */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Education</h3>
+          <input
+            type="text"
+            placeholder="Degree Type"
+            value={profileData.education.degreeType}
+            onChange={(e) => handleProfileFieldChange(['education', 'degreeType'], e.target.value)}
+            className="w-full border-b border-gray-300 p-1 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="Bachelor Department"
+            value={profileData.education.bachelorDepartment}
+            onChange={(e) => handleProfileFieldChange(['education', 'bachelorDepartment'], e.target.value)}
+            className="w-full border-b border-gray-300 p-1 text-sm"
+          />
         </div>
-      </div>
 
-
-      <div className="mb-6">
-      <h3 className="font-semibold mb-2">Uploaded Documents</h3>
-
-      <input
-        type="file"
-        multiple
-        onChange={handleFileUpload}
-        className="mb-3 text-sm"
-      />
-
-      {documents.length > 0 && (
-        <ul className="space-y-2 text-sm text-gray-700 mb-4">
-          {documents.map((doc, index) => (
-            <li key={index} className="flex items-center justify-between border-b pb-1">
-              <span>{doc.name}</span>
-              <button
-                onClick={() => handleRemoveDocument(index)}
-                className="text-red-500 text-xs hover:underline"
-              >
-                Remove
-              </button>
-            </li>
+        {/* Skills */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Skills</h3>
+          {profileData.skills.map((skill, index) => (
+            <input
+              key={index}
+              type="text"
+              value={skill.skillName}
+              onChange={(e) => {
+                const updated = [...profileData.skills];
+                updated[index].skillName = e.target.value;
+                handleProfileFieldChange(['skills'], updated);
+              }}
+              placeholder="Skill"
+              className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+            />
           ))}
-        </ul>
-      )}
-
-      <button
-        onClick={handleSaveDocuments}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-      >
-        Save
-      </button>
-    </div>
-
-
-    <div className="mb-6">
-  <h3 className="font-semibold mb-2">Projects</h3>
-
-  {projects.map((proj, index) => (
-    <div key={index} className="mb-4 border-b pb-4 space-y-2">
-      <input
-        type="text"
-        placeholder="Project Name"
-        value={proj.name}
-        onChange={(e) => handleProjectChange(index, 'name', e.target.value)}
-        className="w-full border-b border-gray-300 p-1 text-sm focus:outline-none"
-      />
-      <textarea
-        placeholder="Description"
-        value={proj.description}
-        onChange={(e) => handleProjectChange(index, 'description', e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 text-sm focus:outline-none"
-        rows={3}
-      />
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Start Date"
-          value={proj.startDate}
-          onChange={(e) => handleProjectChange(index, 'startDate', e.target.value)}
-          className="w-1/2 border-b border-gray-300 p-1 text-sm focus:outline-none"
-        />
-        <input
-          type="text"
-          placeholder="End Date"
-          value={proj.endDate}
-          onChange={(e) => handleProjectChange(index, 'endDate', e.target.value)}
-          disabled={proj.isOngoing}
-          className="w-1/2 border-b border-gray-300 p-1 text-sm focus:outline-none"
-        />
-      </div>
-      <label className="text-sm flex items-center gap-2">
-        <input
-          type="checkbox"
-          checked={proj.isOngoing}
-          onChange={(e) =>
-            handleProjectChange(index, 'isOngoing', e.target.checked)
-          }
-        />
-        Ongoing
-      </label>
-    </div>
-  ))}
-
-  <div className="flex items-center gap-4">
-    <button onClick={handleAddProject} className="text-sm text-blue-600 underline">
-      + Add Project
-    </button>
-    <button
-      onClick={handleSaveProjects}
-      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-    >
-      Save
-    </button>
-  </div>
-</div>
-
-
-
-
-            </div>
-
-            <div className="text-center pt-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 rounded-lg transition">
-                Update Information
-              </button>
-            </div>
-          </div>
         </div>
+
+        {/* Projects */}
+        {profileData.projects.map((proj, index) => (
+          <div key={index} className="mb-6 border-b pb-4">
+            <h3 className="font-semibold mb-2">Project #{index + 1}</h3>
+            <input
+              type="text"
+              placeholder="Project Name"
+              value={proj.projectName}
+              onChange={(e) => {
+                const updated = [...profileData.projects];
+                updated[index].projectName = e.target.value;
+                handleProfileFieldChange(['projects'], updated);
+              }}
+              className="w-full border-b border-gray-300 p-1 text-sm"
+            />
+          </div>
+        ))}
+
+        {/* Certifications */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Certifications</h3>
+          {profileData.certifications.map((cert, index) => (
+            <input
+              key={index}
+              type="text"
+              placeholder="Certification Name"
+              value={cert.certificationName}
+              onChange={(e) => {
+                const updated = [...profileData.certifications];
+                updated[index].certificationName = e.target.value;
+                handleProfileFieldChange(['certifications'], updated);
+              }}
+              className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+            />
+          ))}
+        </div>
+
+        {/* Language Proficiency */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Languages</h3>
+          {profileData.languageProficiency.map((lang, index) => (
+            <input
+              key={index}
+              type="text"
+              placeholder="Language"
+              value={lang.language}
+              onChange={(e) => {
+                const updated = [...profileData.languageProficiency];
+                updated[index].language = e.target.value;
+                handleProfileFieldChange(['languageProficiency'], updated);
+              }}
+              className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+            />
+          ))}
+        </div>
+
+        {/* References */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">References</h3>
+          {profileData.references.map((ref, index) => (
+            <input
+              key={index}
+              type="text"
+              placeholder="Reference Name"
+              value={ref.referenceName}
+              onChange={(e) => {
+                const updated = [...profileData.references];
+                updated[index].referenceName = e.target.value;
+                handleProfileFieldChange(['references'], updated);
+              }}
+              className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+            />
+          ))}
+        </div>
+
+        {/* Exams and Achievements */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Exams and Achievements</h3>
+          {profileData.examsAndAchievements.map((exam, index) => (
+            <input
+              key={index}
+              type="text"
+              placeholder="Exam Name"
+              value={exam.examName}
+              onChange={(e) => {
+                const updated = [...profileData.examsAndAchievements];
+                updated[index].examName = e.target.value;
+                handleProfileFieldChange(['examsAndAchievements'], updated);
+              }}
+              className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+            />
+          ))}
+        </div>
+
+        <div className="text-center pt-4">
+          <button
+            onClick={handleSaveAllProfile}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 rounded-lg transition"
+          >
+            Update Information
+          </button>
+        </div>
+
       </div>
+    </div>
+    </div>
     </div>
   );
 }
