@@ -1,17 +1,57 @@
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { Routes, Route } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
+import { useState } from "react";
 import illustration from './assets/illustration.png';
+import axios from "axios";
 
 
 console.log('Illustration path:', illustration);
 
 export default function SignUp() {
+
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    password: ""
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await axios.post(
+        "http://localhost:9090/api/auth/register", // backend endpoint'in
+        formData
+      );
+      console.log("✅ Kayıt başarılı:", response.data);
+      navigate("/login"); // Kayıt başarılı olduğunda login sayfasına yönlendir
+    } catch (error) {
+      console.error("❌ Kayıt hatası:", error.response?.data || error.message);
+
+      navigate("/login"); // şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+    }
+  };
+
+
+
   return (
     <div className="flex min-h-screen">
-      {/* Left: Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center px-8 py-12 bg-white">
-        <div className="w-full max-w-[400px]">
+
+    {/* Left: Form */}
+    <div className="w-1/2 bg-white p-10 flex items-center justify-center">
+      <div className="w-full max-w-[400px]">
           <h2 className="text-2xl font-semibold mb-2">Sign up</h2>
           <p className="text-sm text-gray-600 mb-8">
             <p className="text-sm text-gray-600 mb-8">
@@ -24,47 +64,84 @@ export default function SignUp() {
             </p>
           </p>
 
-          <form className="space-y-6">
-            <div>
-              <input
-                type="text"
-                placeholder="Enter your Name"
-                className="w-full border-b border-gray-300 pb-2 text-gray-700 placeholder-gray-500 focus:outline-none focus:border-gray-400"
-              />
-            </div>
-            <div>
-              <input
-                type="text"
-                placeholder="Enter your Surname"
-                className="w-full border-b border-gray-300 pb-2 text-gray-700 placeholder-gray-500 focus:outline-none focus:border-gray-400"
-              />
-            </div>
-            <div>
-              <input
-                type="email"
-                placeholder="Enter your Email"
-                className="w-full border-b border-gray-300 pb-2 text-gray-700 placeholder-gray-500 focus:outline-none focus:border-gray-400"
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                placeholder="Enter your Password"
-                className="w-full border-b border-gray-300 pb-2 text-gray-700 placeholder-gray-500 focus:outline-none focus:border-gray-400"
-              />
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+  {/* Name */}
+  <div className="flex flex-col">
+    <label htmlFor="name" className="text-sm font-semibold text-gray-800 mb-1">
+      Name
+    </label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      placeholder="Enter your Name"
+      value={formData.name}
+      onChange={handleChange}
+      className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
+    />
+  </div>
 
-            <p className="text-xs text-gray-500 mt-2">
-              Your password must be at least 8 characters and include a number and a special character.
-            </p>
+  {/* Surname */}
+  <div className="flex flex-col">
+    <label htmlFor="surname" className="text-sm font-semibold text-gray-800 mb-1">
+      Surname
+    </label>
+    <input
+      type="text"
+      id="surname"
+      name="surname"
+      placeholder="Enter your Surname"
+      value={formData.surname}
+      onChange={handleChange}
+      className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
+    />
+  </div>
 
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition-colors mt-8"
-            >
-              Sign Up
-            </button>
-          </form>
+  {/* Email */}
+  <div className="flex flex-col">
+    <label htmlFor="email" className="text-sm font-semibold text-gray-800 mb-1">
+      Email
+    </label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      placeholder="Enter your Email"
+      value={formData.email}
+      onChange={handleChange}
+      className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
+    />
+  </div>
+
+  {/* Password */}
+  <div className="flex flex-col">
+    <label htmlFor="password" className="text-sm font-semibold text-gray-800 mb-1">
+      Password
+    </label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Enter your Password"
+      value={formData.password}
+      onChange={handleChange}
+      className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
+    />
+  </div>
+
+  <p className="text-xs text-gray-500">
+    Your password must be at least 8 characters and include a number and a special character.
+  </p>
+
+  <button
+    type="submit"
+    className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition-colors"
+  >
+    Sign Up
+  </button>
+</form>
+
+
 
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-500 mb-4">or sign up with</p>
@@ -81,7 +158,7 @@ export default function SignUp() {
       </div>
 
       {/* Right: Illustration */}
-      <div className="block md:flex w-1/2 bg-[#1849C6] items-center justify-center relative">
+      <div className="w-1/2 bg-[#1849C6] flex items-center justify-center relative">
         <div className="absolute top-8 right-8">
           <span className="text-white font-semibold">Logo</span>
         </div>

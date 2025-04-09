@@ -40,10 +40,14 @@ export default function Login() {
                 const errorText = await response.text();
                 console.error('Sunucu hatası:', errorText);
                 setError('Invalid email or password');
+
+                navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
             }
         } catch (err) {
             console.error('Bağlantı hatası:', err);
             setError('Sunucuya ulaşılamadı');
+
+            navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
         }
     };
 
@@ -51,9 +55,10 @@ export default function Login() {
 
 
     return (
-    <div className="flex min-h-screen font-sans">
+      <div className="flex min-h-screen">
+
       {/* Left: Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center px-10 md:px-20 bg-white">
+      <div className="w-1/2 bg-white p-10 flex items-center justify-center">
         <div className="w-full max-w-[400px]">
           <h2 className="text-3xl font-bold mb-2">Login</h2>
           <p className="text-sm mb-6">
@@ -105,7 +110,7 @@ export default function Login() {
       </div>
 
       {/* Right: Illustration */}
-            <div className="block md:flex w-1/2 bg-[#1849C6] items-center justify-center relative">
+            <div className="w-1/2 bg-[#1849C6] flex items-center justify-center relative">
               <div className="absolute top-8 right-8">
                 <span className="text-white font-semibold">Logo</span>
               </div>
