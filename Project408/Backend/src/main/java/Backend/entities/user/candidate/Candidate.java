@@ -73,6 +73,18 @@ public class Candidate extends User {
     @JoinColumn(name = "candidate_id")
     private List<Project> projects;
 
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
+    private List<JobApplication> jobApplications;
+
+    // Getter ve setter metodları
+    public List<JobApplication> getJobApplications() {
+        return jobApplications;
+    }
+
+    public void setJobApplications(List<JobApplication> jobApplications) {
+        this.jobApplications = jobApplications;
+    }
+
     // Getter and Setter methods
 
 

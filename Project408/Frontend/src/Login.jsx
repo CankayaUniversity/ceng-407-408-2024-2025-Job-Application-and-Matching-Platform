@@ -33,9 +33,15 @@ export default function Login() {
 
                 // Token'ı localStorage’a kaydet
                 localStorage.setItem('token', data.token);
-
+                localStorage.setItem('userType',data.userType);
                 // Yönlendirme
-                navigate('/dashboard');
+                if(data.userType==='EMPLOYER'){
+                    navigate('/employerDashboard');
+                }
+                else if(data.userType==='CANDIDATE'){
+                    navigate('/dashboard');
+                }
+
             } else {
                 const errorText = await response.text();
                 console.error('Sunucu hatası:', errorText);

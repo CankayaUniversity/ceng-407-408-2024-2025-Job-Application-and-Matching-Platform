@@ -1,7 +1,9 @@
 package Backend.services;
 
+import Backend.core.enums.JobAdvStatus;
 import Backend.entities.common.LanguageProficiency;
 import Backend.entities.common.Project;
+import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.user.User;
 import Backend.entities.user.candidate.*;
 import Backend.repository.*;
@@ -13,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -49,7 +53,10 @@ public class CandidateService {
     SkillRepository skillRepository;
     @Autowired
     ProjectRepository projectRepository;
-
+    @Autowired
+    private JobAdvRepository jobAdvRepository;
+    @Autowired
+    private JobApplicationRepository jobApplicationRepository;
     @Transactional
     public Candidate createProfile(String email, Candidate candidate) {
         // E-posta adresine göre kullanıcıyı bul
@@ -283,4 +290,23 @@ public class CandidateService {
     }
 
 
+    public void applyToJobAdv(String email, Integer id) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Eğer kullanıcı Candidate değilse hata ver
+        if (!(user instanceof Candidate)) {
+            throw new RuntimeException("User is not a Candidate");
+        }
+        JobAdv jobAdv = jobAdvRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("JobAdv not found"));
+
+        JobApplication jobApplication = new JobApplication();
+        jobApplication.setCandidate((Candidate) user);
+        jobApplication.setJobAdv(jobAdv);
+        jobApplication.setApplicationDate(LocalDate.now());
+        jobApplication.setStatus(JobAdvStatus.PENDING);
+
+        jobApplicationRepository.save(jobApplication);
+    }
 }
