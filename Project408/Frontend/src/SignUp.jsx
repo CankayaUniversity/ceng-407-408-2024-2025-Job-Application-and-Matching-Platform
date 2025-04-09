@@ -40,7 +40,7 @@ export default function SignUp() {
     } catch (error) {
       console.error("❌ Kayıt hatası:", error.response?.data || error.message);
 
-      navigate("/login"); // şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+      // navigate("/login"); // şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
     }
   };
 

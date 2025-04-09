@@ -41,13 +41,13 @@ export default function Login() {
                 console.error('Sunucu hatası:', errorText);
                 setError('Invalid email or password');
 
-                navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+                // navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
             }
         } catch (err) {
             console.error('Bağlantı hatası:', err);
             setError('Sunucuya ulaşılamadı');
 
-            navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+            // navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
         }
     };
 
