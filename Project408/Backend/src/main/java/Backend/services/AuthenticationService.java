@@ -48,7 +48,7 @@ public class AuthenticationService {
         // JWT token oluştur
         String jwtToken = jwtService.generateToken(candidate);
 
-        return new UserResponseDto(jwtToken);
+        return new UserResponseDto(jwtToken,UserType.CANDIDATE);
     }
     public UserResponseDto empSave(UserRegisterDto userRegisterDto) {
         // Doğrudan Employer nesnesi oluştur
@@ -65,14 +65,14 @@ public class AuthenticationService {
         // JWT token oluştur
         String jwtToken = jwtService.generateToken(employer);
 
-        return new UserResponseDto(jwtToken);
+        return new UserResponseDto(jwtToken,UserType.EMPLOYER);
     }
 
     public UserResponseDto auth(UserDto userDto) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getEmail(), userDto.getPassword()));
         User user = userRepository.findByEmail(userDto.getEmail()).orElseThrow();
         String jwtToken = jwtService.generateToken(user);
-        return new UserResponseDto(jwtToken); // Directly create an instance of UserResponseDto using the constructor
+        return new UserResponseDto(jwtToken,user.getUserType()); // Directly create an instance of UserResponseDto using the constructor
     }
 
 }
