@@ -199,4 +199,5 @@ public class Candidate extends User {
     public void setProjects(List<Project> projects) {
         this.projects = projects;
     }
+
 }

@@ -63,28 +63,43 @@ public class CandidateController {
 
     @GetMapping("/getAllJobAdv")
     public ResponseEntity<List<JobAdv>> getAllJobAdv() {
-        return ResponseEntity.ok(jobAdvService.getAllJobAdv());
-
+        try {
+            List<JobAdv> allJobAdvs = jobAdvService.getAllJobAdv();
+            return ResponseEntity.ok(allJobAdvs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/filterJobAdv")
     public ResponseEntity<List<JobAdv>> filterJobAdv(@RequestBody FilterDto filterDto) {
-        return ResponseEntity.ok(jobAdvService.filter(
-                filterDto.getJobPositionIds(),
-                filterDto.getWorkTypes(),
-                filterDto.getMinSalary(),
-                filterDto.getMaxSalary(),
-                filterDto.getCities(),
-                filterDto.getCountries(),
-                filterDto.getCompanyIds())
-        );
-
+        try {
+            // FilterDto null ise boş bir nesne oluştur
+            if (filterDto == null) {
+                filterDto = new FilterDto();
+            }
+            
+            List<JobAdv> filteredJobAdvs = jobAdvService.filter(
+                    filterDto.getJobPositionIds(),
+                    filterDto.getWorkTypes(),
+                    filterDto.getMinSalary(),
+                    filterDto.getMaxSalary(),
+                    filterDto.getCities(),
+                    filterDto.getCountries(),
+                    filterDto.getCompanyIds()
+            );
+            return ResponseEntity.ok(filteredJobAdvs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/applyJobAdv/{id}")
     public ResponseEntity<String> applyJobAdv(@RequestHeader("Authorization") String token, @PathVariable("id") Integer id) {
         String email = jwtService.extractEmail(token.replace("Bearer ", ""));
-        candidateService.applyToJobAdv(email, id);
+        jobAdvService.applyForJob(id, email);
         return ResponseEntity.ok("Başvuru başarılı!");
     }
 

@@ -212,6 +212,7 @@ export default function JobSeekerDashboard() {
               <Link to="/blog" className="text-[15px] text-gray-700 hover:text-gray-900">Blog</Link>
               <Link to="/interviews" className="text-[15px] text-gray-700 hover:text-gray-900">Interviews</Link>
               <Link to="/my-jobs" className="text-[15px] text-gray-700 hover:text-gray-900">My Jobs</Link>
+              <Link to="/job-offers" className="text-[15px] text-gray-700 hover:text-gray-900">Job Offers</Link>
             </div>
           </div>
 

@@ -1,12 +1,12 @@
 package Backend.repository;
 
-import Backend.entities.user.employer.Employer;
+
+import Backend.core.location.Country;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 @Repository
-public interface EmployerRepository extends JpaRepository<Employer, Integer> {
-    Optional<Employer> findByEmail(String email);
-}
+public interface CountryRepository extends JpaRepository<Country, Integer> {
+    Optional<Country> findByName(String name);
+} 
