@@ -3,6 +3,8 @@ package Backend.entities.user.candidate;
 import Backend.entities.common.Project;
 import Backend.entities.user.User;
 import Backend.entities.common.LanguageProficiency;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -14,9 +16,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "candidates")
-
 public class Candidate extends User {
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -74,6 +75,7 @@ public class Candidate extends User {
     private List<Project> projects;
 
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
+    @JsonBackReference // Prevents circular references during serialization
     private List<JobApplication> jobApplications;
 
     // Getter ve setter metodları

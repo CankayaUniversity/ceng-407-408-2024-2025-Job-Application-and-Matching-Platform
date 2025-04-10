@@ -5,6 +5,8 @@ import Backend.entities.BaseEntity;
 import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.offer.JobOffer;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -17,13 +19,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "job_applications")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JobApplication extends BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.PERSIST)  // Kaydetme işlemi sırasında ilişkiyi yönet
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "candidate_id", nullable = false)
+    @JsonManagedReference // Marks this side of the relationship as the one to be serialized
     private Candidate candidate;  // Aday
 
-    @ManyToOne(cascade = CascadeType.PERSIST)  // Kaydetme işlemi sırasında ilişkiyi yönet
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "job_adv_id")
     private JobAdv jobAdv;  // İş ilanı
 
@@ -45,6 +49,10 @@ public class JobApplication extends BaseEntity {
     // İş teklifleri
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL)
     private List<JobOffer> offers = new ArrayList<>();
+
+    // Cover letter field
+    @Column(name = "cover_letter", length = 2000)
+    private String coverLetter;
 
     // Getter ve setter metodları
     public Candidate getCandidate() {
@@ -101,5 +109,13 @@ public class JobApplication extends BaseEntity {
 
     public void setOffers(List<JobOffer> offers) {
         this.offers = offers;
+    }
+    
+    public String getCoverLetter() {
+        return coverLetter;
+    }
+    
+    public void setCoverLetter(String coverLetter) {
+        this.coverLetter = coverLetter;
     }
 }

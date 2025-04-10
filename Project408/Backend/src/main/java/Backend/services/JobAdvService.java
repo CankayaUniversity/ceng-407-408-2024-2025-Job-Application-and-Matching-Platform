@@ -417,4 +417,39 @@ public List<JobAdv> filter(
     }
 }
 
+/**
+ * İlan başvurularını tam JobApplication nesneleri olarak döndürür.
+ * Frontend'de aday bilgilerinin tam olarak görüntülenmesi için kullanılır.
+ */
+public List<JobApplication> getApplicationObjectsForJobAdv(int jobAdvId, String userEmail) {
+    // 1. Employer'ı email ile bul
+    Employer employer = employerRepository.findByEmail(userEmail)
+            .orElseThrow(() -> new RuntimeException("İşveren bulunamadı."));
+
+    Company employerCompany = employer.getCompany();
+    if (employerCompany == null) {
+        throw new RuntimeException("İşverene ait şirket bilgisi eksik.");
+    }
+
+    // 2. İlanı veritabanından al
+    JobAdv jobAdv = jobAdvRepository.findById(jobAdvId)
+            .orElseThrow(() -> new RuntimeException("İlan bulunamadı."));
+
+    Company jobCompany = jobAdv.getCompany();
+    if (jobCompany == null) {
+        throw new RuntimeException("İlana ait şirket bilgisi eksik.");
+    }
+
+    // 3. Şirket kontrolü
+    Integer jobCompanyId = jobAdv.getCompany() != null ? jobAdv.getCompany().getId() : null;
+    Integer employerCompanyId = employer.getCompany() != null ? employer.getCompany().getId() : null;
+    
+    if (jobCompanyId == null || employerCompanyId == null || !jobCompanyId.equals(employerCompanyId)) {
+        throw new RuntimeException("Bu ilana erişim yetkiniz yok.");
+    }
+
+    // 4. Başvuruları getir ve doğrudan döndür
+    return jobApplicationRepository.findByJobAdv(jobAdv);
+}
+
 }

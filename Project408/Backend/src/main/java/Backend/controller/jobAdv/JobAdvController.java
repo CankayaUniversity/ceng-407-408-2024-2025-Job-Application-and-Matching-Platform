@@ -2,6 +2,7 @@ package Backend.controller.jobAdv;
 
 import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.offer.JobOffer;
+import Backend.entities.user.candidate.JobApplication;
 import Backend.request.jobAdv.JobAdvCreateRequest;
 import Backend.request.jobAdv.JobAdvUpdateRequest;
 import Backend.services.JobAdvService;
@@ -75,7 +76,7 @@ public class JobAdvController {
 
     // 🔹 5. İlan başvurularını görüntüleme
     @GetMapping("/{id}/applications")
-    public ResponseEntity<List<String>> getApplications(
+    public ResponseEntity<List<JobApplication>> getApplications(
             @PathVariable int id,
             HttpServletRequest request) {
 
@@ -83,8 +84,8 @@ public class JobAdvController {
                 ? request.getUserPrincipal().getName()
                 : "mock@employer.com";
 
-        List<String> result = jobAdvService.getApplicationsForJobAdv(id, email);
-        return ResponseEntity.ok(result);
+        List<JobApplication> applications = jobAdvService.getApplicationObjectsForJobAdv(id, email);
+        return ResponseEntity.ok(applications);
     }
 
     // 🔸 6. İlana başvurma (aday)

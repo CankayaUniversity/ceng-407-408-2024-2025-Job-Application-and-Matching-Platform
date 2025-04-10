@@ -156,12 +156,12 @@ export default function EmployerDashboard() {
           {activeSection === 'postJob' && (
             <div>
               <h2 className="text-2xl font-semibold mb-6">Post a New Job</h2>
-              <p className="mb-4 text-gray-600">Coming soon! This feature is under development.</p>
+              <p className="mb-4 text-gray-600">Create a new job posting to find qualified candidates.</p>
               <button 
-                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
-                onClick={() => setShowCreateJobForm(true)}
+                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition flex items-center"
+                onClick={() => navigate('/create-job')}
               >
-                Create Job Posting
+                <FaPlus className="mr-2" /> Create Job Posting
               </button>
             </div>
           )}
