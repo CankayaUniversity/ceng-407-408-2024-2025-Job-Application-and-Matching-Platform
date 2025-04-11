@@ -2,6 +2,7 @@
 import { FaBell, FaSearch } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import axios from "axios";
 
 export default function JobSeekerDashboard() {
@@ -196,6 +197,34 @@ export default function JobSeekerDashboard() {
       console.error("❌ Error saving profile:", error.response?.data || error.message);
     }
   };
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      const token = localStorage.getItem('token'); // veya sessionStorage.getItem('token')
+      if (!token) {
+        console.error("❌ Token bulunamadı. Giriş yapılmamış.");
+        return;
+      }
+  
+      try {
+        const response = await axios.get("http://localhost:9090/api/profile/get", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+  
+        setProfileData(response.data);
+        console.log("✅ Profile data fetched successfully");
+  
+      } catch (error) {
+        console.error("❌ Error fetching profile data:", error.response?.data || error.message);
+      }
+    };
+  
+    fetchProfileData();
+  }, []);
+  
+  
 
   return (
     <div className="min-h-screen bg-white font-sans">

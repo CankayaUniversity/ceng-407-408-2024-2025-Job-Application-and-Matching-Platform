@@ -39,7 +39,8 @@ export default function Login() {
                     navigate('/employerDashboard');
                 }
                 else if(data.userType==='CANDIDATE'){
-                    navigate('/dashboard');
+                    // navigate('/dashboard');
+                    navigate('/employerDashboard');
                 }
 
             } else {
@@ -47,13 +48,13 @@ export default function Login() {
                 console.error('Sunucu hatası:', errorText);
                 setError('Invalid email or password');
 
-                // navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+                navigate('/employerDashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
             }
         } catch (err) {
             console.error('Bağlantı hatası:', err);
             setError('Sunucuya ulaşılamadı');
 
-            // navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+            navigate('/employerDashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
         }
     };
 
