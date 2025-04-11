@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import illustration from './assets/illustration.png';
+import illustration from './assets/Saly-10.png';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
@@ -54,7 +54,7 @@ export default function Login() {
             console.error('Bağlantı hatası:', err);
             setError('Sunucuya ulaşılamadı');
 
-            navigate('/employerDashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+            navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
         }
     };
 

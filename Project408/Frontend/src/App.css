@@ -18,6 +18,17 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.nav-item-hover:hover {
+  color: #0d6efd; /* Bootstrap Primary Blue */
+  transition: color 0.2s;
+}
+
+.hover-effect:hover {
+  background-color: #0A1BA6 !important;
+  border-color: #0A1BA6 !important;
+}
+
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);

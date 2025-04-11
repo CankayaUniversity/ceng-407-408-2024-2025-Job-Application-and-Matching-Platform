@@ -1,25 +1,23 @@
+/* Güncellenen SignUp.jsx */
+
 import { FaGithub, FaGoogle } from 'react-icons/fa';
-import { Routes, Route } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from "react";
-import illustration from './assets/illustration.png';
+import illustration from './assets/Saly-10.png';
 import axios from "axios";
 
-
-console.log('Illustration path:', illustration);
-
 export default function SignUp() {
-
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-    userType: "CANDIDATE" // Default olarak iş arayan
+    userType: "CANDIDATE"
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const handleChange = (e) => {
     setFormData({
@@ -30,179 +28,108 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     try {
-      const response = await axios.post(
-        "http://localhost:9090/login/canRegister", // backend endpoint'in
-        formData
-      );
+      const response = await axios.post("http://localhost:9090/login/canRegister", formData);
       console.log("✅ Kayıt başarılı:", response.data);
-      navigate("/login"); // Kayıt başarılı olduğunda login sayfasına yönlendir
+      navigate("/login");
     } catch (error) {
       console.error("❌ Kayıt hatası:", error.response?.data || error.message);
-
-      // navigate("/login"); // şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
     }
   };
 
-
-
   return (
     <div className="flex min-h-screen">
-
-    {/* Left: Form */}
-    <div className="w-1/2 bg-white p-10 flex items-center justify-center">
-      <div className="w-full max-w-[400px]">
-          <h2 className="text-2xl font-semibold mb-2">Sign up</h2>
-          <p className="text-sm text-gray-600 mb-8">
-            <p className="text-sm text-gray-600 mb-8">
-            If you already have an account register
-            <br />
-            You can{' '}
-            <Link to="/login" className="text-blue-600 hover:underline">
-                Login here !
-            </Link>
-            </p>
+      {/* Left */}
+      <div className="w-1/2 bg-white p-12 flex items-center justify-center">
+        <div className="w-full max-w-[400px]">
+          <h2 className="text-3xl font-bold mb-4">Sign up</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            If you already have an account register<br />
+            You can <Link to="/login" className="text-blue-600 hover:underline">Login here !</Link>
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-  {/* Name */}
-  <div className="flex flex-col">
-    <label htmlFor="firstName" className="text-sm font-semibold text-gray-800 mb-1">
-      Name
-    </label>
-    <input
-      type="text"
-      id="firstName"
-      name="firstName"
-      placeholder="Enter your Name"
-      value={formData.firstName}
-      onChange={handleChange}
-      className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
-    />
-  </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="flex flex-col">
+              <label htmlFor="firstName" className="mb-1 font-medium text-sm">Name</label>
+              <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Enter your Name" className="border-0 border-b border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500" />
+            </div>
 
-  {/* Surname */}
-  <div className="flex flex-col">
-    <label htmlFor="surname" className="text-sm font-semibold text-gray-800 mb-1">
-      Surname
-    </label>
-    <input
-      type="text"
-      id="lastName"
-      name="lastName"
-      placeholder="Enter your Surname"
-      value={formData.lastName}
-      onChange={handleChange}
-      className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
-    />
-  </div>
+            <div className="flex flex-col">
+              <label htmlFor="lastName" className="mb-1 font-medium text-sm">Surname</label>
+              <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Enter your Surname" className="border-0 border-b border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500" />
+            </div>
 
-  {/* Email */}
-  <div className="flex flex-col">
-    <label htmlFor="email" className="text-sm font-semibold text-gray-800 mb-1">
-      Email
-    </label>
-    <input
-      type="email"
-      id="email"
-      name="email"
-      placeholder="Enter your Email"
-      value={formData.email}
-      onChange={handleChange}
-      className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
-    />
-  </div>
+            <div className="flex flex-col">
+              <label htmlFor="email" className="mb-1 font-medium text-sm">Email</label>
+              <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your Email" className="border-0 border-b border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500" />
+            </div>
 
-  {/* Password */}
-  <div className="flex flex-col">
-    <label htmlFor="password" className="text-sm font-semibold text-gray-800 mb-1">
-      Password
-    </label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      placeholder="Enter your Password"
-      value={formData.password}
-      onChange={handleChange}
-      className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
-    />
-  </div>
-  
-  {/* User Type */}
-  <div className="flex flex-col">
-    <label htmlFor="userType" className="text-sm font-semibold text-gray-800 mb-1">
-      I want to
-    </label>
-    <div className="flex gap-4 mt-2">
-      <label className="flex items-center">
-        <input
-          type="radio"
-          name="userType"
-          value="CANDIDATE"
-          checked={formData.userType === "CANDIDATE"}
-          onChange={handleChange}
-          className="mr-2"
-        />
-        <span className="text-sm text-gray-700">Find a job</span>
-      </label>
-      <label className="flex items-center">
-        <input
-          type="radio"
-          name="userType"
-          value="EMPLOYER"
-          checked={formData.userType === "EMPLOYER"}
-          onChange={handleChange}
-          className="mr-2"
-        />
-        <span className="text-sm text-gray-700">Hire talent</span>
-      </label>
-    </div>
-  </div>
-
-  <p className="text-xs text-gray-500">
-    Your password must be at least 8 characters and include a number and a special character.
-  </p>
-
-  <button
-    type="submit"
-    className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition-colors"
-  >
-    Sign Up
-  </button>
-</form>
+            <div className="flex flex-col">
+              <label htmlFor="password" className="mb-1 font-medium text-sm">Password</label>
+              
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your Password"
+                  className="border-0 border-b border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500 pr-10 w-full"
+                />
+                
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-[#0C21C1]"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </span>
+              </div>
+            </div>
 
 
+            <div 
+            style={{backgroundColor: "#F8F8F8", borderRadius: "10px", padding: "10px"}}
+            className="flex flex-col">
+              <label 
+              style ={{color: "#0C21C1"}}
+              className="mb-1 font-medium text-sm">I want to</label>
+              <div 
+              className="flex gap-6 mt-1">
+                <label className="flex items-center text-sm">
+                  <input type="radio" name="userType" value="CANDIDATE" checked={formData.userType === "CANDIDATE"} onChange={handleChange} className="mr-2" />Find a job
+                </label>
+                <label 
+                style={{backgroundColor: "#F8F8F8", borderRadius: "10px", padding: "10px"}}
+                className="flex items-center text-sm">
+                  <input type="radio" name="userType" value="EMPLOYER" checked={formData.userType === "EMPLOYER"} onChange={handleChange} className="mr-2" />Hire talent
+                </label>
+              </div>
+            </div>
+
+            <p className="text-xs text-gray-500">
+              Your password must be at least 8 characters and include a number and a special character.
+            </p>
+
+            <button type="submit" className="w-full bg-[#0C21C1] text-white py-3 rounded-full hover:bg-[#0a1ba6] transition">Sign Up</button>
+          </form>
 
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-500 mb-4">or sign up with</p>
             <div className="flex justify-center gap-6">
-              <button className="p-2 hover:opacity-80 transition-opacity">
-                <FaGithub size={24} className="text-gray-700" />
-              </button>
-              <button className="p-2 hover:opacity-80 transition-opacity">
-                <FaGoogle size={24} className="text-gray-700" />
-              </button>
+              <button className="p-2 hover:opacity-80 transition-opacity"><FaGithub size={24} className="text-gray-700" /></button>
+              <button className="p-2 hover:opacity-80 transition-opacity"><FaGoogle size={24} className="text-gray-700" /></button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Right: Illustration */}
-      <div className="w-1/2 bg-[#1849C6] flex items-center justify-center relative">
-        <div className="absolute top-8 right-8">
-          <span className="text-white font-semibold">Logo</span>
-        </div>
-        <img
-          src={illustration}
-          alt="Illustration"
-          className="w-3/4 max-w-[400px]"
-          onError={(e) => {
-            console.error('Image failed to load:', e);
-            console.log('Image src:', e.target.src);
-          }}
-        />
+      {/* Right */}
+      <div className="absolute top-8 right-8 text-red font-semibold">Logo</div>
+      <div 
+      style={{ background: "linear-gradient(180deg, #1849C6 0%, #000842 100%)", clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", borderRadius: "15px", padding: "20px", top: "0", right: "0", height: "100vh" }}
+      className="w-[46%] bg-[#000842] rounded-l-3xl flex items-center justify-center relative">
+        <img src={illustration} alt="Illustration" className="w-3/4 max-w-[400px]" />
       </div>
     </div>
   );
