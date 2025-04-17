@@ -39,7 +39,7 @@ export default function Login() {
                     navigate('/employerDashboard');
                 }
                 else if(data.userType==='CANDIDATE'){
-                    navigate('/dashboard');
+                    navigate('/jobs');
                 }
 
             } else {

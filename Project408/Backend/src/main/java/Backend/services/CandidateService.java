@@ -57,6 +57,10 @@ public class CandidateService {
     private JobAdvRepository jobAdvRepository;
     @Autowired
     private JobApplicationRepository jobApplicationRepository;
+    @Autowired
+    CountryRepository countryRepository;
+    @Autowired
+    CityRepository cityRepository;
     @Transactional
     public Candidate createProfile(String email, Candidate candidate) {
         // E-posta adresine göre kullanıcıyı bul
@@ -185,9 +189,19 @@ public class CandidateService {
 
         if (candidate.getContactInformation() != null) {
             ContactInformation contactInformation = candidate.getContactInformation();
+
+            // City ve Country nesnelerini kontrol et ve kaydet
+            if (contactInformation.getCountry() != null && contactInformation.getCountry().getId() == null) {
+                // Country kaydetme işlemi
+                countryRepository.save(contactInformation.getCountry());
+            }
+            if (contactInformation.getCity() != null && contactInformation.getCity().getId() == null) {
+                // City kaydetme işlemi
+                cityRepository.save(contactInformation.getCity());
+            }
+
             existingCandidate.setContactInformation(contactInformation);
         }
-
         if (candidate.getJobPreferences() != null) {
             JobPreferences jobPreferences = candidate.getJobPreferences();
             existingCandidate.setJobPreferences(jobPreferences);
@@ -308,5 +322,27 @@ public class CandidateService {
         jobApplication.setStatus(JobAdvStatus.PENDING);
 
         jobApplicationRepository.save(jobApplication);
+
+    }
+
+    public List<JobApplication> getJobApplicationsByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!(user instanceof Candidate)) {
+            throw new RuntimeException("User is not a Candidate");
+        }
+
+        return jobApplicationRepository.findByCandidate((Candidate) user);
+    }
+
+    public Candidate getProfileByUserId(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!(user instanceof Candidate)) {
+            throw new RuntimeException("User is not a Candidate");
+        }
+        return (Candidate) user;
     }
 }

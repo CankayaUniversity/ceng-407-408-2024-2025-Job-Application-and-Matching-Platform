@@ -1,12 +1,19 @@
 package Backend.controller;
 
+import Backend.core.location.Country;
 import Backend.entities.dto.FilterDto;
+import Backend.entities.dto.JobAdvDto;
+import Backend.entities.jobAdv.Benefit;
 import Backend.entities.jobAdv.JobAdv;
+import Backend.entities.jobAdv.JobCondition;
+import Backend.entities.jobAdv.JobQualification;
 import Backend.entities.user.candidate.Candidate;
+import Backend.entities.user.candidate.JobApplication;
 import Backend.services.CandidateService;
 import Backend.services.JobAdvService;
 import Backend.services.JwtService;
 import Backend.repository.UserRepository;
+import jakarta.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +21,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/candidate")
@@ -34,6 +44,14 @@ public class CandidateController {
     JobAdvService jobAdvService;
 
     // Profil oluşturma
+    @GetMapping("/profile")
+    public ResponseEntity<Candidate> getProfile() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
+        Candidate profile = candidateService.getProfileByUserId(email);
+        return ResponseEntity.ok(profile);
+    }
+
     @PostMapping("/createProfile")
     public ResponseEntity<Candidate> createProfile(@RequestBody Candidate candidate) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -64,10 +82,88 @@ public class CandidateController {
     }
 
     @GetMapping("/getAllJobAdv")
-    public List<JobAdv> getAllJobAdv() {
+    public List<JobAdvDto> getAllJobAdv() {
         List<JobAdv> jobAdvs = jobAdvService.getAllJobAdv();
         // Gereksiz filtreleme veya düzenleme yapılmadığından emin olun
-        return jobAdvs;
+        List<JobAdvDto> jobAdvDtos = jobAdvs.stream()
+                .map(jobAdv -> {
+                    JobAdvDto dto = new JobAdvDto();
+                    dto.setId(jobAdv.getId());
+                    dto.setDescription(jobAdv.getDescription());
+                    dto.setCompanyName(jobAdv.getCompany().getCompanyName());
+                    dto.setMinSalary(jobAdv.getMinSalary());
+                    dto.setMaxSalary(jobAdv.getMaxSalary());
+                    dto.setLastDate(jobAdv.getLastDate());
+                    dto.setTravelRest(jobAdv.isTravelRest());
+                    dto.setLicense(jobAdv.isLicense());
+
+                    if (jobAdv.getJobCondition() != null) {
+                        JobCondition jobCondition = jobAdv.getJobCondition();
+
+                        dto.setWorkType(jobCondition.getWorkType());
+                        dto.setEmploymentType(jobCondition.getEmploymentType());
+                        if(jobCondition.getCountry() != null){
+                            Country country = jobCondition.getCountry();
+                            dto.setCountry(jobCondition.getCountry().getName());
+                        }
+                        dto.setMinWorkHours(jobCondition.getMinWorkHours());
+                        dto.setMaxWorkHours(jobCondition.getMaxWorkHours());
+                    }
+
+                    if (jobAdv.getJobQualification() != null) {
+                        JobQualification jobQualification = jobAdv.getJobQualification();
+
+                        dto.setDegreeType(jobQualification.getDegreeType().toString());
+                        dto.setJobExperience(jobQualification.getJobExperience().toString());
+                        dto.setExperienceYears(jobQualification.getExperienceYears());
+                        dto.setMilitaryStatus(jobQualification.getMilitaryStatus().toString());
+
+                        // Teknik ve sosyal becerileri alıyoruz
+                        dto.setTechnicalSkills(jobQualification.getTechnicalSkills().stream()
+                                .map(skill -> skill.getPositionName())  // TechnicalSkill'in ismi alınır (örneğin: "Java")
+                                .collect(Collectors.toList()));
+
+                        dto.setSocialSkills(jobQualification.getSocialSkills().stream()
+                                .map(skill -> skill.getPositionName())  // SocialSkill'in ismi alınır (örneğin: "Takım Çalışması")
+                                .collect(Collectors.toList()));
+
+                        dto.setLanguageProficiencies(jobQualification.getLanguageProficiencies().stream()
+                                .map(lang -> lang.getLanguage())  // LanguageProficiency'den dil isimleri alınır
+                                .collect(Collectors.toList()));
+                    }
+                    if (jobAdv.getBenefits() != null) {
+                        List<String> benefitTypes = jobAdv.getBenefits().stream()
+                                .map(benefit -> benefit.getBenefitType().toString()) // BenefitType enum'u string'e çeviriyoruz
+                                .collect(Collectors.toList());
+
+                        List<String> benefitDescriptions = jobAdv.getBenefits().stream()
+                                .map(Benefit::getDescription)  // Benefit description'ı alıyoruz
+                                .collect(Collectors.toList());
+
+                        dto.setBenefitTypes(benefitTypes);
+                        dto.setBenefitDescriptions(benefitDescriptions);
+                    }
+
+                    if (jobAdv.getJobPositions() != null) {
+                        List<String> positionTypes = jobAdv.getJobPositions().stream()
+                                .map(jobPosition -> jobPosition.getPositionType().toString())  // PositionType enum'unu string'e çeviriyoruz
+                                .collect(Collectors.toList());
+
+                        List<String> customJobPositions = jobAdv.getJobPositions().stream()
+                                .filter(jobPosition -> jobPosition.getCustomJobPosition() != null)
+                                .map(jobPosition -> jobPosition.getCustomJobPosition().getPositionName()) // CustomJobPosition isimleri
+                                .collect(Collectors.toList());
+
+                        dto.setPositionTypes(positionTypes);
+                        dto.setCustomJobPositions(customJobPositions);
+                    }
+
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return jobAdvDtos;
 
     }
 
@@ -93,6 +189,26 @@ public class CandidateController {
         String email = userDetails.getUsername();
         candidateService.applyToJobAdv(email, id);
         return ResponseEntity.ok("Başvuru başarılı!");
+    }
+
+    @GetMapping("/myApplications")
+    public ResponseEntity<List<Map<String, Object>>> getMyApplications() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
+
+        List<JobApplication> applications = candidateService.getJobApplicationsByEmail(email);
+
+        List<Map<String, Object>> statusList = applications.stream()
+                .map(app -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("jobAdvId", app.getJobAdv().getId());
+                    map.put("status", app.getStatus().name());
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(statusList);
+
     }
 
 

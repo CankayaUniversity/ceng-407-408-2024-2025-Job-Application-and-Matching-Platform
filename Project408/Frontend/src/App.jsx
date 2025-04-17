@@ -4,7 +4,6 @@ import Login from './Login';
 import JobSeekerDashboard from './JobSeekerDashboard';
 import EmployerDashboard from "./EmployerDashboard";
 import JobAdvList from "./JobAdvList";
-import JobAdvDetail from "./JobAdvDetail";
 
 
 function App() {
@@ -15,7 +14,6 @@ function App() {
       <Route path="/dashboard" element={<JobSeekerDashboard />} />
         <Route path="/employerDashboard" element={<EmployerDashboard />} />
         <Route path="/jobs" element={<JobAdvList />} />
-        <Route path="/jobs/:id" element={<JobAdvDetail />} />
       {/* <div className="bg-red-500 text-white p-4">
         Eğer bu kırmızı kutu görünüyorsa Tailwind çalışıyor 🎉
       </div> */}

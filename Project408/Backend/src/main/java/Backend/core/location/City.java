@@ -7,8 +7,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cities")
@@ -21,6 +20,30 @@ public class City extends BaseEntity {
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "city", cascade = CascadeType.PERSIST) // CascadeType.ALL yerine sadece PERSIST kullanılabilir.
     private List<University> universities;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    public List<University> getUniversities() {
+        return universities;
+    }
+
+    public void setUniversities(List<University> universities) {
+        this.universities = universities;
+    }
 }
