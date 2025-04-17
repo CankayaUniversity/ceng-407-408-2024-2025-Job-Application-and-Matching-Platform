@@ -15,19 +15,36 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
-
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     JwtService jwtService;
     @Autowired
     UserDetailsService userDetailsService;
+    
+    // Kimlik doğrulama filtresinin uygulanmayacağı public yollar
+    private static final List<String> PUBLIC_PATHS = Arrays.asList(
+            "/login", 
+            "/h2-console",
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/actuator"
+    );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String header= request.getHeader("Authorization");
+        // Public yollar için filtre atla
+        String requestPath = request.getServletPath();
+        if (PUBLIC_PATHS.stream().anyMatch(path -> requestPath.startsWith(path))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        final String header = request.getHeader("Authorization");
         final String jwt; // token
         final String email; // tokendan alınacak email
 
@@ -37,8 +54,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         //Bearer bosluktan sonra token devam ediyor
-        jwt=header.substring(7); //tokenı aldık
-        email=jwtService.extractEmail(jwt);
+        jwt = header.substring(7); //tokenı aldık
+        email = jwtService.extractEmail(jwt);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
@@ -53,9 +70,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
-
-
-
-
     }
 }

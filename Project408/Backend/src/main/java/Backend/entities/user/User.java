@@ -2,6 +2,7 @@ package Backend.entities.user;
 
 import Backend.core.enums.UserType;
 import Backend.entities.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class User extends BaseEntity implements UserDetails {
 
     private String email;
 
+    @JsonIgnore // Don't serialize the password
     private String password;
 
     @Setter
@@ -37,6 +39,7 @@ public class User extends BaseEntity implements UserDetails {
 
     //return user roles
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //return all roles
         return List.of(new SimpleGrantedAuthority(userType.name()));
@@ -54,21 +57,25 @@ public class User extends BaseEntity implements UserDetails {
 
     //hesabın süresinin dolup dolmadığı kontrol eder
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
     // hesap kitli mi degil m,
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
     //kullanici aktif mi değil mi
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

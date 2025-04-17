@@ -17,7 +17,8 @@ export default function SignUp() {
     firstName: "",
     lastName: "",
     email: "",
-    password: ""
+    password: "",
+    userType: "CANDIDATE" // Default olarak iş arayan
   });
 
   const handleChange = (e) => {
@@ -127,6 +128,37 @@ export default function SignUp() {
       onChange={handleChange}
       className="border-0 border-b border-gray-400 focus:border-blue-600 focus:outline-none p-1 placeholder-gray-500"
     />
+  </div>
+  
+  {/* User Type */}
+  <div className="flex flex-col">
+    <label htmlFor="userType" className="text-sm font-semibold text-gray-800 mb-1">
+      I want to
+    </label>
+    <div className="flex gap-4 mt-2">
+      <label className="flex items-center">
+        <input
+          type="radio"
+          name="userType"
+          value="CANDIDATE"
+          checked={formData.userType === "CANDIDATE"}
+          onChange={handleChange}
+          className="mr-2"
+        />
+        <span className="text-sm text-gray-700">Find a job</span>
+      </label>
+      <label className="flex items-center">
+        <input
+          type="radio"
+          name="userType"
+          value="EMPLOYER"
+          checked={formData.userType === "EMPLOYER"}
+          onChange={handleChange}
+          className="mr-2"
+        />
+        <span className="text-sm text-gray-700">Hire talent</span>
+      </label>
+    </div>
   </div>
 
   <p className="text-xs text-gray-500">

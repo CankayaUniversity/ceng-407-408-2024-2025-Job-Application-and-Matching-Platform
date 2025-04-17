@@ -1,5 +1,6 @@
 package Backend.services;
 
+import Backend.core.enums.ApplicationStatus;
 import Backend.core.enums.JobAdvStatus;
 import Backend.entities.common.LanguageProficiency;
 import Backend.entities.common.Project;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class CandidateService {
@@ -319,7 +321,10 @@ public class CandidateService {
         jobApplication.setCandidate((Candidate) user);
         jobApplication.setJobAdv(jobAdv);
         jobApplication.setApplicationDate(LocalDate.now());
-        jobApplication.setStatus(JobAdvStatus.PENDING);
+        jobApplication.setStatus(ApplicationStatus.PENDING);
+        jobApplication.setReferencePermission(true);
+        jobApplication.setContactPermission(true);
+        jobApplication.setOffers(new ArrayList<>());
 
         jobApplicationRepository.save(jobApplication);
 
