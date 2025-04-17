@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FaBell, FaSearch, FaPlus, FaClipboardList, FaUserTie, FaFileAlt, FaChartLine, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
+
 export default function EmployerDashboard() {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [showCreateJobForm, setShowCreateJobForm] = useState(false);
@@ -35,6 +36,9 @@ export default function EmployerDashboard() {
   };
 
   return (
+
+    <>
+
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-md">
@@ -105,19 +109,9 @@ export default function EmployerDashboard() {
         {/* Header */}
         <header className="bg-white shadow px-6 py-4 flex justify-between items-center">
           <div className="flex items-center border rounded-lg px-3 py-2 w-64">
-            <FaSearch className="text-gray-400 mr-2" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="outline-none w-full"
-            />
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <FaBell className="text-gray-600 text-xl" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
-                3
-              </span>
             </div>
             <div className="flex items-center">
               <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white">
@@ -258,7 +252,9 @@ export default function EmployerDashboard() {
             </div>
           </div>
         </div>
+        
       )}
     </div>
+    </>
   );
 }
