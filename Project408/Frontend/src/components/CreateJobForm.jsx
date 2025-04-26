@@ -1,577 +1,275 @@
-import { useState, useEffect } from 'react';
-import { FaTimesCircle } from 'react-icons/fa';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function CreateJobForm({ onClose, onSuccess }) {
+export default function CreateJobForm({ onClose }) {
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    description: '',
-    minSalary: '',
-    maxSalary: '',
-    deadline: '',
-    travelRest: false,
-    license: false,
+    jobPosition: '',
+    jobDescription: '',
+    startDate: '',
+    endDate: '',
+    isActive: true,
     workType: '',
-    employmentType: '',
-    countryId: '',
+    city: '',
+    country: '',
     minWorkHours: '',
     maxWorkHours: '',
+    salaryRange: '',
+    canWorkRemote: false,
+    skills: [],
+    languages: [],
+    minExperience: '',
     degreeType: '',
-    jobExperience: '',
-    experienceYears: '',
-    militaryStatus: '',
-    technicalSkills: [],
-    socialSkills: [],
-    languageProficiencyIds: [],
-    jobPositionIds: []
   });
 
-  const [countries, setCountries] = useState([]);
-  const [jobPositions, setJobPositions] = useState([]);
-  const [languages, setLanguages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [newTechnicalSkill, setNewTechnicalSkill] = useState('');
-  const [newSocialSkill, setNewSocialSkill] = useState('');
+  const [direction, setDirection] = useState(1);  // 1: ileri, -1: geri
+  const [skillInput, setSkillInput] = useState('');
+  const [languageInput, setLanguageInput] = useState('');
 
-  // Work Types from the enum
-  const workTypes = ['OFFICE', 'REMOTE', 'HYBRID'];
-  
-  // Employment Types from the enum
-  const employmentTypes = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERNSHIP', 'FREELANCE'];
-  
-  // Degree Types from the enum
-  const degreeTypes = ['HIGH_SCHOOL', 'ASSOCIATE', 'BACHELOR', 'MASTER', 'DOCTORATE', 'NONE'];
-  
-  // Job Experience from the enum
-  const jobExperiences = ['JUNIOR', 'MID_LEVEL', 'SENIOR', 'LEAD', 'MANAGER', 'EXECUTIVE'];
-  
-  // Military Status from the enum
-  const militaryStatuses = ['COMPLETED', 'EXEMPT', 'POSTPONED', 'NOT_APPLICABLE'];
 
-  useEffect(() => {
-    // Dummy data for development, would be replaced with real API calls
-    setCountries([
-      { id: 1, name: 'Turkey' },
-      { id: 2, name: 'United States' },
-      { id: 3, name: 'Germany' }
-    ]);
-    
-    setJobPositions([
-      { id: 1, name: 'Software Developer' },
-      { id: 2, name: 'UI/UX Designer' },
-      { id: 3, name: 'Project Manager' }
-    ]);
-    
-    setLanguages([
-      { id: 1, name: 'English' },
-      { id: 2, name: 'Turkish' },
-      { id: 3, name: 'German' }
-    ]);
-  }, []);
+  const handleNext = () => {
+    setDirection(1);        // Yönü ileri ayarla
+    setStep((prev) => prev + 1);
+  };
+
+  const handleBack = () => {
+    setDirection(-1);       // Yönü geri ayarla
+    setStep((prev) => prev - 1);
+  };
+
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
+    setFormData({
+      ...formData,
       [name]: type === 'checkbox' ? checked : value
-    }));
+    });
   };
 
-  const handleSelectMultiple = (e) => {
-    const { name, options } = e.target;
-    const selectedValues = Array.from(options)
-      .filter(option => option.selected)
-      .map(option => parseInt(option.value));
-    
-    setFormData(prev => ({
-      ...prev,
-      [name]: selectedValues
-    }));
-  };
-
-  const addTechnicalSkill = () => {
-    if (newTechnicalSkill.trim() !== '') {
-      setFormData(prev => ({
-        ...prev,
-        technicalSkills: [...prev.technicalSkills, newTechnicalSkill.trim()]
-      }));
-      setNewTechnicalSkill('');
+  const handleSkillAdd = () => {
+    if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
+      setFormData({ ...formData, skills: [...formData.skills, skillInput.trim()] });
+      setSkillInput('');
     }
   };
 
-  const removeTechnicalSkill = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      technicalSkills: prev.technicalSkills.filter((_, i) => i !== index)
-    }));
+  const removeSkill = (skill) => {
+    setFormData({ ...formData, skills: formData.skills.filter(s => s !== skill) });
   };
 
-  const addSocialSkill = () => {
-    if (newSocialSkill.trim() !== '') {
-      setFormData(prev => ({
-        ...prev,
-        socialSkills: [...prev.socialSkills, newSocialSkill.trim()]
-      }));
-      setNewSocialSkill('');
+  const handleLanguageAdd = () => {
+    if (languageInput.trim() && !formData.languages.includes(languageInput.trim())) {
+      setFormData({ ...formData, languages: [...formData.languages, languageInput.trim()] });
+      setLanguageInput('');
     }
   };
 
-  const removeSocialSkill = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      socialSkills: prev.socialSkills.filter((_, i) => i !== index)
-    }));
+  const removeLanguage = (lang) => {
+    setFormData({ ...formData, languages: formData.languages.filter(l => l !== lang) });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    try {
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch('http://localhost:9090/api/job-adv/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          ...formData,
-          minSalary: parseFloat(formData.minSalary),
-          maxSalary: parseFloat(formData.maxSalary),
-          minWorkHours: parseInt(formData.minWorkHours),
-          maxWorkHours: parseInt(formData.maxWorkHours),
-          experienceYears: parseInt(formData.experienceYears),
-          countryId: parseInt(formData.countryId)
-        })
-      });
-      
-      if (response.ok) {
-        onSuccess?.();
-        onClose?.();
-      } else {
-        const errorData = await response.text();
-        setError(errorData || 'Failed to create job posting');
-      }
-    } catch (err) {
-      setError('Network error. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded-md">
-          {error}
-        </div>
-      )}
-      
-      <div>
-        <h3 className="text-lg font-medium mb-4">Basic Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Job Description*
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              rows="4"
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-              placeholder="Describe the job role and responsibilities"
-            />
+      <div className="fixed inset-0 bg-white z-50 flex flex-col max-w-2xl w-full h-full right-0 shadow-lg">
+        <div className="bg-white rounded-lg w-full max-w-3xl overflow-y-auto max-h-[90vh] p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-semibold">Create New Job Posting</h2>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">✕</button>
           </div>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Job Positions*
-              </label>
-              <select
-                name="jobPositionIds"
-                multiple
-                value={formData.jobPositionIds}
-                onChange={handleSelectMultiple}
-                required
-                className="w-full border border-gray-300 rounded-md px-3 py-2 h-24"
-              >
-                {jobPositions.map(position => (
-                  <option key={position.id} value={position.id}>
-                    {position.name}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-gray-500 mt-1">
-                Hold Ctrl/Cmd to select multiple positions
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Min Salary (USD)
-                </label>
-                <input
-                  type="number"
-                  name="minSalary"
-                  value={formData.minSalary}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                  placeholder="e.g. 50000"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Max Salary (USD)
-                </label>
-                <input
-                  type="number"
-                  name="maxSalary"
-                  value={formData.maxSalary}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                  placeholder="e.g. 80000"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-medium mb-4">Job Conditions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Work Type*
-            </label>
-            <select
-              name="workType"
-              value={formData.workType}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            >
-              <option value="">Select work type</option>
-              {workTypes.map(type => (
-                <option key={type} value={type}>
-                  {type.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Employment Type*
-            </label>
-            <select
-              name="employmentType"
-              value={formData.employmentType}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            >
-              <option value="">Select employment type</option>
-              {employmentTypes.map(type => (
-                <option key={type} value={type}>
-                  {type.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Country*
-            </label>
-            <select
-              name="countryId"
-              value={formData.countryId}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            >
-              <option value="">Select country</option>
-              {countries.map(country => (
-                <option key={country.id} value={country.id}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Min Work Hours
-              </label>
-              <input
-                type="number"
-                name="minWorkHours"
-                value={formData.minWorkHours}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                placeholder="e.g. 20"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Max Work Hours
-              </label>
-              <input
-                type="number"
-                name="maxWorkHours"
-                value={formData.maxWorkHours}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                placeholder="e.g. 40"
-              />
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Deadline
-            </label>
-            <input
-              type="date"
-              name="deadline"
-              value={formData.deadline}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            />
-          </div>
-          
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="travelRest"
-                name="travelRest"
-                checked={formData.travelRest}
-                onChange={handleChange}
-                className="h-4 w-4 border-gray-300 rounded text-blue-600"
-              />
-              <label htmlFor="travelRest" className="ml-2 text-sm text-gray-700">
-                Travel Required
-              </label>
-            </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="license"
-                name="license"
-                checked={formData.license}
-                onChange={handleChange}
-                className="h-4 w-4 border-gray-300 rounded text-blue-600"
-              />
-              <label htmlFor="license" className="ml-2 text-sm text-gray-700">
-                License Required
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-medium mb-4">Qualifications</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Degree Type
-            </label>
-            <select
-              name="degreeType"
-              value={formData.degreeType}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            >
-              <option value="">Select degree type</option>
-              {degreeTypes.map(type => (
-                <option key={type} value={type}>
-                  {type.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Job Experience
-            </label>
-            <select
-              name="jobExperience"
-              value={formData.jobExperience}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            >
-              <option value="">Select experience level</option>
-              {jobExperiences.map(exp => (
-                <option key={exp} value={exp}>
-                  {exp.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Years of Experience
-            </label>
-            <input
-              type="number"
-              name="experienceYears"
-              value={formData.experienceYears}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-              placeholder="e.g. 3"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Military Status
-            </label>
-            <select
-              name="militaryStatus"
-              value={formData.militaryStatus}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            >
-              <option value="">Select military status</option>
-              {militaryStatuses.map(status => (
-                <option key={status} value={status}>
-                  {status.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Languages
-            </label>
-            <select
-              name="languageProficiencyIds"
-              multiple
-              value={formData.languageProficiencyIds}
-              onChange={handleSelectMultiple}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 h-20"
-            >
-              {languages.map(lang => (
-                <option key={lang.id} value={lang.id}>
-                  {lang.name}
-                </option>
-              ))}
-            </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Hold Ctrl/Cmd to select multiple languages
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Technical Skills */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Technical Skills
-          </label>
-          <div className="flex mb-2">
-            <input
-              type="text"
-              value={newTechnicalSkill}
-              onChange={(e) => setNewTechnicalSkill(e.target.value)}
-              className="flex-1 border border-gray-300 rounded-l-md px-3 py-2"
-              placeholder="e.g. Java"
-            />
-            <button
-              type="button"
-              onClick={addTechnicalSkill}
-              className="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700"
-            >
-              Add
-            </button>
-          </div>
-          
-          <div className="mt-2 flex flex-wrap gap-2">
-            {formData.technicalSkills.map((skill, index) => (
-              <div key={index} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm flex items-center">
-                {skill}
-                <button
-                  type="button"
-                  onClick={() => removeTechnicalSkill(index)}
-                  className="ml-2 text-blue-500 hover:text-blue-700"
+
+          <AnimatePresence mode="wait" custom={direction}>
+            {step === 1 && (
+                <motion.div
+                    key={step}
+                    custom={direction}
+                    initial={{ x: direction === 1 ? '100%' : '-100%' }}
+                    animate={{ x: 0 }}
+                    exit={{ x: direction === 1 ? '-100%' : '100%' }}
+                    transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
                 >
-                  <FaTimesCircle />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Social Skills */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Social Skills
-          </label>
-          <div className="flex mb-2">
-            <input
-              type="text"
-              value={newSocialSkill}
-              onChange={(e) => setNewSocialSkill(e.target.value)}
-              className="flex-1 border border-gray-300 rounded-l-md px-3 py-2"
-              placeholder="e.g. Team Work"
-            />
-            <button
-              type="button"
-              onClick={addSocialSkill}
-              className="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700"
-            >
-              Add
-            </button>
-          </div>
-          
-          <div className="mt-2 flex flex-wrap gap-2">
-            {formData.socialSkills.map((skill, index) => (
-              <div key={index} className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm flex items-center">
-                {skill}
-                <button
-                  type="button"
-                  onClick={() => removeSocialSkill(index)}
-                  className="ml-2 text-green-500 hover:text-green-700"
+
+                  <label className="block">
+                    <span className="text-gray-700">Job Position</span>
+                    <input type="text" name="jobPosition" value={formData.jobPosition} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md" />
+                  </label>
+                  <label className="block">
+                    <span className="text-gray-700">Job Description</span>
+                    <textarea name="jobDescription" value={formData.jobDescription} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md" />
+                  </label>
+                  <div className="flex space-x-4">
+                    <label className="block flex-1">
+                      <span className="text-gray-700">Start Date</span>
+                      <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md" />
+                    </label>
+                    <label className="block flex-1">
+                      <span className="text-gray-700">End Date</span>
+                      <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md" />
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input type="checkbox" name="isActive" checked={formData.isActive} onChange={handleChange} className="mr-2" />
+                    <span>Is Active</span>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <button onClick={handleNext} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                  </div>
+                </motion.div>
+            )}
+
+            {step === 2 && (
+                <motion.div
+                    key={step}
+                    custom={direction}
+                    initial={{ x: direction === 1 ? '100%' : '-100%' }}
+                    animate={{ x: 0 }}
+                    exit={{ x: direction === 1 ? '-100%' : '100%' }}
+                    transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
                 >
-                  <FaTimesCircle />
-                </button>
-              </div>
-            ))}
-          </div>
+                  <label className="block">
+                    <span className="text-gray-700">Work Type</span>
+                    <select name="workType" value={formData.workType} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md">
+                      <option value="">Select</option>
+                      <option value="Full-time">Full-time</option>
+                      <option value="Part-time">Part-time</option>
+                      <option value="Internship">Internship</option>
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-gray-700">City</span>
+                    <input type="text" name="city" value={formData.city} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md" />
+                  </label>
+                  <label className="block">
+                    <span className="text-gray-700">Country</span>
+                    <input type="text" name="country" value={formData.country} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md" />
+                  </label>
+                  <div className="flex space-x-4">
+                    <label className="block flex-1">
+                      <span className="text-gray-700">Min Work Hours</span>
+                      <input type="number" name="minWorkHours" value={formData.minWorkHours} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md" />
+                    </label>
+                    <label className="block flex-1">
+                      <span className="text-gray-700">Max Work Hours</span>
+                      <input type="number" name="maxWorkHours" value={formData.maxWorkHours} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md" />
+                    </label>
+                  </div>
+                  <label className="block">
+                    <span className="text-gray-700">Salary Range (Optional)</span>
+                    <input type="text" name="salaryRange" value={formData.salaryRange} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md" />
+                  </label>
+                  <div className="flex items-center">
+                    <input type="checkbox" name="canWorkRemote" checked={formData.canWorkRemote} onChange={handleChange} className="mr-2" />
+                    <span>Can Work Remote</span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <button onClick={handleBack} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                    <div className="flex justify-end">
+                      <button onClick={handleNext} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                    </div>
+                  </div>
+                </motion.div>
+            )}
+
+            {step === 3 && (
+                <motion.div
+                    key="step3"
+                    custom={direction}
+                    initial={{ x: direction === 1 ? '100%' : '-100%' }}
+                    animate={{ x: 0 }}
+                    exit={{ x: direction === 1 ? '-100%' : '100%' }}
+                    transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+                    className="space-y-4"
+                >
+                  {/* Skills */}
+                  <label className="block">
+                    <span className="text-gray-700">Required Skills</span>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <input type="text" value={skillInput} onChange={(e) => setSkillInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleSkillAdd(); }} className="flex-1 border border-gray-300 rounded-md px-3 py-2" />
+                      <button type="button" onClick={handleSkillAdd} className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700">+</button>
+                    </div>
+                    <div className="flex flex-wrap mt-2">
+                      {formData.skills.map((skill, idx) => (
+                          <div key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full flex items-center mr-2 mb-2">
+                            <span>{skill}</span>
+                            <button type="button" onClick={() => removeSkill(skill)} className="ml-2 text-blue-500 hover:text-blue-700">x</button>
+                          </div>
+                      ))}
+                    </div>
+                  </label>
+
+                  {/* minExperience */}
+                  <label className="block">
+                    <span className="text-gray-700">Minimum Experience (years)</span>
+                    <input type="number" name="minExperience" value={formData.minExperience} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
+                  </label>
+
+                  {/* degreeType */}
+                  <label className="block">
+                    <span className="text-gray-700">Degree Type</span>
+                    <select name="degreeType" value={formData.degreeType} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                      <option value="">Select</option>
+                      <option value="BACHELOR">Lisans</option>
+                      <option value="MASTER">Yüksek Lisans</option>
+                      <option value="PHD">Doktora</option>
+                    </select>
+                  </label>
+
+                  {/* Languages */}
+                  <label className="block">
+                    <span className="text-gray-700">Languages</span>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <input type="text" value={languageInput} onChange={(e) => setLanguageInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleLanguageAdd(); }} className="flex-1 border border-gray-300 rounded-md px-3 py-2" />
+                      <button type="button" onClick={handleLanguageAdd} className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700">+</button>
+                    </div>
+                    <div className="flex flex-wrap mt-2">
+                      {formData.languages.map((lang, idx) => (
+                          <div key={idx} className="bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center mr-2 mb-2">
+                            <span>{lang}</span>
+                            <button type="button" onClick={() => removeLanguage(lang)} className="ml-2 text-green-500 hover:text-green-700">x</button>
+                          </div>
+                      ))}
+                    </div>
+                  </label>
+
+                  <div className="flex justify-between">
+                    <button onClick={handleBack} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                    <div className="flex justify-end">
+                      <button onClick={handleNext} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                    </div>
+                  </div>
+
+                </motion.div>
+            )}
+
+            {step === 4 && (
+                <motion.div
+                    key="step4"
+                    custom={direction}
+                    initial={{ x: direction === 1 ? '100%' : '-100%' }}
+                    animate={{ x: 0 }}
+                    exit={{ x: direction === 1 ? '-100%' : '100%' }}
+                    transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+                    className="space-y-4"
+                >
+                  <h3 className="text-lg font-semibold">Review Job Posting</h3>
+                  <pre className="bg-gray-100 p-4 rounded-lg text-sm">{JSON.stringify(formData, null, 2)}</pre>
+                  <div className="flex justify-between">
+                    <button onClick={handleBack} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                    <button
+                        type="submit"
+                        disabled={false}  // şimdilik false tut, test için
+                        className="px-4 py-2 bg-green-600 text-grey rounded-md hover:bg-green-700 transition-colors duration-300 disabled:opacity-100 disabled:pointer-events-auto"
+                    >Submit
+                    </button>
+                  </div>
+                </motion.div>
+            )}
+
+
+          </AnimatePresence>
         </div>
       </div>
-      
-      <div className="flex justify-end space-x-3 pt-4 border-t">
-        <button 
-          type="button"
-          onClick={onClose}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-          disabled={loading}
-        >
-          Cancel
-        </button>
-        <button 
-          type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
-          disabled={loading}
-        >
-          {loading ? 'Creating...' : 'Create Job'}
-        </button>
-      </div>
-    </form>
   );
-} 
+}
