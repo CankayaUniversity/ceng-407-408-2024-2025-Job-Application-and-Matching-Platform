@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FaBell, FaSearch, FaPlus, FaClipboardList, FaUserTie, FaFileAlt, FaChartLine, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import CreateJobForm from './components/CreateJobForm';
 
 
 export default function EmployerDashboard() {
@@ -149,14 +150,21 @@ export default function EmployerDashboard() {
 
           {activeSection === 'postJob' && (
             <div>
+              {console.log('Post Job Section Active')}
               <h2 className="text-2xl font-semibold mb-6">Post a New Job</h2>
               <p className="mb-4 text-gray-600">Create a new job posting to find qualified candidates.</p>
               <button 
-                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition flex items-center"
-                onClick={() => navigate('/create-job')}
+                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition flex items-center opacity-100 pointer-events-auto !bg-blue-600"
+                onClick={() => {
+                  console.log('Buton tıklandı');
+                  setShowCreateJobForm(true);
+                }}
               >
                 <FaPlus className="mr-2" /> Create Job Posting
               </button>
+
+
+
             </div>
           )}
 
@@ -189,7 +197,10 @@ export default function EmployerDashboard() {
                   <p className="text-gray-500 mb-4">You haven't posted any jobs yet.</p>
                   <button 
                     className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
-                    onClick={() => setActiveSection('postJob')}
+                    onClick={() => {
+                      setActiveSection('postJob');
+                      console.log('Clicked Post Job');
+                    }}
                   >
                     Post Your First Job
                   </button>
@@ -216,44 +227,12 @@ export default function EmployerDashboard() {
 
       {/* Create Job Form Modal */}
       {showCreateJobForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg w-full max-w-3xl overflow-y-auto max-h-[90vh]">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold">Create New Job Posting</h2>
-                <button 
-                  onClick={() => setShowCreateJobForm(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  ✕
-                </button>
-              </div>
-              
-              <form className="space-y-6">
-                {/* Job details will go here */}
-                <p className="text-gray-600">Form under development. Check back soon!</p>
-                
-                <div className="flex justify-end space-x-3 pt-4">
-                  <button 
-                    type="button"
-                    onClick={() => setShowCreateJobForm(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  >
-                    Create Job
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        
+        <>
+          {console.log('Modal Opened')}
+          <CreateJobForm onClose={() => setShowCreateJobForm(false)} />
+        </>
       )}
+
     </div>
     </>
   );
