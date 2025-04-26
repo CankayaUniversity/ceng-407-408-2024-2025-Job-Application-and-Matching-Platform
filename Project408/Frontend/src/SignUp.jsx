@@ -66,7 +66,7 @@ export default function SignUp() {
 
             <div className="flex flex-col">
               <label htmlFor="password" className="mb-1 font-medium text-sm">Password</label>
-              
+
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -77,7 +77,7 @@ export default function SignUp() {
                   placeholder="Enter your Password"
                   className="border-0 border-b border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500 pr-10 w-full"
                 />
-                
+
                 <span
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-[#0C21C1]"
@@ -88,20 +88,20 @@ export default function SignUp() {
             </div>
 
 
-            <div 
-            style={{backgroundColor: "#F8F8F8", borderRadius: "10px", padding: "10px"}}
-            className="flex flex-col">
-              <label 
-              style ={{color: "#0C21C1"}}
-              className="mb-1 font-medium text-sm">I want to</label>
-              <div 
-              className="flex gap-6 mt-1">
+            <div
+              style={{ backgroundColor: "#F8F8F8", borderRadius: "10px", padding: "10px" }}
+              className="flex flex-col">
+              <label
+                style={{ color: "#0C21C1" }}
+                className="mb-1 font-medium text-sm">I want to</label>
+              <div
+                className="flex gap-6 mt-1">
                 <label className="flex items-center text-sm">
                   <input type="radio" name="userType" value="CANDIDATE" checked={formData.userType === "CANDIDATE"} onChange={handleChange} className="mr-2" />Find a job
                 </label>
-                <label 
-                style={{backgroundColor: "#F8F8F8", borderRadius: "10px", padding: "10px"}}
-                className="flex items-center text-sm">
+                <label
+                  style={{ backgroundColor: "#F8F8F8", borderRadius: "10px", padding: "10px" }}
+                  className="flex items-center text-sm">
                   <input type="radio" name="userType" value="EMPLOYER" checked={formData.userType === "EMPLOYER"} onChange={handleChange} className="mr-2" />Hire talent
                 </label>
               </div>
@@ -126,9 +126,9 @@ export default function SignUp() {
 
       {/* Right */}
       <div className="absolute top-8 right-8 text-red font-semibold">Logo</div>
-      <div 
-      style={{ background: "linear-gradient(180deg, #1849C6 0%, #000842 100%)", clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", borderRadius: "15px", padding: "20px", top: "0", right: "0", height: "100vh" }}
-      className="w-[46%] bg-[#000842] rounded-l-3xl flex items-center justify-center relative">
+      <div
+        style={{ background: "linear-gradient(180deg, #1849C6 0%, #000842 100%)", clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", borderRadius: "15px", padding: "20px", top: "0", right: "0", height: "100vh" }}
+        className="w-[46%] bg-[#000842] rounded-l-3xl flex items-center justify-center relative">
         <img src={illustration} alt="Illustration" className="w-3/4 max-w-[400px]" />
       </div>
     </div>
