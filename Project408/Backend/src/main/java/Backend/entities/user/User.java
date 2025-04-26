@@ -39,7 +39,6 @@ public class User extends BaseEntity implements UserDetails {
 
     //return user roles
     @Override
-    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //return all roles
         return List.of(new SimpleGrantedAuthority(userType.name()));
@@ -57,7 +56,6 @@ public class User extends BaseEntity implements UserDetails {
 
     //hesabın süresinin dolup dolmadığı kontrol eder
     @Override
-    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -69,13 +67,11 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     @Override
-    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
     //kullanici aktif mi değil mi
     @Override
-    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

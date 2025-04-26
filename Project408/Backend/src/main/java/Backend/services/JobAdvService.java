@@ -27,6 +27,7 @@ import Backend.repository.LanguageProficiencyRepository;
 import Backend.request.jobAdv.JobAdvCreateRequest;
 import Backend.request.jobAdv.JobAdvUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,16 +39,28 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class JobAdvService {
+    @Autowired
+    JobAdvRepository jobAdvRepository;
+    @Autowired
+    EmployerRepository employerRepository;
+    @Autowired
 
-private final JobAdvRepository jobAdvRepository;
-private final EmployerRepository employerRepository;
-private final CountryRepository countryRepository;
-private final JobPositionsRepository jobPositionsRepository;
-private final LanguageProficiencyRepository languageProficiencyRepository;
+    CountryRepository countryRepository;
+    @Autowired
 
-private final CandidateRepository candidateRepository;
-private final JobApplicationRepository jobApplicationRepository;
-private final JobOfferRepository jobOfferRepository;
+    JobPositionsRepository jobPositionsRepository;
+    @Autowired
+
+    LanguageProficiencyRepository languageProficiencyRepository;
+    @Autowired
+
+    CandidateRepository candidateRepository;
+    @Autowired
+
+   JobApplicationRepository jobApplicationRepository;
+    @Autowired
+
+    JobOfferRepository jobOfferRepository;
 
 
 

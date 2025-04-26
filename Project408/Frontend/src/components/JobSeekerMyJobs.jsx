@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const JobAdvList = () => {
+const JobSeekerMyJobs = () => {
     const [jobs, setJobs] = useState([]);
     const [filteredJobs, setFilteredJobs] = useState([]);
     const [message, setMessage] = useState('');
@@ -266,4 +266,4 @@ const JobAdvList = () => {
     );
 };
 
-export default JobAdvList;
+export default JobSeekerMyJobs;

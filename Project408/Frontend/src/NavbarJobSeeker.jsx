@@ -1,8 +1,10 @@
 import { FaSearch, FaBell } from 'react-icons/fa';
 import { Navbar, Nav, Container, FormControl, Button, Dropdown } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 
 function NavbarCustom() {
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -18,11 +20,11 @@ function NavbarCustom() {
         <div className="d-flex align-items-center gap-5">
           <Navbar.Brand href="/" className="fw-bold text-primary">Logo</Navbar.Brand>
           <Nav className="d-flex gap-4">
-            <Nav.Link href="/profile" className="text-dark fw-medium nav-item-hover">Profile</Nav.Link>
-            <Nav.Link href="/chat" className="text-dark fw-medium">Chat</Nav.Link>
-            <Nav.Link href="/blog" className="text-dark fw-medium">Blog</Nav.Link>
-            <Nav.Link href="/interviews" className="text-dark fw-medium">Interviews</Nav.Link>
-            <Nav.Link href="/my-jobs" className="text-dark fw-medium">My Jobs</Nav.Link>
+            <Nav.Link href="/candidate/dashboard" className="text-dark fw-medium nav-item-hover">Profile</Nav.Link>
+            <Nav.Link href="/candidate/chat" className="text-dark fw-medium">Chat</Nav.Link>
+            <Nav.Link href="/candidate/blog" className="text-dark fw-medium">Blog</Nav.Link>
+            <Nav.Link href="/candidate/interviews" className="text-dark fw-medium">Interviews</Nav.Link>
+            <Nav.Link href="/candidate/my-jobs" className="text-dark fw-medium">My Jobs</Nav.Link>
           </Nav>
         </div>
 

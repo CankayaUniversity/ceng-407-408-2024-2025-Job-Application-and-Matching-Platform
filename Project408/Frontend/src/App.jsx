@@ -10,7 +10,12 @@ import EmployerDashboard from "./EmployerDashboard";
 import JobOffers from './components/JobOffers';
 import EditJobForm from './components/EditJobForm';
 import JobAdvList from "./JobAdvList";
-import JobAdvDetail from "./JobAdvDetail";
+import CreateJobPosting from "./components/CreateJobPosting.jsx";
+import EmployerProfile from "./components/EmployerProfile.jsx";
+import JobListings from "./components/JobListings.jsx";
+import CreateJobForm from "./components/CreateJobForm.jsx";
+import JobSeekerMyJobs from "./components/JobSeekerMyJobs.jsx";
+
 
 function App() {
   return (
@@ -24,12 +29,16 @@ function App() {
         {/* <Route element={<PrivateRoute />}> */}
         <Route>
           <Route element={<Layout />}>
-            <Route path="/dashboard" element={<JobSeekerDashboard />} />
+            <Route path="/candidate/dashboard" element={<JobSeekerDashboard />} />
             <Route path="/employerDashboard" element={<EmployerDashboard />} />
             <Route path="/job-offers" element={<JobOffers />} />
-            <Route path="/jobs" element={<JobAdvList />} />
-            <Route path="/jobs/:id" element={<JobAdvDetail />} />
+            <Route path="/candidate/jobs" element={<JobAdvList />} />
             <Route path="/employer/jobs/:id/edit" element={<EditJobForm />} />
+            <Route path="/employer/create-job" element={<CreateJobForm />} />
+              <Route path="/employer/profile" element={<EmployerProfile />} />
+              <Route path="/employer/my-jobs" element={<JobListings />} />
+              <Route path="/employer/offers" element={<JobOffers />} />
+              <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs />} />
           </Route>
         </Route>
       </Routes>

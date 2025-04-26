@@ -41,7 +41,7 @@ public class JwtService {
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))// how long this token valid 24 hours 1000 milliseconds;
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 48))// how long this token valid 24 hours 1000 milliseconds;
                 .signWith(getSignInKey())
                 .compact();
 

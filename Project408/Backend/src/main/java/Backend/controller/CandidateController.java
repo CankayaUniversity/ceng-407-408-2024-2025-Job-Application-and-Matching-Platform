@@ -1,14 +1,15 @@
 package Backend.controller;
 
 import Backend.core.location.Country;
+import Backend.entities.dto.CandidateProfileDto;
 import Backend.entities.dto.FilterDto;
 import Backend.entities.dto.JobAdvDto;
+import Backend.entities.dto.ReferenceDto;
 import Backend.entities.jobAdv.Benefit;
 import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.jobAdv.JobCondition;
 import Backend.entities.jobAdv.JobQualification;
-import Backend.entities.user.candidate.Candidate;
-import Backend.entities.user.candidate.JobApplication;
+import Backend.entities.user.candidate.*;
 import Backend.services.CandidateService;
 import Backend.services.JobAdvService;
 import Backend.services.JwtService;
@@ -31,8 +32,7 @@ import java.util.stream.Collectors;
 
 public class CandidateController {
 
-    @Autowired
-    CandidateService candidateService;
+     private final  CandidateService candidateService;
 
     @Autowired
     JwtService jwtService;
@@ -43,14 +43,33 @@ public class CandidateController {
     @Autowired
     JobAdvService jobAdvService;
 
+    public CandidateController(CandidateService candidateService) {
+        this.candidateService = candidateService;
+    }
+
     // Profil oluşturma
-    @GetMapping("/profile")
-    public ResponseEntity<Candidate> getProfile() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = userDetails.getUsername();
-        Candidate profile = candidateService.getProfileByUserId(email);
+
+    @GetMapping("/profileDetails/{id}")
+    public ResponseEntity<ProfileDetails> getProfile(@PathVariable("id") int id) {
+        ProfileDetails profile = candidateService.getProfileByUserId(id);
         return ResponseEntity.ok(profile);
     }
+    @GetMapping("/socialLinks/{id}")
+    public ResponseEntity<SocialLinks> socialLinks(@PathVariable("id") int id) {
+        SocialLinks socialLinks = candidateService.getSocialLinksByUserId(id);
+        return ResponseEntity.ok(socialLinks);
+    }
+    @GetMapping("/contactInformation/{id}")
+    public ResponseEntity<ContactInformation> contactInformation(@PathVariable("id") int id) {
+        ContactInformation contactInformation = candidateService.getContactInformationByUserId(id);
+        return ResponseEntity.ok(contactInformation);
+    }
+    @GetMapping("/jobPreferences/{id}")
+    public ResponseEntity<JobPreferences> jobPreferences(@PathVariable("id") int id) {
+        JobPreferences profile = candidateService.getJobPreferencesByUserId(id);
+        return ResponseEntity.ok(profile);
+    }
+
 
     @PostMapping("/createProfile")
     public ResponseEntity<Candidate> createProfile(@RequestBody Candidate candidate) {

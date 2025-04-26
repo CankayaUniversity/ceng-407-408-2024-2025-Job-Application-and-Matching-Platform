@@ -22,12 +22,12 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JobApplication extends BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToOne( fetch = FetchType.EAGER)
     @JoinColumn(name = "candidate_id", nullable = false)
     @JsonManagedReference // Marks this side of the relationship as the one to be serialized
     private Candidate candidate;  // Aday
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "job_adv_id")
     private JobAdv jobAdv;  // İş ilanı
 

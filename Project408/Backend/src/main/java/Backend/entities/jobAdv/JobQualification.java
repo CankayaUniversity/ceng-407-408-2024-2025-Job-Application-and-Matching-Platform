@@ -5,6 +5,7 @@ import Backend.core.enums.JobExperience;
 import Backend.core.enums.MilitaryStatus;
 import Backend.entities.BaseEntity;
 import Backend.entities.common.LanguageProficiency;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,17 +33,18 @@ public class JobQualification extends BaseEntity {
     @Column(name = "military_status")
     private MilitaryStatus militaryStatus;
 
-    @OneToMany(mappedBy = "jobQualification", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "jobQualification", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<TechnicalSkill> technicalSkills;
 
-    @OneToMany(mappedBy = "jobQualification", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "jobQualification", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<SocialSkill> socialSkills;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "job_qualification_id")
     private List<LanguageProficiency> languageProficiencies;
 
     @OneToOne(mappedBy = "jobQualification")
+    @JsonBackReference // Prevents circular references during serialization
     private JobAdv jobAdv;
 
     public DegreeType getDegreeType() {

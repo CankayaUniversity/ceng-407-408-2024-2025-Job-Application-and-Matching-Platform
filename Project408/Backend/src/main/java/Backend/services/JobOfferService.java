@@ -6,6 +6,7 @@ import Backend.entities.user.candidate.JobApplication;
 import Backend.repository.CandidateRepository;
 import Backend.repository.JobOfferRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +15,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class JobOfferService {
-
-    private final JobOfferRepository jobOfferRepository;
-    private final CandidateRepository candidateRepository;
+    @Autowired
+    JobOfferRepository jobOfferRepository;
+    @Autowired
+    CandidateRepository candidateRepository;
 
     public List<JobOffer> getMyOffers(String candidateEmail) {
         Candidate candidate = candidateRepository.findByEmail(candidateEmail)

@@ -8,6 +8,7 @@ import Backend.request.jobAdv.JobAdvUpdateRequest;
 import Backend.services.JobAdvService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +18,8 @@ import java.util.List;
 @RequestMapping("/api/job-adv")
 @RequiredArgsConstructor
 public class JobAdvController {
-
-    private final JobAdvService jobAdvService;
+    @Autowired
+    JobAdvService jobAdvService;
 
     // 🔹 1. İlan Oluşturma
     @PostMapping("/create")

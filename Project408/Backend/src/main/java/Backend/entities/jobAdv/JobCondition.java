@@ -4,6 +4,7 @@ import Backend.core.enums.EmploymentType;
 import Backend.core.enums.WorkType;
 import Backend.entities.BaseEntity;
 import Backend.core.location.Country;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,6 +34,7 @@ public class JobCondition extends BaseEntity {
     private int maxWorkHours;
 
     @OneToOne(mappedBy = "jobCondition")
+    @JsonBackReference // Prevents circular references during serialization
     private JobAdv jobAdv;
 
     public WorkType getWorkType() {

@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = {"Backend.repository"})
-@EntityScan(basePackages = {"Backend.entities", "Backend.core"})
+
 public class BackendApplication {
 
 	public static void main(String[] args) {

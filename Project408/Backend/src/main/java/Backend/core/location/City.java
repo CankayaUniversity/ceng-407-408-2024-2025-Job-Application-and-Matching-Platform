@@ -1,6 +1,8 @@
 package Backend.core.location;
 
 import Backend.entities.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cities")
+@JsonIgnoreProperties("country")
 public class City extends BaseEntity {
 
     @Column(name = "name", nullable = false)
@@ -21,6 +24,7 @@ public class City extends BaseEntity {
     private Country country;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.PERSIST) // CascadeType.ALL yerine sadece PERSIST kullanılabilir.
+    @JsonIgnore
     private List<University> universities;
 
     public String getName() {

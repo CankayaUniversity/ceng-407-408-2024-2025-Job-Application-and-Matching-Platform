@@ -4,6 +4,7 @@ import Backend.entities.BaseEntity;
 import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.common.Project;
 import Backend.entities.user.employer.Employer;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,13 +46,14 @@ public class Company extends BaseEntity {
     @Column(name = "employee_count")
     private int employeeCount;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Employer> employers;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Project> projects;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonBackReference // Prevents circular references during serialization
     private List<JobAdv> jobAdvs;
 
     public String getCompanyName() {

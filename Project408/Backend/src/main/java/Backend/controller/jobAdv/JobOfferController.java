@@ -4,6 +4,7 @@ import Backend.entities.offer.JobOffer;
 import Backend.services.JobOfferService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +14,8 @@ import java.util.List;
 @RequestMapping("/api/job-offer")
 @RequiredArgsConstructor
 public class JobOfferController {
-
-    private final JobOfferService jobOfferService;
+    @Autowired
+    JobOfferService jobOfferService;
 
     @GetMapping("/my-offers")
     public ResponseEntity<List<JobOffer>> getMyOffers(HttpServletRequest request) {

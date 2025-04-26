@@ -3,6 +3,7 @@ package Backend.entities.common;
 import Backend.core.enums.JobPosition;
 import Backend.entities.BaseEntity;
 import Backend.entities.jobAdv.JobAdv;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class JobPositions extends BaseEntity {
     private CustomJobPosition customJobPosition;
 
     @ManyToOne
+    @JsonBackReference // Prevents circular references during serialization
     @JoinColumn(name = "job_adv_id") // Veritabanındaki yabancı anahtar
     private JobAdv jobAdv;
 

@@ -45,63 +45,63 @@ export default function EmployerDashboard() {
         <div className="p-6">
           <h1 className="text-2xl font-bold text-blue-600">JobMatch</h1>
         </div>
-        <nav className="mt-6">
-          <div
-            className={`flex items-center px-6 py-3 cursor-pointer ${
-              activeSection === 'dashboard' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'
-            }`}
-            onClick={() => setActiveSection('dashboard')}
-          >
-            <FaChartLine className="mr-3" />
-            <span>Dashboard</span>
-          </div>
-          <div
-            className={`flex items-center px-6 py-3 cursor-pointer ${
-              activeSection === 'postJob' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'
-            }`}
-            onClick={() => setActiveSection('postJob')}
-          >
-            <FaPlus className="mr-3" />
-            <span>Post Job</span>
-          </div>
-          <div
-            className={`flex items-center px-6 py-3 cursor-pointer ${
-              activeSection === 'myJobs' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'
-            }`}
-            onClick={() => {
-              setActiveSection('myJobs');
-              fetchMyJobs();
-            }}
-          >
-            <FaClipboardList className="mr-3" />
-            <span>My Job Listings</span>
-          </div>
-          <div
-            className={`flex items-center px-6 py-3 cursor-pointer ${
-              activeSection === 'candidates' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'
-            }`}
-            onClick={() => setActiveSection('candidates')}
-          >
-            <FaUserTie className="mr-3" />
-            <span>Candidates</span>
-          </div>
-          <div
-            className={`flex items-center px-6 py-3 cursor-pointer ${
-              activeSection === 'offers' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'
-            }`}
-            onClick={() => setActiveSection('offers')}
-          >
-            <FaFileAlt className="mr-3" />
-            <span>Offers</span>
-          </div>
-          <div
-            className="flex items-center px-6 py-3 text-gray-700 cursor-pointer mt-10"
-            onClick={handleLogout}
-          >
-            <FaSignOutAlt className="mr-3" />
-            <span>Logout</span>
-          </div>
-        </nav>
+        {/*<nav className="mt-6">*/}
+        {/*  <div*/}
+        {/*    className={`flex items-center px-6 py-3 cursor-pointer ${*/}
+        {/*      activeSection === 'dashboard' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'*/}
+        {/*    }`}*/}
+        {/*    onClick={() => setActiveSection('dashboard')}*/}
+        {/*  >*/}
+        {/*    <FaChartLine className="mr-3" />*/}
+        {/*    <span>Dashboard</span>*/}
+        {/*  </div>*/}
+        {/*  <div*/}
+        {/*    className={`flex items-center px-6 py-3 cursor-pointer ${*/}
+        {/*      activeSection === 'postJob' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'*/}
+        {/*    }`}*/}
+        {/*    onClick={() => setActiveSection('postJob')}*/}
+        {/*  >*/}
+        {/*    <FaPlus className="mr-3" />*/}
+        {/*    <span>Post Job</span>*/}
+        {/*  </div>*/}
+        {/*  <div*/}
+        {/*    className={`flex items-center px-6 py-3 cursor-pointer ${*/}
+        {/*      activeSection === 'myJobs' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'*/}
+        {/*    }`}*/}
+        {/*    onClick={() => {*/}
+        {/*      setActiveSection('myJobs');*/}
+        {/*      fetchMyJobs();*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    <FaClipboardList className="mr-3" />*/}
+        {/*    <span>My Job Listings</span>*/}
+        {/*  </div>*/}
+        {/*  <div*/}
+        {/*    className={`flex items-center px-6 py-3 cursor-pointer ${*/}
+        {/*      activeSection === 'candidates' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'*/}
+        {/*    }`}*/}
+        {/*    onClick={() => setActiveSection('candidates')}*/}
+        {/*  >*/}
+        {/*    <FaUserTie className="mr-3" />*/}
+        {/*    <span>Candidates</span>*/}
+        {/*  </div>*/}
+        {/*  <div*/}
+        {/*    className={`flex items-center px-6 py-3 cursor-pointer ${*/}
+        {/*      activeSection === 'offers' ? 'bg-blue-100 text-blue-600' : 'text-gray-700'*/}
+        {/*    }`}*/}
+        {/*    onClick={() => setActiveSection('offers')}*/}
+        {/*  >*/}
+        {/*    <FaFileAlt className="mr-3" />*/}
+        {/*    <span>Offers</span>*/}
+        {/*  </div>*/}
+        {/*  <div*/}
+        {/*    className="flex items-center px-6 py-3 text-gray-700 cursor-pointer mt-10"*/}
+        {/*    onClick={handleLogout}*/}
+        {/*  >*/}
+        {/*    <FaSignOutAlt className="mr-3" />*/}
+        {/*    <span>Logout</span>*/}
+        {/*  </div>*/}
+        {/*</nav>*/}
       </div>
 
       {/* Main Content */}

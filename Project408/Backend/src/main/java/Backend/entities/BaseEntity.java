@@ -25,6 +25,7 @@ public abstract class BaseEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_active")
     private boolean isActive = true;
 
     public Integer getId() {

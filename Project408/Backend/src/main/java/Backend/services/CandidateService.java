@@ -4,6 +4,8 @@ import Backend.core.enums.ApplicationStatus;
 import Backend.core.enums.JobAdvStatus;
 import Backend.entities.common.LanguageProficiency;
 import Backend.entities.common.Project;
+import Backend.entities.dto.CandidateProfileDto;
+import Backend.entities.dto.ReferenceDto;
 import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.user.User;
 import Backend.entities.user.candidate.*;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Service
+
 public class CandidateService {
     @Autowired
     UserRepository userRepository;
@@ -61,8 +64,8 @@ public class CandidateService {
     private JobApplicationRepository jobApplicationRepository;
     @Autowired
     CountryRepository countryRepository;
-    @Autowired
     CityRepository cityRepository;
+
     @Transactional
     public Candidate createProfile(String email, Candidate candidate) {
         // E-posta adresine göre kullanıcıyı bul
@@ -341,13 +344,46 @@ public class CandidateService {
         return jobApplicationRepository.findByCandidate((Candidate) user);
     }
 
-    public Candidate getProfileByUserId(String email) {
-        User user = userRepository.findByEmail(email)
+
+    public ProfileDetails getProfileByUserId(int id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!(user instanceof Candidate)) {
+        if (!(user instanceof Candidate candidate)) {
             throw new RuntimeException("User is not a Candidate");
         }
-        return (Candidate) user;
+        return candidate.getProfileDetails();
     }
+
+    public SocialLinks getSocialLinksByUserId(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!(user instanceof Candidate candidate)) {
+            throw new RuntimeException("User is not a Candidate");
+        }
+        return candidate.getSocialLinks();
+    }
+
+    public ContactInformation getContactInformationByUserId(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!(user instanceof Candidate candidate)) {
+            throw new RuntimeException("User is not a Candidate");
+        }
+        return candidate.getContactInformation();
+    }
+
+    public JobPreferences getJobPreferencesByUserId(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!(user instanceof Candidate candidate)) {
+            throw new RuntimeException("User is not a Candidate");
+        }
+        return candidate.getJobPreferences();
+    }
+
+
 }

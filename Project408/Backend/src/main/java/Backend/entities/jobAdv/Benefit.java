@@ -2,6 +2,7 @@ package Backend.entities.jobAdv;
 
 import Backend.core.enums.BenefitType;
 import Backend.entities.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Benefit extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "job_adv_id")
+    @JsonBackReference // Prevents circular references during serialization
     private JobAdv jobAdv;
 
     public BenefitType getBenefitType() {

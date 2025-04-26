@@ -34,13 +34,14 @@ export default function Login() {
                 // Token'ı localStorage’a kaydet
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userType',data.userType);
+                localStorage.setItem('id',data.id);
                 // Yönlendirme
                 if(data.userType==='EMPLOYER'){
                     navigate('/employerDashboard');
                 }
                 else if(data.userType==='CANDIDATE'){
                     // navigate('/dashboard');
-                    navigate('/employerDashboard');
+                    navigate('/candidate/jobs');
                 }
 
             } else {
@@ -48,13 +49,13 @@ export default function Login() {
                 console.error('Sunucu hatası:', errorText);
                 setError('Invalid email or password');
 
-                navigate('/employerDashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+                // navigate('/employerDashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
             }
         } catch (err) {
             console.error('Bağlantı hatası:', err);
             setError('Sunucuya ulaşılamadı');
 
-            navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+            // navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
         }
     };
 

@@ -28,14 +28,21 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const endpoint =
+        formData.userType === "CANDIDATE"
+            ? "http://localhost:9090/login/canRegister"
+            : "http://localhost:9090/login/empRegister";
+
     try {
-      const response = await axios.post("http://localhost:9090/login/canRegister", formData);
+      const response = await axios.post(endpoint, formData);
       console.log("✅ Kayıt başarılı:", response.data);
-      navigate("/login");
+      navigate("/login"); // Kayıttan sonra login sayfasına git
     } catch (error) {
       console.error("❌ Kayıt hatası:", error.response?.data || error.message);
     }
   };
+
 
   return (
     <div className="flex min-h-screen">

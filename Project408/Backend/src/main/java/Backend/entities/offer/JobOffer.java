@@ -10,8 +10,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "job_offers")
@@ -43,4 +42,68 @@ public class JobOffer extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OfferStatus status = OfferStatus.PENDING;
+
+    public Employer getEmployer() {
+        return employer;
+    }
+
+    public void setEmployer(Employer employer) {
+        this.employer = employer;
+    }
+
+    public Double getSalaryOffer() {
+        return salaryOffer;
+    }
+
+    public void setSalaryOffer(Double salaryOffer) {
+        this.salaryOffer = salaryOffer;
+    }
+
+    public String getWorkHours() {
+        return workHours;
+    }
+
+    public void setWorkHours(String workHours) {
+        this.workHours = workHours;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getBenefits() {
+        return benefits;
+    }
+
+    public void setBenefits(String benefits) {
+        this.benefits = benefits;
+    }
+
+    public OfferStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OfferStatus status) {
+        this.status = status;
+    }
+
+    public JobApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(JobApplication application) {
+        this.application = application;
+    }
 }

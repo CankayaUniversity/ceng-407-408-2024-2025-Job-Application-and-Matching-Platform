@@ -11,12 +11,14 @@ public class UserResponseDto {
 
     private String token;
 
-    public UserResponseDto(String token , UserType userType) {
+    public UserResponseDto(String token , UserType userType ,Integer id) {
         this.token = token;
         this.userType = userType;
+        this.id =id;
     }
 
     private UserType userType;
+    private Integer id;
 
     public UserType getUserType() {
         return userType;
@@ -31,5 +33,12 @@ public class UserResponseDto {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
