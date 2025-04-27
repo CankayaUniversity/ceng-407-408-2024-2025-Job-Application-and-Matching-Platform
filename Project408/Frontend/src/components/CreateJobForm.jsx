@@ -243,31 +243,71 @@ export default function CreateJobForm({ onClose }) {
               </motion.div>
             )}
 
-              {step === 4 && (
-                <motion.div
-                  key="step4"
-                  custom={direction}
-                  initial={{ x: direction === 1 ? '100%' : '-100%' }}
-                  animate={{ x: 0 }}
-                  exit={{ x: direction === 1 ? '-100%' : '100%' }}
-                  transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
-                  className="space-y-4"
-                >
-                  <h3 className="text-lg font-semibold">Review Job Posting</h3>
-                  <pre className="bg-gray-100 p-4 rounded-lg text-sm">{JSON.stringify(formData, null, 2)}</pre>
-                  <div className="flex justify-between">
+            {step === 4 && (
+              <motion.div
+                key="step4"
+                custom={direction}
+                initial={{ x: direction === 1 ? '100%' : '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: direction === 1 ? '-100%' : '100%' }}
+                transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+                className="space-y-4"
+              >
+                <h3 className="text-lg font-semibold">Review Job Posting</h3>
+
+                <div className="space-y-2 bg-gray-100 p-4 rounded-lg">
+                  <h4 className="text-xl font-bold">{formData.jobPosition}</h4>
+                  <p className="text-gray-600">{formData.city}, {formData.country}</p>
+                  <p><span className="font-semibold">Work Type:</span> {formData.workType}</p>
+                  <p><span className="font-semibold">Experience:</span> {formData.minExperience}</p>
+                  <p><span className="font-semibold">Degree:</span> {formData.degreeType}</p>
+                  <p><span className="font-semibold">Salary Range:</span> {formData.salaryRange}</p>
+                  <p><span className="font-semibold">Work Hours:</span> {formData.minWorkHours} - {formData.maxWorkHours} hours/week</p>
+                  <p><span className="font-semibold">Remote Work:</span> {formData.canWorkRemote ? 'Available' : 'Not Available'}</p>
+                  <p><span className="font-semibold">Active:</span> {formData.isActive ? 'Yes' : 'No'}</p>
+                  <p><span className="font-semibold">Start Date:</span> {formData.startDate}</p>
+                  <p><span className="font-semibold">End Date:</span> {formData.endDate}</p>
+
+                  <div>
+                    <h5 className="font-semibold mt-4">Job Description:</h5>
+                    <p className="text-gray-700">{formData.jobDescription}</p>
+                  </div>
+
+                  {formData.skills && formData.skills.length > 0 && (
+                    <div>
+                      <h5 className="font-semibold mt-4">Skills Required:</h5>
+                      <ul className="list-disc list-inside">
+                        {formData.skills.map((skill, index) => (
+                          <li key={index}>{skill}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {formData.languages && formData.languages.length > 0 && (
+                    <div>
+                      <h5 className="font-semibold mt-4">Languages Required:</h5>
+                      <ul className="list-disc list-inside">
+                        {formData.languages.map((lang, index) => (
+                          <li key={index}>{lang}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-between">
                   <button onClick={handleBack} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
                   <button
                     type="submit"
-                    disabled={false}  // şimdilik false tut, test için
-                    className="px-4 py-2 bg-green-600 text-grey rounded-md hover:bg-green-700 transition-colors duration-300 disabled:opacity-100 disabled:pointer-events-auto"
-                  >Submit
+                    disabled={false}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-300"
+                  >
+                    Submit
                   </button>
                 </div>
-                </motion.div>
-              )}
-
-
+              </motion.div>
+            )}
         </AnimatePresence>
       </div>
     </div>
