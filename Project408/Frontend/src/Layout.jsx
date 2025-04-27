@@ -7,7 +7,7 @@ export default function Layout() {
 
   return (
     <>
-      {userType === 'employer' ? <NavbarEmployer /> : <NavbarJobSeeker />}  {/* Navbar'ı kullanıcı tipine göre göster, şimdilik backend olmadığı için default JobSeeker olan geliyor*/}
+      {userType === 'employer' ? <NavbarJobSeeker /> : <NavbarEmployer />}  {/* Navbar'ı kullanıcı tipine göre göster, şimdilik backend olmadığı için default JobSeeker olan geliyor*/}
       <Outlet />
     </>
   );

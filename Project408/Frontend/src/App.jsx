@@ -11,6 +11,8 @@ import JobOffers from './components/JobOffers';
 import EditJobForm from './components/EditJobForm';
 import JobAdvList from "./JobAdvList";
 import JobAdvDetail from "./JobAdvDetail";
+import EmployerProfile from './components/EmployerProfile';
+import CreateJobForm from './components/CreateJobForm';
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
             <Route path="/jobs" element={<JobAdvList />} />
             <Route path="/jobs/:id" element={<JobAdvDetail />} />
             <Route path="/employer/jobs/:id/edit" element={<EditJobForm />} />
+            <Route path="/employer/profile" element={<EmployerProfile />} />
+            <Route path="/employer/create-job" element={<CreateJobForm />} />
           </Route>
         </Route>
       </Routes>

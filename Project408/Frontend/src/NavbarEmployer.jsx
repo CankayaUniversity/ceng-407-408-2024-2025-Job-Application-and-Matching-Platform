@@ -1,60 +1,71 @@
 // src/Navbar.jsx
-import { Link } from 'react-router-dom';
-import { FaBell, FaSearch } from 'react-icons/fa';
+import { FaSearch, FaBell } from 'react-icons/fa';
+import { Navbar, Nav, Container, FormControl, Button, Dropdown } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
-export default function Navbar() {
+
+function NavbarCustom() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userType');
+    navigate('/login');
+  };
+
+
   return (
+      <Navbar bg="white" expand="lg" className="shadow-sm px-4 py-2">
+        <Container fluid className="d-flex justify-content-between align-items-center">
+          {/* Sol kısım: Logo + Menü */}
+          <div className="d-flex align-items-center gap-5">
+            <Navbar.Brand href="/" className="fw-bold text-primary">Logo</Navbar.Brand>
+            <Nav className="d-flex gap-4">
+              <Nav.Link href="/employer/profile" className="text-dark fw-medium">Profile</Nav.Link>
+              <Nav.Link href="/employer/create-job" className="text-dark fw-medium">Post Job</Nav.Link>
+              <Nav.Link href="/employer/my-jobs" className="text-dark fw-medium">My Job Listings</Nav.Link>
+              <Nav.Link href="/employer/candidates" className="text-dark fw-medium">Candidates</Nav.Link>
+              <Nav.Link href="/employer/offers" className="text-dark fw-medium">Offers</Nav.Link>
+            </Nav>
+          </div>
 
-    <nav className="w-full bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05)]">
-            <div className="flex items-center justify-between w-full h-16 px-8">
-              {/* Sol: Logo + Menü */}
-              <div className="flex items-center gap-12">
-                <Link to="/" className="text-blue-600 font-semibold text-lg">Logo</Link>
-    
-                <div className="flex items-center gap-8">
-                  <Link to="/profile" className="text-[15px] text-gray-700 hover:text-gray-900">Profile</Link>
-                  <Link to="/chat" className="text-[15px] text-gray-700 hover:text-gray-900">Chat</Link>
-                  <Link to="/blog" className="text-[15px] text-gray-700 hover:text-gray-900">Blog</Link>
-                  <Link to="/interviews" className="text-[15px] text-gray-700 hover:text-gray-900">Interviews</Link>
-                  <Link to="/my-jobs" className="text-[15px] text-gray-700 hover:text-gray-900">My Jobs</Link>
-                  <Link to="/job-offers" className="text-[15px] text-gray-700 hover:text-gray-900">Job Offersss</Link>
-                </div>
-              </div>
-    
-              {/* Sağ: Search + Bildirim + User */}
-              <div className="flex items-center gap-6">
-                {/* Search */}
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="w-[260px] h-9 pl-9 pr-4 text-sm rounded-full bg-gray-100 border border-gray-200 focus:outline-none"
-                  />
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-                </div>
-    
-                {/* Notification */}
-                <button className="relative p-2 hover:bg-gray-100 rounded-full transition">
-                  <FaBell className="text-gray-600 text-lg" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full" />
-                </button>
-    
-                {/* User */}
-                <button className="bg-blue-600 text-white px-4 py-1.5 text-sm rounded-full hover:bg-blue-700 transition">
-                  İrem
-                </button>
-              </div>
+          {/* Sağ kısım: Arama + Bildirim + Kullanıcı */}
+          <div className="d-flex align-items-center gap-3">
+            {/* Search */}
+            <div className="position-relative bg-light rounded-pill px-3 py-1 d-flex align-items-center">
+              <FaSearch className="text-muted me-2" />
+              <FormControl
+                  type="search"
+                  placeholder="Search"
+                  className="border-0 bg-transparent shadow-none"
+                  style={{ width: '160px' }}
+              />
             </div>
-          </nav>
 
-    // <nav className="bg-gray-800 text-white p-4 flex justify-between">
-    //   <div className="font-bold text-xl">JobMatch</div>
-    //   <div className="space-x-4">
-    //     <Link to="/dashboard">Dashboard</Link>
-    //     <Link to="/profile">Profile</Link>
-    //     <Link to="/jobs">Jobs</Link>
-    //     <Link to="/messages">Messages</Link>
-    //   </div>
-    // </nav>
+            {/* Notification */}
+            <Button variant="light" className="rounded-circle p-2">
+              <FaBell className="text-dark" />
+            </Button>
+
+            {/* User */}
+            <Dropdown align="end">
+              <Dropdown.Toggle
+                  style={{ backgroundColor: '#0C21C1', borderColor: '#0C21C1' }}
+                  variant="primary" className="rounded-pill px-3 py-1 text-white fw-medium">
+                İrem
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item href="/profile/settings">Profile Settings</Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={handleLogout}>Sign Out</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+
+          </div>
+        </Container>
+      </Navbar>
   );
 }
+
+export default NavbarCustom;
