@@ -1,7 +1,10 @@
 import {useEffect, useState} from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 export default function JobSeekerDashboard() {
+  const [showForm, setShowForm] = useState(false);
+  const [formKey, setFormKey] = useState(0);
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedCountryId, setSelectedCountryId] = useState(null);
@@ -479,10 +482,17 @@ export default function JobSeekerDashboard() {
 
   // Step number
   const [currentStep, setCurrentStep] = useState(1);
+  const [direction, setDirection] = useState(1);
 
   // Panel open/close function
   const handleNextStep = () => {
-    setCurrentStep(prev => prev + 1);
+    setDirection(1);
+    setCurrentStep((prev) => prev + 1);
+  };
+
+  const handleBackStep = () => {
+    setDirection(-1);
+    setCurrentStep((prev) => prev - 1);
   };
 
   // Profile field change function
@@ -498,13 +508,250 @@ export default function JobSeekerDashboard() {
     });
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Form gönderildi:', formData); // Burada API'ye gönderebilirsin.
+  
+    // Form başarılıysa pencereyi kapat:
+    onClose();
+  };
+
+
+  const handleCloseForm = () => {
+    setDirection(1);
+    setCurrentStep(1);   // Step'i başa alıyoruz
+    setFormKey((prev) => prev + 1);  // Formu resetlemek için key değiştiriyoruz
+    setShowForm(false);  // Formu kapatıyoruz
+  };
+  
+  
+
+
 
   return (
-      <div className="min-h-screen bg-white font-sans text-black">
+    <div className="min-h-screen bg-gray-100 p-8">
         <div className="w-full px-4 py-10">
           <div className="max-w-[900px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
 
-            {currentStep === 1 && (
+          {!showForm && (
+          //   <div className={`relative min-h-screen bg-gray-100 flex flex-col items-center justify-center transition-all duration-300 ${showForm ? 'opacity-20 pointer-events-none' : 'opacity-100'}`}>
+          //   <h1 className="text-3xl font-bold mb-4">Hello World!</h1>
+          //   <button
+          //     onClick={() => setShowForm(true)}
+          //     className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          //   >
+          //     Bilgilerimi Güncelle
+          //   </button>
+          // </div>
+          <div 
+          style={{borderRadius: "15px", padding: "10px"}}
+          className="flex max-w-6xl mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
+            {/* Sol Lacivert Sidebar */}
+            <div
+            style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+            className="w-1/3 bg-gray-100 p-4 rounded-lg">
+              {/* Lacivert içerik kutusu */}
+              <div 
+              style={{backgroundColor: "#000842", borderRadius: "15px", padding: "10px"}}
+              className="bg-blue-900 text-white p-6 rounded-lg space-y-4 flex flex-col items-center shadow-md">
+                {/* Profil Foto */}
+                <img src="/profile-placeholder.png" alt="Profile" className="w-24 h-24 rounded-full border-4 border-white" />
+                <h2 className="text-xl font-bold">Name Surname</h2>
+                <p className="text-gray-300">Job Title</p>
+
+                {/* Bilgi listesi */}
+                <div className="space-y-2 text-sm w-full">
+                  <p><strong>Nationality:</strong> {profileData.profileDetails.nationality || '-'}</p>
+                  <p><strong>Currently Working:</strong> {profileData.profileDetails.currentEmploymentStatus ? 'Yes' : 'No'}</p>
+                  <p><strong>Phone:</strong> {profileData.contactInformation.phoneNumber || '-'}</p>
+                  <p><strong>Location:</strong> {profileData.contactInformation.city || '-'}, {profileData.contactInformation.country || '-'}</p>
+                  <p><strong>Gender:</strong> {profileData.profileDetails.gender || '-'}</p>
+                  <p><strong>Military Status:</strong> {profileData.profileDetails.militaryStatus || '-'}</p>
+                  
+                  {profileData.profileDetails.militaryStatus === "DEFERRED" && (
+                    <p><strong>Military Deferment Date:</strong> {profileData.profileDetails.militaryDefermentDate || '-'}</p>
+                  )}
+
+                  <p><strong>Disability Status:</strong> {profileData.profileDetails.disabilityStatus || '-'}</p>
+                  <p><strong>Marital Status:</strong> {profileData.profileDetails.maritalStatus || '-'}</p>
+                  <p><strong>Driving License:</strong> {profileData.profileDetails.drivingLicense ? 'Yes' : 'No'}</p>
+                  <p><strong>Profile Privacy:</strong> {profileData.profileDetails.isPrivateProfile ? 'Private' : 'Public'}</p>
+                  <p><strong>Github:</strong> {profileData.socialLinks.githubUrl || '-'}</p>
+                  <p><strong>LinkedIn:</strong> {profileData.socialLinks.linkedinUrl || '-'}</p>
+                  <p><strong>Portfolio:</strong> {profileData.socialLinks.websiteUrl || '-'}</p>
+                </div>
+
+              </div>
+            </div>
+
+
+            {/* Sağ Taraftaki Bilgi Alanları */}
+            <div 
+            style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+            className="w-2/3 bg-gray-100 p-4 rounded-lg">
+            {/* İç Beyaz Kutu */}
+            <div style={{borderRadius: "15px", padding: "10px"}} className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+              
+              {/* About Me */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">About Me</h3>
+                <p className="text-gray-700">{profileData.profileDetails.aboutMe || '-'}</p>
+              </div>
+
+              {/* Work Experiences */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Work Experiences</h3>
+                {profileData.workExperiences.length > 0 && profileData.workExperiences[0].companyName ? (
+                  profileData.workExperiences.map((exp, idx) => (
+                    <div key={idx} className="border-b pb-2 mb-2">
+                      <p className="font-semibold">{exp.companyName}</p>
+                      <p>{exp.jobTitle} - {exp.industry}</p>
+                      <p>{exp.startDate} - {exp.isGoing ? 'Present' : exp.endDate}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No work experiences added.</p>
+                )}
+              </div>
+
+              {/* Education */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Education</h3>
+                {profileData.education.length > 0 && profileData.education[0].bachelorDepartment ? (
+                  <div className="border-b pb-2">
+                    <p><strong>Bachelor:</strong> {profileData.education[0].bachelorDepartment} ({profileData.education[0].bachelorStartDate} - {profileData.education[0].bachelorIsOngoing ? 'Present' : profileData.education[0].bachelorEndDate})</p>
+                    {profileData.education[0].masterDepartment && (
+                      <p><strong>Master:</strong> {profileData.education[0].masterDepartment} ({profileData.education[0].masterStartDate} - {profileData.education[0].masterIsOngoing ? 'Present' : profileData.education[0].masterEndDate})</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No education details added.</p>
+                )}
+              </div>
+
+              {/* Skills */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Skills</h3>
+                {profileData.skills.length > 0 && profileData.skills[0].skillName ? (
+                  <div className="flex flex-wrap gap-2">
+                    {profileData.skills.map((skill, idx) => (
+                      <span key={idx} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">{skill.skillName} ({skill.skillLevel})</span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No skills added.</p>
+                )}
+              </div>
+
+              {/* Languages */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Language Proficiency</h3>
+                {profileData.languageProficiency.length > 0 && profileData.languageProficiency[0].language ? (
+                  profileData.languageProficiency.map((lang, idx) => (
+                    <div key={idx} className="border-b pb-2 mb-2">
+                      <p className="font-semibold">{lang.language}</p>
+                      <p>Reading: {lang.readingLevel}, Writing: {lang.writingLevel}, Speaking: {lang.speakingLevel}, Listening: {lang.listeningLevel}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No languages added.</p>
+                )}
+              </div>
+
+              {/* Certifications */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Certifications</h3>
+                {profileData.certifications.length > 0 && profileData.certifications[0].certificationName ? (
+                  profileData.certifications.map((cert, idx) => (
+                    <div key={idx} className="border-b pb-2 mb-2">
+                      <p className="font-semibold">{cert.certificationName}</p>
+                      <p>Issued by: {cert.issuedBy} ({cert.certificateValidityDate})</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No certifications added.</p>
+                )}
+              </div>
+
+              {/* Projects */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Projects</h3>
+                {profileData.projects.length > 0 && profileData.projects[0].projectName ? (
+                  profileData.projects.map((proj, idx) => (
+                    <div key={idx} className="border-b pb-2 mb-2">
+                      <p className="font-semibold">{proj.projectName}</p>
+                      <p>{proj.projectDescription}</p>
+                      <p>{proj.projectStartDate} - {proj.projectStatus}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No projects added.</p>
+                )}
+              </div>
+
+              {/* Exams & Achievements */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Exams & Achievements</h3>
+                {profileData.examsAndAchievements.length > 0 && profileData.examsAndAchievements[0].examName ? (
+                  profileData.examsAndAchievements.map((exam, idx) => (
+                    <div key={idx} className="border-b pb-2 mb-2">
+                      <p className="font-semibold">{exam.examName} ({exam.examYear})</p>
+                      <p>Score: {exam.examScore}, Rank: {exam.examRank}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No achievements added.</p>
+                )}
+              </div>
+
+              {/* Hobbies */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Hobbies</h3>
+                {profileData.hobbies.length > 0 && profileData.hobbies[0].hobbyName ? (
+                  profileData.hobbies.map((hobby, idx) => (
+                    <div key={idx} className="border-b pb-2 mb-2">
+                      <p className="font-semibold">{hobby.hobbyName}</p>
+                      <p>{hobby.description}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No hobbies added.</p>
+                )}
+              </div>
+
+              {/* Update Button */}
+              <button
+                style={{ backgroundColor: '#0C21C1', borderColor: '#0C21C1' }}
+                onClick={() => setShowForm(true)}
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Update Information
+              </button>
+
+            </div>
+          </div>
+
+
+          </div>
+
+
+          )}
+
+          <AnimatePresence mode="wait" custom={direction}>
+            {currentStep === 1 && showForm && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Profil Bilgilerini Güncelle</h2>
+              <button onClick={() => setShowForm(false)} className="text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <p>Burada profil detaylarını güncelleyebilirsin!</p>
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold text-black mb-0">Profile Details</h3>
 
@@ -700,11 +947,20 @@ export default function JobSeekerDashboard() {
                     </div>
                   </div>
                 </div>
+              </motion.div>
             )}
 
 
             {/* Step 2: Social Links Section */}
-            {currentStep === 2 && (
+            {currentStep === 2 && showForm && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Social Links</h3>
 
@@ -759,17 +1015,26 @@ export default function JobSeekerDashboard() {
                   <div>
                     <br/>
                     <div style={{textAlign: 'right'}}>
-                      <button
-                          onClick={handleNextStep}
-                          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                      >
-                        Next Step
-                      </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                     </div>
                   </div>
                 </div>
+                </motion.div>
             )}
             {currentStep === 3 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Contact Information</h3>
 
@@ -818,20 +1083,29 @@ export default function JobSeekerDashboard() {
                   <div>
                     <br />
                     <div style={{ textAlign: 'right' }}>
-                      <button
-                          onClick={handleNextStep}
-                          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                      >
-                        Next Step
-                      </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                     </div>
                   </div>
                 </div>
+                </motion.div>
             )}
 
 
             {/* Step 4: Job Preferences Section */}
             {currentStep === 4 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Job Preferences</h3>
 
@@ -913,17 +1187,26 @@ export default function JobSeekerDashboard() {
                   <div>
                     <br/>
                     <div style={{textAlign: 'right'}}>
-                      <button
-                          onClick={handleNextStep}
-                          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                      >
-                        Next Step
-                      </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                     </div>
                   </div>
                 </div>
+                </motion.div>
             )}
             {currentStep === 5 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">References</h3>
 
@@ -1012,19 +1295,27 @@ export default function JobSeekerDashboard() {
                     </button>
 
                     {/* Next Step Button */}
-                    <button
-                        onClick={handleNextStep}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Next Step
-                    </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
               </div>
-
+              </motion.div>
             )}
             {currentStep === 6 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Language Skills</h3>
 
@@ -1140,17 +1431,26 @@ export default function JobSeekerDashboard() {
                     </button>
 
                     {/* Next Step Button */}
-                    <button
-                        onClick={handleNextStep}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Next Step
-                    </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                </motion.div>
             )}
 
             {currentStep === 7 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Hobbies</h3>
 
@@ -1201,18 +1501,27 @@ export default function JobSeekerDashboard() {
                     </button>
 
                     {/* Next Step Button */}
-                    <button
-                        onClick={handleNextStep}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Next Step
-                    </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                </motion.div>
             )}
             {/* Step 8: Education Section */}
 
             {currentStep === 8 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Education</h3>
 
@@ -1698,20 +2007,28 @@ export default function JobSeekerDashboard() {
                     </button>
 
                     <div style={{textAlign: 'right'}}>
-                      <button
-                          onClick={handleNextStep}
-                          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                      >
-                        Next Step
-                      </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                     </div>
                   </div>
 
                 </div>
 
-
+                </motion.div>
             )}
             {currentStep === 9 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Certifications</h3>
 
@@ -1802,17 +2119,26 @@ export default function JobSeekerDashboard() {
                     </button>
 
                     {/* Sonraki Adım Butonu */}
-                    <button
-                        onClick={handleNextStep}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Next Step
-                    </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                </motion.div>
             )}
 
             {currentStep === 10 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Work Experience</h3>
 
@@ -1955,17 +2281,26 @@ export default function JobSeekerDashboard() {
                     </button>
 
                     {/* Next Step Button */}
-                    <button
-                        onClick={handleNextStep}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Next Step
-                    </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                </motion.div>
             )}
 
             {currentStep === 11 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Exams and Achievements</h3>
 
@@ -2056,16 +2391,25 @@ export default function JobSeekerDashboard() {
                     </button>
 
                     {/* Next Step Button */}
-                    <button
-                        onClick={handleNextStep}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Next Step
-                    </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                </motion.div>
             )}
             {currentStep === 12 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Uploaded Documents</h3>
 
@@ -2157,16 +2501,25 @@ export default function JobSeekerDashboard() {
                     >
                       Add Document
                     </button>
-                    <button
-                        onClick={handleNextStep}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Next Step
-                    </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                </motion.div>
             )}
             {currentStep === 13 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Skills</h3>
 
@@ -2220,16 +2573,25 @@ export default function JobSeekerDashboard() {
                     >
                       Add Skill
                     </button>
-                    <button
-                        onClick={handleNextStep}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Next Step
-                    </button>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                </motion.div>
             )}
             {currentStep === 14 && (
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold">Projects</h3>
 
@@ -2343,6 +2705,7 @@ export default function JobSeekerDashboard() {
                         </div>
 
                       </div>
+                      
                   ))}
 
                   {/* Add Project + Next */}
@@ -2353,15 +2716,24 @@ export default function JobSeekerDashboard() {
                     >
                       Add Project
                     </button>
-                    <button
-                        onClick={handleNextStep}
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                      <button
+                        onClick={handleCloseForm}
                         className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                     >
                       Done
                     </button>
+                        {/* <button onClick={() => setShowForm(false)} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Done</button> */}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                  )}
+                </motion.div>
+              )}
+
+          </AnimatePresence>
 
 
           </div>
@@ -2370,3 +2742,530 @@ export default function JobSeekerDashboard() {
               );
 
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // GÜNCELLENMİŞ: Sağ panelin inputları profileData yapısına bağlandı
+// import { FaBell, FaSearch } from 'react-icons/fa';
+// import { Link } from 'react-router-dom';
+// import { useState } from 'react';
+// import { useEffect } from 'react';
+// import axios from "axios";
+
+// export default function JobSeekerDashboard() {
+//   const [profileData, setProfileData] = useState({
+//     profileDetails: {
+//       aboutMe: '',
+//       nationality: '',
+//       gender: '',
+//       militaryStatus: '',
+//       militaryDefermentDate: '',
+//       disabilityStatus: '',
+//       maritalStatus: '',
+//       currentEmploymentStatus: false,
+//       drivingLicense: false,
+//       isPrivateProfile: false,
+//       profilePicture: '',
+//       birthDate: '',
+//       firstName: '',
+//       jobTitle: ''
+//     },
+//     socialLinks: {
+//       githubUrl: '',
+//       linkedinUrl: '',
+//       websiteUrl: '',
+//       blogUrl: '',
+//       otherLinksUrl: '',
+//       otherLinksDescription: ''
+//     },
+//     contactInformation: {
+//       phoneNumber: '',
+//       country: '',
+//       city: ''
+//     },
+//     jobPreferences: {
+//       preferredPositions: [{ positionType: '' }],
+//       preferredWorkType: '',
+//       minWorkHour: 0,
+//       maxWorkHour: 0,
+//       canTravel: false,
+//       expectedSalary: ''
+//     },
+//     references: [
+//       {
+//         referenceName: '',
+//         referenceCompany: '',
+//         referenceJobTitle: '',
+//         referenceContactInfo: '',
+//         referenceYearsWorked: ''
+//       }
+//     ],
+//     languageProficiency: [
+//       {
+//         language: '',
+//         readingLevel: '',
+//         writingLevel: '',
+//         speakingLevel: '',
+//         listeningLevel: ''
+//       }
+//     ],
+//     hobbies: [
+//       {
+//         hobbyName: '',
+//         description: ''
+//       }
+//     ],
+//     education: {
+//       degreeType: '',
+//       associateDepartment: '',
+//       associateStartDate: '',
+//       associateEndDate: '',
+//       associateIsOngoing: false,
+//       bachelorDepartment: '',
+//       bachelorStartDate: '',
+//       bachelorEndDate: '',
+//       bachelorIsOngoing: false,
+//       masterDepartment: '',
+//       masterStartDate: '',
+//       masterEndDate: '',
+//       masterIsOngoing: false,
+//       masterThesisTitle: '',
+//       masterThesisDescription: '',
+//       masterThesisUrl: '',
+//       doctorateDepartment: '',
+//       doctorateStartDate: '',
+//       doctorateEndDate: '',
+//       doctorateIsOngoing: false,
+//       doctorateThesisTitle: '',
+//       doctorateThesisDescription: '',
+//       doctorateThesisUrl: '',
+//       isDoubleMajor: false,
+//       doubleMajorDepartment: '',
+//       doubleMajorStartDate: '',
+//       doubleMajorEndDate: '',
+//       doubleMajorIsOngoing: false,
+//       isMinor: false,
+//       minorDepartment: '',
+//       minorStartDate: '',
+//       minorEndDate: '',
+//       minorIsOngoing: false
+//     },
+//     certifications: [
+//       {
+//         certificationName: '',
+//         certificationUrl: '',
+//         certificateValidityDate: '',
+//         issuedBy: ''
+//       }
+//     ],
+//     workExperiences: [
+//       {
+//         companyName: '',
+//         industry: '',
+//         jobTitle: '',
+//         jobDescription: '',
+//         employmentType: '',
+//         startDate: '',
+//         endDate: '',
+//         isGoing: false
+//       }
+//     ],
+//     examsAndAchievements: [
+//       {
+//         examName: '',
+//         examYear: '',
+//         examScore: '',
+//         examRank: ''
+//       }
+//     ],
+//     uploadedDocuments: [
+//       {
+//         documentName: '',
+//         documentType: '',
+//         documentCategory: '',
+//         documentUrl: '',
+//         isPrivate: false
+//       }
+//     ],
+//     skills: [
+//       {
+//         skillName: '',
+//         skillLevel: ''
+//       }
+//     ],
+//     projects: [
+//       {
+//         projectName: '',
+//         projectDescription: '',
+//         projectStartDate: '',
+//         projectEndDate: '',
+//         projectStatus: '',
+//         isPrivate: false,
+//         company: ''
+//       }
+//     ]
+//   });
+
+//   const handleProfileFieldChange = (path, value) => {
+//     setProfileData((prev) => {
+//       const updated = { ...prev };
+//       let target = updated;
+//       for (let i = 0; i < path.length - 1; i++) {
+//         target = target[path[i]];
+//       }
+//       target[path[path.length - 1]] = value;
+//       return updated;
+//     });
+//   };
+
+//   const validateProfileData = () => {
+//     const requiredFields = [
+//       profileData.profileDetails.firstName,
+//       profileData.profileDetails.jobTitle,
+//       profileData.profileDetails.aboutMe,
+//       profileData.contactInformation.phoneNumber,
+//       profileData.education.degreeType,
+//       profileData.skills[0]?.skillName,
+//       profileData.projects[0]?.projectName
+//     ];
+//     return requiredFields.every(field => field && field.trim() !== '');
+//   };
+
+//   const handleSaveAllProfile = async () => {
+//     if (!validateProfileData()) {
+//       alert('Lütfen tüm zorunlu alanları doldurun.');
+//       return;
+//     }
+
+//     try {
+//       const response = await axios.post("http://localhost:9090/api/profile/save", profileData);
+//       console.log("✅ Profile saved:", response.data);
+//     } catch (error) {
+//       console.error("❌ Error saving profile:", error.response?.data || error.message);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const fetchProfileData = async () => {
+//       const token = localStorage.getItem('token'); // veya sessionStorage.getItem('token')
+//       if (!token) {
+//         console.error("❌ Token bulunamadı. Giriş yapılmamış.");
+//         return;
+//       }
+  
+//       try {
+//         const response = await axios.get("http://localhost:9090/api/profile/get", {
+//           headers: {
+//             Authorization: `Bearer ${token}`
+//           }
+//         });
+  
+//         setProfileData(response.data);
+//         console.log("✅ Profile data fetched successfully");
+  
+//       } catch (error) {
+//         console.error("❌ Error fetching profile data:", error.response?.data || error.message);
+//       }
+//     };
+  
+//     fetchProfileData();
+//   }, []);
+  
+  
+
+//   return (
+//     <div className="min-h-screen bg-white font-sans">
+
+//       {/* İçerik */}
+//       <div className="w-full px-4 py-6">
+//         <div className="max-w-[1200px] mx-auto flex gap-6">
+//           {/* Sol Panel - Profil */}
+//           <div className="w-[280px] bg-[#061A40] text-white rounded-lg p-6">
+//   <div className="text-center">
+//     <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white flex items-center justify-center">
+//       <span className="text-3xl">👤</span>
+//     </div>
+
+//     <input
+//       type="text"
+//       value={profileData.profileDetails.firstName}
+//       onChange={(e) => handleProfileFieldChange(['profileDetails', 'firstName'], e.target.value)}
+
+//       className="text-lg font-semibold mb-1 bg-transparent text-white text-center focus:outline-none"
+//     />
+//     <input
+//       type="text"
+//       value={profileData.profileDetails.jobTitle}
+//       onChange={(e) => handleProfileFieldChange(['profileDetails', 'jobTitle'], e.target.value)}
+//       className="text-sm text-gray-300 mb-6 bg-transparent text-center focus:outline-none"
+//     />
+
+//     <ul className="text-left space-y-2.5 text-sm text-gray-300">
+//   {[
+//     ['Nationality', ['profileDetails', 'nationality']],
+//     ['Currently Working', ['profileDetails', 'currentEmploymentStatus']],
+//     ['Phone Number', ['contactInformation', 'phoneNumber']],
+//     ['Country', ['contactInformation', 'country']],
+//     ['City', ['contactInformation', 'city']],
+//     ['Gender', ['profileDetails', 'gender']],
+//     ['Military Status', ['profileDetails', 'militaryStatus']],
+//     ['Disability Status', ['profileDetails', 'disabilityStatus']],
+//     ['Marital Status', ['profileDetails', 'maritalStatus']],
+//     ['Driving License', ['profileDetails', 'drivingLicense']],
+//     ['Profile Privacy', ['profileDetails', 'isPrivateProfile']],
+//     ['Github', ['socialLinks', 'githubUrl']],
+//     ['Portfolio', ['socialLinks', 'websiteUrl']]
+//   ].map(([label, path]) => (
+//     <li key={path.join('.')} className="flex flex-col gap-1">
+//       <span className="text-xs font-semibold">{label}</span>
+//       <input
+//         type="text"
+//         value={path.reduce((acc, curr) => acc?.[curr], profileData) || ''}
+//         onChange={(e) => handleProfileFieldChange(path, e.target.value)}
+//         className="bg-transparent border-b border-gray-500 text-white text-sm focus:outline-none"
+//       />
+//     </li>
+//   ))}
+// </ul>
+
+//     <button
+//       onClick={handleSaveAllProfile}
+//       className="mt-6 bg-blue-600 hover:bg-blue-700 text-white text-sm px-6 py-1.5 rounded transition"
+//     >
+//       Save
+//     </button>
+//   </div>
+// </div>
+
+
+//       {/* Sağ Panel - Bilgiler */}
+//       <div className="flex-1 bg-white rounded-lg p-6 space-y-6">
+//         {/* Biography */}
+//         <div className="mb-6">
+//           <h3 className="font-semibold mb-2">Biography</h3>
+//           <textarea
+//             value={profileData.profileDetails.aboutMe}
+//             onChange={(e) => handleProfileFieldChange(['profileDetails', 'aboutMe'], e.target.value)}
+//             className="w-full border border-gray-300 rounded-md p-2 text-sm"
+//             rows={4}
+//             placeholder="Tell us about yourself..."
+//           />
+//         </div>
+
+//         <div className="mb-6">
+//           <h3 className="font-semibold mb-2">Phone Number</h3>
+//           <input
+//             type="text"
+//             value={profileData.contactInformation.phoneNumber}
+//             onChange={(e) => handleProfileFieldChange(['contactInformation', 'phoneNumber'], e.target.value)}
+//             className="w-full border border-gray-300 rounded-md p-2 text-sm"
+//             placeholder="Enter phone number"
+//           />
+//         </div>
+
+//         <div className="mb-6">
+//           <h3 className="font-semibold mb-2">Github URL</h3>
+//           <input
+//             type="text"
+//             value={profileData.socialLinks.githubUrl}
+//             onChange={(e) => handleProfileFieldChange(['socialLinks', 'githubUrl'], e.target.value)}
+//             className="w-full border border-gray-300 rounded-md p-2 text-sm"
+//             placeholder="Enter github profile url"
+//           />
+//         </div>
+
+//         {/* Work Experiences */}
+//         {profileData.workExperiences.map((exp, index) => (
+//           <div key={index} className="mb-6 border-b pb-4">
+//             <h3 className="font-semibold mb-2">Work Experience #{index + 1}</h3>
+//             <input
+//               type="text"
+//               placeholder="Company Name"
+//               value={exp.companyName}
+//               onChange={(e) => {
+//                 const updated = [...profileData.workExperiences];
+//                 updated[index].companyName = e.target.value;
+//                 handleProfileFieldChange(['workExperiences'], updated);
+//               }}
+//               className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+//             />
+//             <input
+//               type="text"
+//               placeholder="Job Title"
+//               value={exp.jobTitle}
+//               onChange={(e) => {
+//                 const updated = [...profileData.workExperiences];
+//                 updated[index].jobTitle = e.target.value;
+//                 handleProfileFieldChange(['workExperiences'], updated);
+//               }}
+//               className="w-full border-b border-gray-300 p-1 text-sm"
+//             />
+//           </div>
+//         ))}
+
+//         {/* Education */}
+//         <div className="mb-6">
+//           <h3 className="font-semibold mb-2">Education</h3>
+//           <input
+//             type="text"
+//             placeholder="Degree Type"
+//             value={profileData.education.degreeType}
+//             onChange={(e) => handleProfileFieldChange(['education', 'degreeType'], e.target.value)}
+//             className="w-full border-b border-gray-300 p-1 text-sm"
+//           />
+//           <input
+//             type="text"
+//             placeholder="Bachelor Department"
+//             value={profileData.education.bachelorDepartment}
+//             onChange={(e) => handleProfileFieldChange(['education', 'bachelorDepartment'], e.target.value)}
+//             className="w-full border-b border-gray-300 p-1 text-sm"
+//           />
+//         </div>
+
+//         {/* Skills */}
+//         <div className="mb-6">
+//           <h3 className="font-semibold mb-2">Skills</h3>
+//           {profileData.skills.map((skill, index) => (
+//             <input
+//               key={index}
+//               type="text"
+//               value={skill.skillName}
+//               onChange={(e) => {
+//                 const updated = [...profileData.skills];
+//                 updated[index].skillName = e.target.value;
+//                 handleProfileFieldChange(['skills'], updated);
+//               }}
+//               placeholder="Skill"
+//               className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+//             />
+//           ))}
+//         </div>
+
+//         {/* Projects */}
+//         {profileData.projects.map((proj, index) => (
+//           <div key={index} className="mb-6 border-b pb-4">
+//             <h3 className="font-semibold mb-2">Project #{index + 1}</h3>
+//             <input
+//               type="text"
+//               placeholder="Project Name"
+//               value={proj.projectName}
+//               onChange={(e) => {
+//                 const updated = [...profileData.projects];
+//                 updated[index].projectName = e.target.value;
+//                 handleProfileFieldChange(['projects'], updated);
+//               }}
+//               className="w-full border-b border-gray-300 p-1 text-sm"
+//             />
+//           </div>
+//         ))}
+
+//         {/* Certifications */}
+//         <div className="mb-6">
+//           <h3 className="font-semibold mb-2">Certifications</h3>
+//           {profileData.certifications.map((cert, index) => (
+//             <input
+//               key={index}
+//               type="text"
+//               placeholder="Certification Name"
+//               value={cert.certificationName}
+//               onChange={(e) => {
+//                 const updated = [...profileData.certifications];
+//                 updated[index].certificationName = e.target.value;
+//                 handleProfileFieldChange(['certifications'], updated);
+//               }}
+//               className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+//             />
+//           ))}
+//         </div>
+
+//         {/* Language Proficiency */}
+//         <div className="mb-6">
+//           <h3 className="font-semibold mb-2">Languages</h3>
+//           {profileData.languageProficiency.map((lang, index) => (
+//             <input
+//               key={index}
+//               type="text"
+//               placeholder="Language"
+//               value={lang.language}
+//               onChange={(e) => {
+//                 const updated = [...profileData.languageProficiency];
+//                 updated[index].language = e.target.value;
+//                 handleProfileFieldChange(['languageProficiency'], updated);
+//               }}
+//               className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+//             />
+//           ))}
+//         </div>
+
+//         {/* References */}
+//         <div className="mb-6">
+//           <h3 className="font-semibold mb-2">References</h3>
+//           {profileData.references.map((ref, index) => (
+//             <input
+//               key={index}
+//               type="text"
+//               placeholder="Reference Name"
+//               value={ref.referenceName}
+//               onChange={(e) => {
+//                 const updated = [...profileData.references];
+//                 updated[index].referenceName = e.target.value;
+//                 handleProfileFieldChange(['references'], updated);
+//               }}
+//               className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+//             />
+//           ))}
+//         </div>
+
+//         {/* Exams and Achievements */}
+//         <div className="mb-6">
+//           <h3 className="font-semibold mb-2">Exams and Achievements</h3>
+//           {profileData.examsAndAchievements.map((exam, index) => (
+//             <input
+//               key={index}
+//               type="text"
+//               placeholder="Exam Name"
+//               value={exam.examName}
+//               onChange={(e) => {
+//                 const updated = [...profileData.examsAndAchievements];
+//                 updated[index].examName = e.target.value;
+//                 handleProfileFieldChange(['examsAndAchievements'], updated);
+//               }}
+//               className="w-full border-b border-gray-300 p-1 text-sm mb-2"
+//             />
+//           ))}
+//         </div>
+
+//         <div className="text-center pt-4">
+//           <button
+//             onClick={handleSaveAllProfile}
+//             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 rounded-lg transition"
+//           >
+//             Update Information
+//           </button>
+//         </div>
+
+//       </div>
+//     </div>
+//     </div>
+//     </div>
+//   );
+// }
