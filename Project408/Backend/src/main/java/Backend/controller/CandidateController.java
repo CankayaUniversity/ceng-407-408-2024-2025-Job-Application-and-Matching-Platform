@@ -10,8 +10,10 @@ import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.jobAdv.JobCondition;
 import Backend.entities.jobAdv.JobQualification;
 import Backend.entities.user.candidate.*;
+import Backend.repository.JobAdvRepository;
 import Backend.services.CandidateService;
 import Backend.services.JobAdvService;
+import Backend.services.JobApplicationService;
 import Backend.services.JwtService;
 import Backend.repository.UserRepository;
 import jakarta.persistence.Column;
@@ -22,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +45,11 @@ public class CandidateController {
 
     @Autowired
     JobAdvService jobAdvService;
+
+    @Autowired
+    JobApplicationService jobApplicationService;
+    @Autowired
+    private JobAdvRepository jobAdvRepository;
 
     public CandidateController(CandidateService candidateService) {
         this.candidateService = candidateService;
@@ -228,6 +236,87 @@ public class CandidateController {
 
         return ResponseEntity.ok(statusList);
 
+    }
+
+    @GetMapping("/getMyApplicationsDetails/{id}")
+    public List<JobAdvDto> getMyApplicationsDetails(@PathVariable("id") Integer id) {
+        List<JobApplication> myApplications = jobApplicationService.findMyApplications(id);
+        List<JobAdvDto> jobAdvDtos = new ArrayList<>();
+
+        for (JobApplication jobApplication : myApplications) {
+            JobAdv jobAdv = jobApplication.getJobAdv();
+
+            JobAdvDto dto = new JobAdvDto();
+            dto.setId(jobAdv.getId());
+            dto.setDescription(jobAdv.getDescription());
+            dto.setCompanyName(jobAdv.getCompany().getCompanyName());
+            dto.setMinSalary(jobAdv.getMinSalary());
+            dto.setMaxSalary(jobAdv.getMaxSalary());
+            dto.setLastDate(jobAdv.getLastDate());
+            dto.setTravelRest(jobAdv.isTravelRest());
+            dto.setLicense(jobAdv.isLicense());
+
+            if (jobAdv.getJobCondition() != null) {
+                JobCondition jobCondition = jobAdv.getJobCondition();
+                dto.setWorkType(jobCondition.getWorkType());
+                dto.setEmploymentType(jobCondition.getEmploymentType());
+                if (jobCondition.getCountry() != null) {
+                    dto.setCountry(jobCondition.getCountry().getName());
+                }
+                dto.setMinWorkHours(jobCondition.getMinWorkHours());
+                dto.setMaxWorkHours(jobCondition.getMaxWorkHours());
+            }
+
+            if (jobAdv.getJobQualification() != null) {
+                JobQualification jobQualification = jobAdv.getJobQualification();
+                dto.setDegreeType(jobQualification.getDegreeType().toString());
+                dto.setJobExperience(jobQualification.getJobExperience().toString());
+                dto.setExperienceYears(jobQualification.getExperienceYears());
+                dto.setMilitaryStatus(jobQualification.getMilitaryStatus().toString());
+
+                dto.setTechnicalSkills(jobQualification.getTechnicalSkills().stream()
+                        .map(skill -> skill.getPositionName())
+                        .collect(Collectors.toList()));
+
+                dto.setSocialSkills(jobQualification.getSocialSkills().stream()
+                        .map(skill -> skill.getPositionName())
+                        .collect(Collectors.toList()));
+
+                dto.setLanguageProficiencies(jobQualification.getLanguageProficiencies().stream()
+                        .map(lang -> lang.getLanguage())
+                        .collect(Collectors.toList()));
+            }
+
+            if (jobAdv.getBenefits() != null) {
+                List<String> benefitTypes = jobAdv.getBenefits().stream()
+                        .map(benefit -> benefit.getBenefitType().toString())
+                        .collect(Collectors.toList());
+                List<String> benefitDescriptions = jobAdv.getBenefits().stream()
+                        .map(Benefit::getDescription)
+                        .collect(Collectors.toList());
+
+                dto.setBenefitTypes(benefitTypes);
+                dto.setBenefitDescriptions(benefitDescriptions);
+            }
+
+            if (jobAdv.getJobPositions() != null) {
+                List<String> positionTypes = jobAdv.getJobPositions().stream()
+                        .map(jobPosition -> jobPosition.getPositionType().toString())
+                        .collect(Collectors.toList());
+
+                List<String> customJobPositions = jobAdv.getJobPositions().stream()
+                        .filter(jobPosition -> jobPosition.getCustomJobPosition() != null)
+                        .map(jobPosition -> jobPosition.getCustomJobPosition().getPositionName())
+                        .collect(Collectors.toList());
+
+                dto.setPositionTypes(positionTypes);
+                dto.setCustomJobPositions(customJobPositions);
+            }
+
+            jobAdvDtos.add(dto);
+        }
+
+        return jobAdvDtos;
     }
 
 

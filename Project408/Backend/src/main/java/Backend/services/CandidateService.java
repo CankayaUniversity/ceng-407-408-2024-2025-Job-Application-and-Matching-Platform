@@ -386,4 +386,7 @@ public class CandidateService {
     }
 
 
+    public List<Candidate> getAvailableCandidates() {
+        return candidateRepository.getAvailableCandidates();
+    }
 }

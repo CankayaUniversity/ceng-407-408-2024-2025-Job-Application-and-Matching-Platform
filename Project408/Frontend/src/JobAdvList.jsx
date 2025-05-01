@@ -20,7 +20,7 @@ const JobAdvList = () => {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
-            console.log('Kullanıcı giriş yapmamış');
+            console.log('User not logged in');
             return;
         }
 
@@ -37,7 +37,7 @@ const JobAdvList = () => {
                 setJobs(data);
                 setFilteredJobs(data);
             })
-            .catch(err => console.error("İlanlar alınamadı", err));
+            .catch(err => console.error("Unable to fetch job ads", err));
 
         fetch('http://localhost:9090/candidate/myApplications', {
             method: 'GET',
@@ -111,7 +111,7 @@ const JobAdvList = () => {
         const handleApply = async (jobId) => {
             const token = localStorage.getItem('token');
             if (!token) {
-                setMessage("Lütfen giriş yapın.");
+                setMessage("Please log in.");
                 return;
             }
 
@@ -133,13 +133,13 @@ const JobAdvList = () => {
                     const statusData = await statusResponse.json();
                     setApplications(statusData);
 
-                    setMessage("Başvuru başarılı!");
+                    setMessage("Application successful!");
                 } else {
                     const errorText = await res.text();
-                    setMessage("Başvuru başarısız! " + errorText);
+                    setMessage("Application failed! " + errorText);
                 }
             } catch (error) {
-                setMessage("Bir hata oluştu.");
+                setMessage("An error occurred.");
             }
         };
 
@@ -157,14 +157,16 @@ const JobAdvList = () => {
                     transform: 'scale(1)',
                     width: 'calc(33.33% - 16px)',
                     marginBottom: '16px',
+                    height: isAccordionOpen ? '550px' : '250px',
+                    overflowY: 'auto',
                 }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
                 onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
             >
                 <div>
                     <h3 style={{ margin: '0', fontSize: '20px', fontWeight: 'bold' }}>{job.description}</h3>
-                    <p style={{ fontSize: '16px', color: '#383e3e', marginBottom: '5px' }}>🏢 {job.companyName || "Bilinmeyen Şirket"}</p>
-                    <p style={{ fontSize: '16px', color: '#383e3e', marginBottom: '5px' }}>💼 {job.workType || "Bilinmiyor"}</p>
+                    <p style={{ fontSize: '16px', color: '#383e3e', marginBottom: '5px' }}>🏢 {job.companyName || "Unknown Company"}</p>
+                    <p style={{ fontSize: '16px', color: '#383e3e', marginBottom: '5px' }}>💼 {job.workType || "Unknown"}</p>
                     <p style={{ fontSize: '16px', color: '#383e3e', marginBottom: '5px' }}>💰 {job.minSalary} ₺ - {job.maxSalary} ₺</p>
                 </div>
 
@@ -173,32 +175,32 @@ const JobAdvList = () => {
                         onClick={() => setIsAccordionOpen(!isAccordionOpen)}
                         style={buttonStyle}
                     >
-                        {isAccordionOpen ? '🔽 Gizle' : '🔼 Detayları Göster'}
+                        {isAccordionOpen ? '🔽 Hide' : '🔼 Show Details'}
                     </button>
                 </div>
 
                 {isAccordionOpen && (
                     <div style={{ marginTop: '10px', lineHeight: '1.4', fontSize: '14px' }}>
-                        <p><strong>🕒 Süre:</strong> {job.minWorkHours} - {job.maxWorkHours} saat/hafta</p>
-                        <p><strong>📅 Son Başvuru:</strong> {new Date(job.lastDate).toLocaleDateString()}</p>
-                        <p><strong>🧳 Gezi İzni:</strong> {job.travelRest ? "Evet" : "Hayır"}</p>
-                        <p><strong>🎁 İzinler:</strong> {job.benefitTypes?.join(', ') || "Yok"}</p>
-                        <p><strong>🗣️ Diller:</strong> {job.languageProficiencies?.join(', ')}</p>
-                        <p><strong>🤝 Sosyal Beceriler:</strong> {job.socialSkills?.join(', ')}</p>
-                        <p><strong>🧠 Teknik Beceriler:</strong> {job.technicalSkills?.join(', ')}</p>
-                        <p><strong>📌 Pozisyon Türleri:</strong> {job.positionTypes?.join(', ')}</p>
-                        <p><strong>🌟 Özel Pozisyonlar:</strong> {job.customJobPositions?.join(', ')}</p>
+                        <p><strong>🕒 Duration:</strong> {job.minWorkHours} - {job.maxWorkHours} hours/week</p>
+                        <p><strong>📅 Last Application:</strong> {new Date(job.lastDate).toLocaleDateString()}</p>
+                        <p><strong>🧳 Travel Allowance:</strong> {job.travelRest ? "Yes" : "No"}</p>
+                        <p><strong>🎁 Benefits:</strong> {job.benefitTypes?.join(', ') || "None"}</p>
+                        <p><strong>🗣️ Languages:</strong> {job.languageProficiencies?.join(', ')}</p>
+                        <p><strong>🤝 Social Skills:</strong> {job.socialSkills?.join(', ')}</p>
+                        <p><strong>🧠 Technical Skills:</strong> {job.technicalSkills?.join(', ')}</p>
+                        <p><strong>📌 Position Types:</strong> {job.positionTypes?.join(', ')}</p>
+                        <p><strong>🌟 Special Positions:</strong> {job.customJobPositions?.join(', ')}</p>
 
                         {status ? (
                             <p style={{ marginTop: '8px', fontWeight: 'bold', color: '#cc304b' }}>
-                                Başvuru Durumu: {status}
+                                Application Status: {status}
                             </p>
                         ) : (
                             <button
                                 onClick={() => handleApply(job.id)}
                                 style={{ ...buttonStyle, marginTop: '8px' }}
                             >
-                                🚀 Başvur
+                                🚀 Apply
                             </button>
                         )}
                     </div>
@@ -228,7 +230,7 @@ const JobAdvList = () => {
                 marginBottom: '20px',
                 marginTop: '20px'
             }}>
-                <h2 style={{ textAlign: 'center', fontSize: '30px' }}>İş İlanları</h2>
+                <h2 style={{ textAlign: 'center', fontSize: '30px' }}>Job Listings</h2>
                 {message && <p style={{ color: '#cc304b', textAlign: 'center', fontSize: '14px' }}>{message}</p>}
                 <div style={{
                     display: 'flex',
@@ -237,15 +239,15 @@ const JobAdvList = () => {
                     marginBottom: '16px',
                     flexWrap: 'wrap'
                 }}>
-                    <input type="text" name="position" value={filters.position} onChange={handleFilterChange} placeholder="Pozisyon" style={inputStyle} />
-                    <input type="text" name="workType" value={filters.workType} onChange={handleFilterChange} placeholder="İş Tipi" style={inputStyle} />
-                    <input type="number" name="minSalary" value={filters.minSalary} onChange={handleFilterChange} placeholder="Min Maaş" style={inputStyle} />
-                    <input type="number" name="maxSalary" value={filters.maxSalary} onChange={handleFilterChange} placeholder="Max Maaş" style={inputStyle} />
-                    <input type="text" name="city" value={filters.city} onChange={handleFilterChange} placeholder="Konum (Şehir)" style={inputStyle} />
-                    <input type="text" name="company" value={filters.company} onChange={handleFilterChange} placeholder="Şirket" style={inputStyle} />
+                    <input type="text" name="position" value={filters.position} onChange={handleFilterChange} placeholder="Position" style={inputStyle} />
+                    <input type="text" name="workType" value={filters.workType} onChange={handleFilterChange} placeholder="Work Type" style={inputStyle} />
+                    <input type="number" name="minSalary" value={filters.minSalary} onChange={handleFilterChange} placeholder="Min Salary" style={inputStyle} />
+                    <input type="number" name="maxSalary" value={filters.maxSalary} onChange={handleFilterChange} placeholder="Max Salary" style={inputStyle} />
+                    <input type="text" name="city" value={filters.city} onChange={handleFilterChange} placeholder="Location (City)" style={inputStyle} />
+                    <input type="text" name="company" value={filters.company} onChange={handleFilterChange} placeholder="Company" style={inputStyle} />
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                    <button onClick={filterJobs} style={{ ...buttonStyle, marginTop: '8px' }}>Filtrele</button>
+                    <button onClick={filterJobs} style={{ ...buttonStyle, marginTop: '8px' }}>Filter</button>
                 </div>
             </div>
 

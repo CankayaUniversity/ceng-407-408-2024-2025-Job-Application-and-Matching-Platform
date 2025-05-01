@@ -47,7 +47,7 @@ public class JobApplication extends BaseEntity {
     private boolean contactPermission;
     
     // İş teklifleri
-    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<JobOffer> offers = new ArrayList<>();
 
     // Cover letter field

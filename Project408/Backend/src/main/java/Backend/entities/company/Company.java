@@ -12,10 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Table(name = "companies")
 public class Company extends BaseEntity {
 
@@ -47,9 +44,12 @@ public class Company extends BaseEntity {
     private int employeeCount;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonBackReference // Prevents circular references during serialization
     private List<Employer> employers;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonBackReference // Prevents circular references during serialization
+
     private List<Project> projects;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
@@ -62,5 +62,93 @@ public class Company extends BaseEntity {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
+
+    public String getVision() {
+        return vision;
+    }
+
+    public void setVision(String vision) {
+        this.vision = vision;
+    }
+
+    public String getMission() {
+        return mission;
+    }
+
+    public void setMission(String mission) {
+        this.mission = mission;
+    }
+
+    public LocalDate getEstablishedDate() {
+        return establishedDate;
+    }
+
+    public void setEstablishedDate(LocalDate establishedDate) {
+        this.establishedDate = establishedDate;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public int getEmployeeCount() {
+        return employeeCount;
+    }
+
+    public void setEmployeeCount(int employeeCount) {
+        this.employeeCount = employeeCount;
+    }
+
+    public List<Employer> getEmployers() {
+        return employers;
+    }
+
+    public void setEmployers(List<Employer> employers) {
+        this.employers = employers;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+
+    public List<JobAdv> getJobAdvs() {
+        return jobAdvs;
+    }
+
+    public void setJobAdvs(List<JobAdv> jobAdvs) {
+        this.jobAdvs = jobAdvs;
     }
 }

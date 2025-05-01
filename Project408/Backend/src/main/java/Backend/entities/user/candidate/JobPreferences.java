@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "job_preferences")
 public class JobPreferences extends BaseEntity {
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "job_position_id")
     private List<JobPositions> preferredPositions;
 

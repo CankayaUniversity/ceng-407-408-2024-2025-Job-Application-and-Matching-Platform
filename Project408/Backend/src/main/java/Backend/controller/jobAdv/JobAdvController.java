@@ -1,6 +1,12 @@
 package Backend.controller.jobAdv;
 
+import Backend.core.location.Country;
+import Backend.entities.dto.JobAdvDto;
+import Backend.entities.dto.JobApplicationDto;
+import Backend.entities.jobAdv.Benefit;
 import Backend.entities.jobAdv.JobAdv;
+import Backend.entities.jobAdv.JobCondition;
+import Backend.entities.jobAdv.JobQualification;
 import Backend.entities.offer.JobOffer;
 import Backend.entities.user.candidate.JobApplication;
 import Backend.request.jobAdv.JobAdvCreateRequest;
@@ -13,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/job-adv")
@@ -20,6 +27,114 @@ import java.util.List;
 public class JobAdvController {
     @Autowired
     JobAdvService jobAdvService;
+
+
+    // 🔹 4. İşverene ait ilanları getirme
+    @GetMapping("/my-jobadvs")
+    public ResponseEntity<List<JobAdvDto>> getMyJobAdvertisements(HttpServletRequest request) {
+        String email = (request.getUserPrincipal() != null)
+                ? request.getUserPrincipal().getName()
+                : "mock@employer.com";
+
+        List<JobAdv> myJobAdvs = jobAdvService.getMyJobAdvs(email);
+
+        List<JobAdvDto> jobAdvDtos = myJobAdvs.stream()
+                .map(jobAdv -> {
+                    JobAdvDto dto = new JobAdvDto();
+                    dto.setId(jobAdv.getId());
+                    dto.setDescription(jobAdv.getDescription());
+                    dto.setCompanyName(jobAdv.getCompany().getCompanyName());
+                    dto.setMinSalary(jobAdv.getMinSalary());
+                    dto.setMaxSalary(jobAdv.getMaxSalary());
+                    dto.setLastDate(jobAdv.getLastDate());
+                    dto.setTravelRest(jobAdv.isTravelRest());
+                    dto.setLicense(jobAdv.isLicense());
+
+                    if (jobAdv.getJobCondition() != null) {
+                        JobCondition jobCondition = jobAdv.getJobCondition();
+
+                        dto.setWorkType(jobCondition.getWorkType());
+                        dto.setEmploymentType(jobCondition.getEmploymentType());
+                        if (jobCondition.getCountry() != null) {
+                            Country country = jobCondition.getCountry();
+                            dto.setCountry(jobCondition.getCountry().getName());
+                        }
+                        dto.setMinWorkHours(jobCondition.getMinWorkHours());
+                        dto.setMaxWorkHours(jobCondition.getMaxWorkHours());
+                    }
+
+                    if (jobAdv.getJobQualification() != null) {
+                        JobQualification jobQualification = jobAdv.getJobQualification();
+
+                        dto.setDegreeType(jobQualification.getDegreeType().toString());
+                        dto.setJobExperience(jobQualification.getJobExperience().toString());
+                        dto.setExperienceYears(jobQualification.getExperienceYears());
+                        dto.setMilitaryStatus(jobQualification.getMilitaryStatus().toString());
+
+                        // Teknik ve sosyal becerileri alıyoruz
+                        dto.setTechnicalSkills(jobQualification.getTechnicalSkills().stream()
+                                .map(skill -> skill.getPositionName())  // TechnicalSkill'in ismi alınır (örneğin: "Java")
+                                .collect(Collectors.toList()));
+
+                        dto.setSocialSkills(jobQualification.getSocialSkills().stream()
+                                .map(skill -> skill.getPositionName())  // SocialSkill'in ismi alınır (örneğin: "Takım Çalışması")
+                                .collect(Collectors.toList()));
+
+                        dto.setLanguageProficiencies(jobQualification.getLanguageProficiencies().stream()
+                                .map(lang -> lang.getLanguage())  // LanguageProficiency'den dil isimleri alınır
+                                .collect(Collectors.toList()));
+                    }
+                    if (jobAdv.getBenefits() != null) {
+                        List<String> benefitTypes = jobAdv.getBenefits().stream()
+                                .map(benefit -> benefit.getBenefitType().toString()) // BenefitType enum'u string'e çeviriyoruz
+                                .collect(Collectors.toList());
+
+                        List<String> benefitDescriptions = jobAdv.getBenefits().stream()
+                                .map(Benefit::getDescription)  // Benefit description'ı alıyoruz
+                                .collect(Collectors.toList());
+
+                        dto.setBenefitTypes(benefitTypes);
+                        dto.setBenefitDescriptions(benefitDescriptions);
+                    }
+
+                    if (jobAdv.getJobPositions() != null) {
+                        List<String> positionTypes = jobAdv.getJobPositions().stream()
+                                .map(jobPosition -> jobPosition.getPositionType().toString())  // PositionType enum'unu string'e çeviriyoruz
+                                .collect(Collectors.toList());
+
+                        List<String> customJobPositions = jobAdv.getJobPositions().stream()
+                                .filter(jobPosition -> jobPosition.getCustomJobPosition() != null)
+                                .map(jobPosition -> jobPosition.getCustomJobPosition().getPositionName()) // CustomJobPosition isimleri
+                                .collect(Collectors.toList());
+
+                        dto.setPositionTypes(positionTypes);
+                        dto.setCustomJobPositions(customJobPositions);
+                    }
+
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(jobAdvDtos);
+
+    }
+
+    // 🔹 5. İlan başvurularını görüntüleme
+    @GetMapping("/application/{id}")
+    public ResponseEntity<List<JobApplication>> getApplications(
+            @PathVariable int id,
+            HttpServletRequest request) {
+
+        String email = (request.getUserPrincipal() != null)
+                ? request.getUserPrincipal().getName()
+                : "mock@employer.com";
+
+        List<JobApplication> applications = jobAdvService.getApplicationObjectsForJobAdv(id, email);
+
+
+        return ResponseEntity.ok(applications);
+    }
+
 
     // 🔹 1. İlan Oluşturma
     @PostMapping("/create")
@@ -64,30 +179,7 @@ public class JobAdvController {
         return ResponseEntity.ok("İlan başarıyla silindi.");
     }
 
-    // 🔹 4. İşverene ait ilanları getirme
-    @GetMapping("/my-jobadvs")
-    public ResponseEntity<List<JobAdv>> getMyJobAdvertisements(HttpServletRequest request) {
-        String email = (request.getUserPrincipal() != null)
-                ? request.getUserPrincipal().getName()
-                : "mock@employer.com";
 
-        List<JobAdv> myJobAdvs = jobAdvService.getMyJobAdvs(email);
-        return ResponseEntity.ok(myJobAdvs);
-    }
-
-    // 🔹 5. İlan başvurularını görüntüleme
-    @GetMapping("/{id}/applications")
-    public ResponseEntity<List<JobApplication>> getApplications(
-            @PathVariable int id,
-            HttpServletRequest request) {
-
-        String email = (request.getUserPrincipal() != null)
-                ? request.getUserPrincipal().getName()
-                : "mock@employer.com";
-
-        List<JobApplication> applications = jobAdvService.getApplicationObjectsForJobAdv(id, email);
-        return ResponseEntity.ok(applications);
-    }
 
     // 🔸 6. İlana başvurma (aday)
     @PostMapping("/apply/{id}")
