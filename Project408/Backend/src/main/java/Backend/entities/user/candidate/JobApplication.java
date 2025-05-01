@@ -4,6 +4,7 @@ import Backend.core.enums.ApplicationStatus;
 import Backend.entities.BaseEntity;
 import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.offer.JobOffer;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,7 +25,7 @@ public class JobApplication extends BaseEntity {
 
     @ManyToOne( fetch = FetchType.EAGER)
     @JoinColumn(name = "candidate_id", nullable = false)
-    @JsonManagedReference // Marks this side of the relationship as the one to be serialized
+    @JsonBackReference("jobapp") // Marks this side of the relationship as the one to be serialized
     private Candidate candidate;  // Aday
 
     @ManyToOne

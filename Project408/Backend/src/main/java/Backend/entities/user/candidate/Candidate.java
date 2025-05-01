@@ -5,6 +5,7 @@ import Backend.entities.user.User;
 import Backend.entities.common.LanguageProficiency;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -75,7 +76,7 @@ public class Candidate extends User {
     private List<Project> projects;
 
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonBackReference // Prevents circular references during serialization
+    @JsonManagedReference("jobapp")// Prevents circular references during serialization
     private List<JobApplication> jobApplications;
 
     // Getter ve setter metodları

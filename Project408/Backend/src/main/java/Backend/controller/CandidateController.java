@@ -9,7 +9,9 @@ import Backend.entities.jobAdv.Benefit;
 import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.jobAdv.JobCondition;
 import Backend.entities.jobAdv.JobQualification;
+import Backend.entities.user.User;
 import Backend.entities.user.candidate.*;
+import Backend.repository.CandidateRepository;
 import Backend.repository.JobAdvRepository;
 import Backend.services.CandidateService;
 import Backend.services.JobAdvService;
@@ -50,15 +52,29 @@ public class CandidateController {
     JobApplicationService jobApplicationService;
     @Autowired
     private JobAdvRepository jobAdvRepository;
+    @Autowired
+    private CandidateRepository candidateRepository;
 
     public CandidateController(CandidateService candidateService) {
         this.candidateService = candidateService;
     }
 
-    // Profil oluşturma
+    @GetMapping("/userName/{id}")
+    public ResponseEntity<Map<String, String>> getUserName(@PathVariable("id") int id) {
+        User profile = userRepository.findById(id).get();
+        Map<String, String> userName = new HashMap<>();
+        userName.put("userName", profile.getFirstName() + " " + profile.getLastName());
+        return ResponseEntity.ok(userName);
 
+    }
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<Candidate> getProfile(@PathVariable("id") int id) {
+        Candidate profile = candidateRepository.findById(id).orElseThrow();
+        return ResponseEntity.ok(profile);
+
+    }
     @GetMapping("/profileDetails/{id}")
-    public ResponseEntity<ProfileDetails> getProfile(@PathVariable("id") int id) {
+    public ResponseEntity<ProfileDetails> getProfiles(@PathVariable("id") int id) {
         ProfileDetails profile = candidateService.getProfileByUserId(id);
         return ResponseEntity.ok(profile);
     }

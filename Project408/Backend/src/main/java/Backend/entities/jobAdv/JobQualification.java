@@ -44,7 +44,7 @@ public class JobQualification extends BaseEntity {
     private List<LanguageProficiency> languageProficiencies;
 
     @OneToOne(mappedBy = "jobQualification")
-    @JsonBackReference // Prevents circular references during serialization
+    @JsonBackReference ("jobadv_2")// Prevents circular references during serialization
     private JobAdv jobAdv;
 
     public DegreeType getDegreeType() {

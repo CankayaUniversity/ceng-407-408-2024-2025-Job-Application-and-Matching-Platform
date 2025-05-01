@@ -11,8 +11,12 @@ import JobOffers from './components/JobOffers';
 import EditJobForm from './components/EditJobForm';
 import JobAdvList from "./JobAdvList";
 import JobAdvDetail from "./JobAdvDetail";
-import EmployerProfile from './components/EmployerProfile';
 import CreateJobForm from './components/CreateJobForm';
+import JobListings from "./components/JobListings.jsx";
+import JobSeekerMyJobs from "./components/JobSeekerMyJobs.jsx";
+import ApplicationsPage from "./components/ApplicationsPage.jsx";
+import CandidateList from "./components/CandidateList.jsx";
+import EmployerProfile from "./components/EmployerProfile.jsx";
 
 function App() {
   return (
@@ -26,14 +30,20 @@ function App() {
         {/* <Route element={<PrivateRoute />}> */}
         <Route>
           <Route element={<Layout />}>
-            <Route path="/dashboard" element={<JobSeekerDashboard />} />
-            <Route path="/employerDashboard" element={<EmployerDashboard />} />
-            <Route path="/job-offers" element={<JobOffers />} />
-            <Route path="/jobs" element={<JobAdvList />} />
-            <Route path="/jobs/:id" element={<JobAdvDetail />} />
-            <Route path="/employer/jobs/:id/edit" element={<EditJobForm />} />
-            <Route path="/employer/profile" element={<EmployerProfile />} />
-            <Route path="/employer/create-job" element={<CreateJobForm />} />
+
+              <Route path="/candidate/dashboard" element={<JobSeekerDashboard/>}/>
+              <Route path="/employerDashboard" element={<EmployerDashboard/>}/>
+              <Route path="/job-offers" element={<JobOffers/>}/>
+              <Route path="/candidate/jobs" element={<JobAdvList/>}/>
+              <Route path="/employer/jobs/:id/edit" element={<EditJobForm/>}/>
+              <Route path="/employer/create-job" element={<CreateJobForm/>}/>
+              <Route path="/employer/profile" element={<EmployerProfile/>}/>
+              <Route path="/employer/my-jobs" element={<JobListings/>}/>
+              <Route path="/employer/offers" element={<JobOffers/>}/>
+              <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs/>}/>
+              <Route path="/employer/applications" element={<ApplicationsPage/>}/>
+              <Route path="/candidates/:jobAdvId" element={<CandidateList/>}/>
+
           </Route>
         </Route>
       </Routes>

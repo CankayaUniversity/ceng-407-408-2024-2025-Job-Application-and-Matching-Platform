@@ -2,16 +2,47 @@
 import { FaSearch, FaBell } from 'react-icons/fa';
 import { Navbar, Nav, Container, FormControl, Button, Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import {useEffect, useState} from "react";
 
 
 function NavbarCustom() {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState('');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userType');
+    localStorage.removeItem('id');
+
     navigate('/login');
   };
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const id = localStorage.getItem('id');
+
+    if (!token || !id) {
+      console.log('User not logged in or ID is missing');
+      return;
+    }
+
+    fetch(`http://localhost:9090/candidate/userName/${id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.userName) {
+            setUserName(data.userName);
+          } else {
+            console.log('No username found in the response');
+          }
+        })
+        .catch(err => console.error("Unable to fetch user info", err));
+  }, []);
+
 
 
   return (
@@ -24,9 +55,10 @@ function NavbarCustom() {
               <Nav.Link href="/employer/profile" className="text-dark fw-medium">Profile</Nav.Link>
               <Nav.Link href="/employer/create-job" className="text-dark fw-medium">Post Job</Nav.Link>
               <Nav.Link href="/employer/my-jobs" className="text-dark fw-medium">My Job Listings</Nav.Link>
-              <Nav.Link href="/employer/candidates" className="text-dark fw-medium">Candidates</Nav.Link>
+              <Nav.Link href="/employer/applications" className="text-dark fw-medium">Candidates</Nav.Link>
               <Nav.Link href="/employer/offers" className="text-dark fw-medium">Offers</Nav.Link>
             </Nav>
+
           </div>
 
           {/* Sağ kısım: Arama + Bildirim + Kullanıcı */}
@@ -52,7 +84,7 @@ function NavbarCustom() {
               <Dropdown.Toggle
                   style={{ backgroundColor: '#0C21C1', borderColor: '#0C21C1' }}
                   variant="primary" className="rounded-pill px-3 py-1 text-white fw-medium">
-                İrem
+                {userName}
               </Dropdown.Toggle>
 
               <Dropdown.Menu>

@@ -6,22 +6,28 @@
   <component name="ChangeListManager">
     <list default="true" id="af5e9ab0-f157-44fb-a158-8739b861992b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/CandidateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/CandidateController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobAdvController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobAdvController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/EmployerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/EmployerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/common/JobPositions.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/common/JobPositions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/common/Project.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/common/Project.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/company/Company.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/company/Company.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/dto/CandidateProfileDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/dto/CandidateProfileDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/jobAdv/Benefit.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/jobAdv/Benefit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/jobAdv/JobAdv.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/jobAdv/JobAdv.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/jobAdv/JobCondition.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/jobAdv/JobCondition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/jobAdv/JobQualification.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/jobAdv/JobQualification.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/candidate/Candidate.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/candidate/Candidate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/candidate/JobApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/candidate/JobApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/candidate/JobPreferences.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/candidate/JobPreferences.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/repository/CandidateRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/repository/CandidateRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/CandidateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/CandidateService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/employer/Employer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/employer/Employer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/JobAdvList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/JobAdvList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/EmployerDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/EmployerDashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/JobSeekerDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/JobSeekerDashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/Layout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/Layout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/Login.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/NavbarEmployer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/NavbarEmployer.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/NavbarJobSeeker.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/NavbarJobSeeker.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/SignUp.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/SignUp.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/components/EmployerProfile.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/components/EmployerProfile.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/components/JobSeekerMyJobs.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/components/JobSeekerMyJobs.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,39 +56,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Maven.Backend [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Backend [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Backend [deploy].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Backend [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Backend [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Backend [site].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Backend [test].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Backend [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Backend [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.FrontApplication.executor&quot;: &quot;Debug&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;Spring Boot.BackendApplication.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;features2-login&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/blgsy/OneDrive/Belgeler/GitHub/ceng382/ceng-407-408-2024-2025-Job-Application-and-Matching-Platform/Project408/Frontend&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.Backend [clean].executor": "Run",
+    "Maven.Backend [compile].executor": "Run",
+    "Maven.Backend [deploy].executor": "Run",
+    "Maven.Backend [install].executor": "Run",
+    "Maven.Backend [package].executor": "Run",
+    "Maven.Backend [site].executor": "Run",
+    "Maven.Backend [test].executor": "Run",
+    "Maven.Backend [validate].executor": "Run",
+    "Maven.Backend [verify].executor": "Run",
+    "Node.js.FrontApplication.executor": "Debug",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.BackendApplication.executor": "Debug",
+    "git-widget-placeholder": "updated-pages",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/blgsy/OneDrive/Belgeler/GitHub/ceng382/ceng-407-408-2024-2025-Job-Application-and-Matching-Platform/Project408/Frontend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "MavenSettings",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="Backend.repository" />
@@ -145,6 +151,7 @@
       <workItem from="1745654251213" duration="28211000" />
       <workItem from="1745711443841" duration="3000000" />
       <workItem from="1745734963827" duration="10845000" />
+      <workItem from="1746106449776" duration="19632000" />
     </task>
     <servers />
   </component>
@@ -180,29 +187,19 @@
           <option name="timeStamp" value="43" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/CandidateController.java</url>
-          <line>318</line>
-          <option name="timeStamp" value="55" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/JobApplicationService.java</url>
-          <line>31</line>
-          <option name="timeStamp" value="56" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobAdvController.java</url>
-          <line>34</line>
-          <option name="timeStamp" value="63" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobAdvController.java</url>
-          <line>134</line>
-          <option name="timeStamp" value="65" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/EmployerService.java</url>
           <line>35</line>
           <option name="timeStamp" value="71" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java</url>
+          <line>21</line>
+          <option name="timeStamp" value="86" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/CandidateController.java</url>
+          <line>99</line>
+          <option name="timeStamp" value="93" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/repository/CandidateRepository.java</url>

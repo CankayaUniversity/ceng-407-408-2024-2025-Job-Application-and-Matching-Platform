@@ -2,6 +2,8 @@ package Backend.entities.user.employer;
 
 import Backend.entities.company.Company;
 import Backend.entities.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -21,6 +23,7 @@ public class Employer extends User {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonBackReference("employers")
     private Company company;
 
 

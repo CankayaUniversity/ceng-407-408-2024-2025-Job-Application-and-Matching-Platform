@@ -23,7 +23,7 @@ public class JobPositions extends BaseEntity {
     private CustomJobPosition customJobPosition;
 
     @ManyToOne
-    @JsonBackReference // Prevents circular references during serialization
+    @JsonBackReference ("jobadv_3")// Prevents circular references during serialization
     @JoinColumn(name = "job_adv_id") // Veritabanındaki yabancı anahtar
     private JobAdv jobAdv;
 

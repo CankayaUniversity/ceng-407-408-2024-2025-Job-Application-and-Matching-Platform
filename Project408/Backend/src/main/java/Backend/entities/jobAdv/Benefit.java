@@ -22,7 +22,7 @@ public class Benefit extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "job_adv_id")
-    @JsonBackReference // Prevents circular references during serialization
+    @JsonBackReference ("jobadv_4")// Prevents circular references during serialization
     private JobAdv jobAdv;
 
     public BenefitType getBenefitType() {

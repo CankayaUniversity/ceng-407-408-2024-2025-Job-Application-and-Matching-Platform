@@ -4,6 +4,8 @@ import Backend.entities.BaseEntity;
 import Backend.entities.common.JobPositions;
 import Backend.entities.company.Company;
 import Backend.entities.user.employer.Employer;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +21,7 @@ public class JobAdv extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonBackReference("jobadv_1")
     private Company company;
 
     @ManyToOne
@@ -53,9 +56,11 @@ public class JobAdv extends BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "benefit_id")
+    @JsonManagedReference("jobadv_4")
     private List<Benefit> benefits;
 
     @OneToMany(mappedBy = "jobAdv", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference("jobadv_3")
     private List<JobPositions> jobPositions;
 
 

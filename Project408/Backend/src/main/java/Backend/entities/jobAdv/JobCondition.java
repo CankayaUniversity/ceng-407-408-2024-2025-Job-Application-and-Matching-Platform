@@ -34,7 +34,7 @@ public class JobCondition extends BaseEntity {
     private int maxWorkHours;
 
     @OneToOne(mappedBy = "jobCondition")
-    @JsonBackReference // Prevents circular references during serialization
+    @JsonBackReference ("jobadv")// Prevents circular references during serialization
     private JobAdv jobAdv;
 
     public WorkType getWorkType() {

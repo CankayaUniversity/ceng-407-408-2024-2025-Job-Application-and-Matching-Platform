@@ -3,6 +3,9 @@ package Backend.entities.common;
 import Backend.core.enums.ProjectStatus;
 import Backend.entities.BaseEntity;
 import Backend.entities.company.Company;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +39,7 @@ public class Project extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonBackReference("projects")
     private Company company;
 
     public String getProjectName() {

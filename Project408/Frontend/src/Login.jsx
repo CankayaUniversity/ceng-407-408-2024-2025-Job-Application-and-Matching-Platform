@@ -13,6 +13,7 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,71 +68,93 @@ export default function Login() {
 
       {/* Left: Form */}
       <div className="w-1/2 bg-white p-10 flex items-center justify-center">
-        <div className="w-full max-w-[400px]">
-          <h2 className="text-3xl font-bold mb-2">Login</h2>
-          <p className="text-sm mb-6">
-            If you don’t have an account register <br />
-            You can{' '}
-            <Link to="/" className="text-blue-600 font-medium hover:underline">
-              Sign Up here !
-            </Link>
-          </p>
+          <div className="w-full max-w-[400px]">
+              <h2 className="text-3xl font-bold mb-2">Login</h2>
+              <p className="text-sm mb-6">
+                  If you don’t have an account register <br/>
+                  You can{' '}
+                  <Link to="/" className="text-blue-600 font-medium hover:underline">
+                      Sign Up here !
+                  </Link>
+              </p>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <input
-                type="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border-b border-gray-300 pb-2 text-gray-700 placeholder-gray-500 focus:outline-none focus:border-gray-500"
-            />
-            <input
-                type="password"
-                placeholder="Enter your Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full border-b border-gray-300 pb-2 text-gray-700 placeholder-gray-500 focus:outline-none focus:border-gray-500"
-            />
+              <form className="space-y-5" onSubmit={handleSubmit}>
 
-            {error && (
-                <p className="text-sm text-red-500 font-medium">{error}</p>
-            )}
+                  <div className="flex flex-col">
+                      <label htmlFor="email" className="mb-1 font-medium text-sm">Email</label>
+                      <input
+                          type="email"
+                          placeholder="Enter your email address"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full bg-white text-black border border-gray-300 pb-2 placeholder-gray-500 focus:outline-none focus:border-gray-500"
+                      />
+                  </div>
 
-            <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition-colors mt-4"
-            >
-                Login
-            </button>
-            </form>
+                  <div className="flex flex-col">
+                      <label htmlFor="password" className="mb-1 font-medium text-sm">Password</label>
 
-          
+                      <div className="relative">
+                          <input
+                              type={showPassword ? "text" : "password"}
+                              id="password"
+                              name="password"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              placeholder="Enter your Password"
+                              className="bg-white text-black border border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500 pr-10 w-full mb-3"
+                          />
 
-          <div className="my-8 border-t pt-4 text-center">
-            <p className="text-gray-500 text-sm mb-2">or sign up with</p>
-            <div className="flex justify-center gap-6">
-              <FaGithub size={24} className="text-gray-700 cursor-pointer hover:text-black" />
-              <FaGoogle size={24} className="text-gray-700 cursor-pointer hover:text-blue-500" />
-            </div>
+                          <span
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-[#0C21C1]"
+                          >
+                  {showPassword ? "🙈" : "👁️"}
+                </span>
+                      </div>
+                  </div>
+
+
+                  {error && (
+                      <p className="text-sm text-red-500 font-medium">{error}</p>
+                  )}
+
+                  <button
+                      type="submit"
+                      className="w-full bg-[#0C21C1] text-white py-3 rounded-full hover:bg-[#0a1ba6] transition"
+                  >
+                      Login
+                  </button>
+              </form>
+
+
+              <div className="mt-8 text-center">
+                  <p className="text-sm text-gray-500 mb-4">or sign up with</p>
+                  <div className="flex justify-center gap-6">
+                      <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGithub size={24}
+                                                                                                     className="text-black"/>
+                      </button>
+                      <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGoogle size={24}
+                                                                                                     className="text-black"/>
+                      </button>
+                  </div>
+              </div>
           </div>
-        </div>
       </div>
 
-      {/* Right: Illustration */}
-            <div className="w-1/2 bg-[#1849C6] flex items-center justify-center relative">
-              <div className="absolute top-8 right-8">
-                <span className="text-white font-semibold">Logo</span>
-              </div>
+          {/* Right: Illustration */}
+          <div className="w-1/2 bg-[#1849C6] flex items-center justify-center relative">
+
               <img
-                src={illustration}
-                alt="Illustration"
-                className="w-3/4 max-w-[400px]"
-                onError={(e) => {
-                  console.error('Image failed to load:', e);
-                  console.log('Image src:', e.target.src);
-                }}
+                  src={illustration}
+                  alt="Illustration"
+                  className="w-3/4 max-w-[400px]"
+                  onError={(e) => {
+                      console.error('Image failed to load:', e);
+                      console.log('Image src:', e.target.src);
+                  }}
               />
-            </div>
-    </div>
-  );
+          </div>
+      </div>
+    );
 }
