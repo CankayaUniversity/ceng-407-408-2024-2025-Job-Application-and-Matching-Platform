@@ -1,26 +1,32 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import axios from 'axios';
 import { Collapse } from 'react-collapse'; // react-collapse ile açılıp kapanabilen alanlar
 
 function CandidateList() {
     const [applications, setApplications] = useState([]);
     const [expandedIndex, setExpandedIndex] = useState(null); // Hangi başvuru detayının açıldığını takip eder
-    const { jobAdvId } = useParams(); // URL parametresinden jobAdvId'yi alıyoruz
     const token = localStorage.getItem('token');
+    const location = useLocation();
+    const selectedJob = location.state?.selectedJob;
 
     useEffect(() => {
-        fetchApplications(jobAdvId);
-    }, [jobAdvId]);
+        if (selectedJob) {
+            fetchApplications(selectedJob);
+        }
 
-    const fetchApplications = async (jobAdvId) => {
-        console.log('gelen ' + jobAdvId);
+    }, [selectedJob]);
+
+    const fetchApplications = async (selectedJob) => {
+        console.log('selectedJob ' + JSON.stringify(selectedJob));
 
         try {
-            const response = await axios.get(`http://localhost:9090/api/job-adv/application/${jobAdvId}`, {
+            const response = await axios.get(`http://localhost:9090/api/job-adv/application/${selectedJob.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
                 },
+
             });
             setApplications(response.data);
             console.log("Başvurular:", response.data);
@@ -33,65 +39,143 @@ function CandidateList() {
         setExpandedIndex(expandedIndex === index ? null : index); // Aynı başlık tekrar tıklanırsa kapanır
     };
 
+    const handleOffer = async (applicationId) => {
+        const token = localStorage.getItem('token');
+        const offerDetails = {
+            salaryOffer: selectedJob.maxSalary,
+            workHours: selectedJob.maxWorkHours ,
+            startDate: selectedJob.lastDate,
+            location:selectedJob.workType,
+            benefits:selectedJob.benefitTypes.join(", "),
+        };
+        console.log(offerDetails);
+        try {
+            const response = await axios.post(
+                `http://localhost:9090/api/job-adv/application/${applicationId}`,
+                offerDetails,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+            console.log(response.data); // Teklif başarıyla gönderildi mesajını kontrol edebilirsin
+        } catch (error) {
+            console.error("Teklif gönderme hatası:", error);
+        }
+    };
+
+    const handleDecline = async (applicationId) => {
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await axios.put(
+                `http://localhost:9090/api/job-adv/decline/${applicationId}`,{},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+            console.log(response.data);
+        } catch (error) {
+            console.error("Teklif gönderme hatası:", error);
+        }
+    };
+
     return (
         <div className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Başvurular</h2>
+            <h2 className="text-2xl font-bold mb-4">Applications</h2>
             {applications.length > 0 ? (
                 applications.map((app, index) => (
                     <div key={index} className="border p-4 mb-4 rounded shadow bg-gray-100">
-                        <div
+                        <h4
                             onClick={() => toggleExpand(index)}
-                            className="cursor-pointer text-xl font-semibold text-blue-600"
+                            className="cursor-pointer text-2xl font-semibold text-black"
                         >
-                            {app.candidate?.firstName} {app.candidate?.lastName} Başvurusu
-                        </div>
+                            {app.candidate?.firstName} {app.candidate?.lastName} Application's
+                        </h4>
+
 
                         <Collapse isOpened={expandedIndex === index}>
                             <div className="mt-4">
-                                {/* Sertifikalar */}
-                                <div className="mb-4">
-                                    <h3 className="font-semibold">Sertifikalar</h3>
-                                    {app.candidate?.certifications && app.candidate.certifications.length > 0 ? (
-                                        app.candidate.certifications.map((certification, certIndex) => (
-                                            <div key={certIndex} className="mb-2">
-                                                {certification.certificationName && <p><strong>Sertifika Adı:</strong> {certification.certificationName}</p>}
-                                                {certification.certificationUrl &&
-                                                    <p><strong>Sertifika Linki:</strong> <a href={certification.certificationUrl} target="_blank" rel="noopener noreferrer">Bağlantı</a></p>}
-                                                {certification.certificateValidityDate && <p><strong>Geçerlilik Tarihi:</strong> {certification.certificateValidityDate}</p>}
-                                                {certification.issuedBy && <p><strong>Verilen Kurum:</strong> {certification.issuedBy}</p>}
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p>Bilgi yok</p>
-                                    )}
-                                </div>
 
                                 {/* İş Deneyimleri */}
                                 <div className="mb-4">
-                                    <h3 className="font-semibold">İş Deneyimleri</h3>
-                                    {app.candidate?.workExperiences && app.candidate.workExperiences.length > 0 ? (
-                                        app.candidate.workExperiences.map((experience, expIndex) => (
+                                    <h5 className="font-semibold">Work Experiences</h5>
+                                    {app.candidate?.workExperiences && app.candidate?.workExperiences.length > 0 ? (
+                                        app.candidate?.workExperiences.map((experience, expIndex) => (
                                             <div key={expIndex} className="mb-2">
-                                                {experience.companyName && <p><strong>Şirket Adı:</strong> {experience.companyName}</p>}
-                                                {experience.industry && <p><strong>Sektör:</strong> {experience.industry}</p>}
-                                                {experience.jobTitle && <p><strong>Pozisyon:</strong> {experience.jobTitle}</p>}
-                                                {experience.jobDescription && <p><strong>İş Tanımı:</strong> {experience.jobDescription}</p>}
-                                                {experience.employmentType && <p><strong>Çalışma Türü:</strong> {experience.employmentType}</p>}
-                                                {experience.startDate && <p><strong>Başlangıç Tarihi:</strong> {experience.startDate}</p>}
-                                                {experience.endDate && <p><strong>Bitiş Tarihi:</strong> {experience.endDate}</p>}
-                                                <p><strong>Devam Ediyor:</strong> {experience.isGoing ? 'Evet' : 'Hayır'}</p>
+                                                {experience.companyName &&
+                                                    <p><strong>Company Name:</strong> {experience.companyName}</p>}
+                                                {experience.industry &&
+                                                    <p><strong>Industry:</strong> {experience.industry}</p>}
+                                                {experience.jobTitle &&
+                                                    <p><strong>Job Title:</strong> {experience.jobTitle}</p>}
+                                                {experience.jobDescription &&
+                                                    <p><strong>Job Description:</strong> {experience.jobDescription}
+                                                    </p>}
+                                                {experience.employmentType &&
+                                                    <p><strong>Employment Type:</strong> {experience.employmentType}
+                                                    </p>}
+                                                {experience.startDate &&
+                                                    <p><strong>Start Date:</strong> {experience.startDate}</p>}
+                                                {experience.endDate &&
+                                                    <p><strong>End Date:</strong> {experience.endDate}</p>}
+                                                <p><strong>Is going?:</strong> {experience.isGoing ? 'Yes' : 'No'}</p>
                                             </div>
                                         ))
                                     ) : (
                                         <p>Bilgi yok</p>
                                     )}
                                 </div>
+                                {/* Sertifikalar */}
+                                <div className="mb-4">
+                                    <h5 className="font-semibold">Certifications</h5>
+                                    {app.candidate?.certifications && app.candidate?.certifications.length > 0 ? (
+                                        app.candidate?.certifications.map((certification, certIndex) => (
+                                            <div key={certIndex} className="mb-2">
+                                                {certification.certificationName && <p><strong> Certification
+                                                    Name:</strong> {certification.certificationName}</p>}
+                                                {certification.certificationUrl &&
+                                                    <p><strong>Certification Link:</strong> <a
+                                                        href={certification.certificationUrl} target="_blank"
+                                                        rel="noopener noreferrer">Connection</a></p>}
+                                                {certification.certificateValidityDate &&
+                                                    <p><strong>Certificate Validity
+                                                        Date:</strong> {certification.certificateValidityDate}</p>}
+                                                {certification.issuedBy &&
+                                                    <p><strong>Issued By:</strong> {certification.issuedBy}</p>}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>No information.</p>
+                                    )}
+                                </div>
+                                <div className="flex justify-between mt-6">
+                                    <button
+                                        onClick={() => handleOffer(app.applicationId)}
+                                        className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                    >
+                                        Make Offer / Accept
+                                    </button>
+                                    <br/>
+                                    <button
+                                        onClick={() => handleDecline(app.applicationId)}
+                                        className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                    >
+                                        Decline
+                                    </button>
+                                </div>
+
                             </div>
                         </Collapse>
                     </div>
                 ))
             ) : (
-                <p>Başvuru bulunamadı.</p>
+                <p>No application found.</p>
             )}
         </div>
     );
@@ -100,9 +184,8 @@ function CandidateList() {
 export default CandidateList;
 
 
-
 // 5. <h2 className="text-2xl font-bold mb-4">Başvurular (İlan ID: {selectedJobAdvId})</h2>
-            // {applications.length > 0 ? (
+// {applications.length > 0 ? (
 
 //     applications.map((app, index) => (
 //

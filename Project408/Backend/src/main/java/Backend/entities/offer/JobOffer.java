@@ -4,6 +4,7 @@ import Backend.entities.user.candidate.JobApplication;
 import Backend.entities.user.employer.Employer;
 import Backend.core.enums.OfferStatus;
 import Backend.entities.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class JobOffer extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "application_id")
+    @JsonBackReference("offer")
     private JobApplication application;
 
     @ManyToOne

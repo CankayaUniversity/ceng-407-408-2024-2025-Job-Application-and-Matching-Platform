@@ -17,6 +17,7 @@ import JobSeekerMyJobs from "./components/JobSeekerMyJobs.jsx";
 import ApplicationsPage from "./components/ApplicationsPage.jsx";
 import CandidateList from "./components/CandidateList.jsx";
 import EmployerProfile from "./components/EmployerProfile.jsx";
+import JobOffersEmployer from "./components/JobOffersEmployer.jsx";
 
 function App() {
   return (
@@ -33,7 +34,7 @@ function App() {
 
               <Route path="/candidate/dashboard" element={<JobSeekerDashboard/>}/>
               <Route path="/employerDashboard" element={<EmployerDashboard/>}/>
-              <Route path="/job-offers" element={<JobOffers/>}/>
+              <Route path="/job-offers" element={<JobOffersEmployer/>}/>
               <Route path="/candidate/jobs" element={<JobAdvList/>}/>
               <Route path="/employer/jobs/:id/edit" element={<EditJobForm/>}/>
               <Route path="/employer/create-job" element={<CreateJobForm/>}/>
@@ -42,7 +43,7 @@ function App() {
               <Route path="/employer/offers" element={<JobOffers/>}/>
               <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs/>}/>
               <Route path="/employer/applications" element={<ApplicationsPage/>}/>
-              <Route path="/candidates/:jobAdvId" element={<CandidateList/>}/>
+              <Route path="/candidates" element={<CandidateList />} />
 
           </Route>
         </Route>

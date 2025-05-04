@@ -3,6 +3,7 @@ package Backend.entities.jobAdv;
 import Backend.entities.BaseEntity;
 import Backend.entities.common.JobPositions;
 import Backend.entities.company.Company;
+import Backend.entities.user.candidate.JobApplication;
 import Backend.entities.user.employer.Employer;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -63,7 +64,9 @@ public class JobAdv extends BaseEntity {
     @JsonManagedReference("jobadv_3")
     private List<JobPositions> jobPositions;
 
-
+    @OneToMany(mappedBy = "jobAdv", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference("jobadv_6")
+    private List<JobApplication> jobApplication;
 
     public Company getCompany() {
         return company;
@@ -159,6 +162,14 @@ public class JobAdv extends BaseEntity {
 
     public void setJobPositions(List<JobPositions> jobPositions) {
         this.jobPositions = jobPositions;
+    }
+
+    public List<JobApplication> getJobApplication() {
+        return jobApplication;
+    }
+
+    public void setJobApplication(List<JobApplication> jobApplication) {
+        this.jobApplication = jobApplication;
     }
 }
     

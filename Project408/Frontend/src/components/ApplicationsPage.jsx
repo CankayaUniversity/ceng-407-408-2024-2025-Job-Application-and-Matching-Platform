@@ -20,6 +20,7 @@ const ApplicationsPage = () => {
             const response = await axios.get('http://localhost:9090/api/job-adv/my-jobadvs', {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
                 },
             });
             setJobAdvs(response.data); // Job ilanlarını state'e yükle
@@ -81,6 +82,7 @@ const ApplicationsPage = () => {
         );
     };
 
+
     return (
         <div style={{
             backgroundColor: '#ffffff',
@@ -116,6 +118,14 @@ const ApplicationsPage = () => {
                         <JobCard key={job.id} job={job}/>
                     ))
                 )}
+                <div className="mt-4">
+                    <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        onClick={() => navigate("/employer/create-job")}
+                    >
+                        Create Job Advertisement
+                    </button>
+                </div>
             </div>
 
 
@@ -130,25 +140,26 @@ const ApplicationsPage = () => {
                 {selectedJob ? (
                     <div>
                         <h2 className="text-2xl font-bold mb-4">{selectedJob.companyName}</h2>
-                        <p><strong>İlan Başlığı:</strong> {selectedJob.description}</p>
-                        <p><strong>Maaş Aralığı:</strong> {selectedJob.minSalary} - {selectedJob.maxSalary}</p>
-                        <p><strong>Son Başvuru Tarihi:</strong> {new Date(selectedJob.lastDate).toLocaleDateString()}</p>
-                        <p><strong>Çalışma Tipi:</strong> {selectedJob.workType}</p>
-                        <p><strong>İstihdam Tipi:</strong> {selectedJob.employmentType}</p>
-                        <p><strong>Ülke:</strong> {selectedJob.country}</p>
+                        <p><strong>Description:</strong> {selectedJob.description}</p>
+                        <p><strong>Salary Range:</strong> {selectedJob.minSalary} - {selectedJob.maxSalary}</p>
+                        <p><strong>Last Date:</strong> {new Date(selectedJob.lastDate).toLocaleDateString()}</p>
+                        <p><strong>WorkType:</strong> {selectedJob.workType}</p>
+                        <p><strong>Employment Type:</strong> {selectedJob.employmentType}</p>
+                        <p><strong>Country:</strong> {selectedJob.country}</p>
 
                         {/* Başvuruları Görüntüle butonu */}
                         <div className="mt-4">
                             <button
                                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                                onClick={() => navigate(`/candidates/${selectedJob.id}`)}
+                                onClick={() => navigate("/candidates", { state: { selectedJob } })}
+
                             >
-                                Başvuruları Görüntüle
+                                View Applications
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <p style={{ color: '#7f8c8d' }}>Bir ilan seçin, detaylar burada gösterilecektir.</p>
+                    <p style={{ color: '#7f8c8d' }}>Select an advertisement, details will be displayed here.</p>
                 )}
             </div>
         </div>

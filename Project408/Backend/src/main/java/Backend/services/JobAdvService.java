@@ -314,7 +314,7 @@ public List<String> filterApplications(int jobAdvId, String userEmail, int minEx
     return results;
 }
 
-public void sendJobOffer(int applicationId, String employerEmail, JobOffer requestOffer) {
+public void sendJobOffer1(int applicationId, String employerEmail, JobOffer requestOffer) {
     // 1. İşvereni email ile bul
     Employer employer = employerRepository.findByEmail(employerEmail)
             .orElseThrow(() -> new RuntimeException("İşveren bulunamadı."));
@@ -322,29 +322,49 @@ public void sendJobOffer(int applicationId, String employerEmail, JobOffer reque
     // 2. İlgili başvuruyu al
     JobApplication application = jobApplicationRepository.findById(applicationId)
             .orElseThrow(() -> new RuntimeException("Başvuru bulunamadı."));
+    if(application.getStatus() == ApplicationStatus.PENDING){
+        // 3. Teklif nesnesini oluştur
+        JobOffer offer = new JobOffer();
+        offer.setApplication(application);
+        offer.setEmployer(employer);
+        offer.setSalaryOffer(requestOffer.getSalaryOffer());
+        offer.setWorkHours(requestOffer.getWorkHours());
+        offer.setStartDate(requestOffer.getStartDate());
+        offer.setLocation(requestOffer.getLocation());
+        offer.setBenefits(requestOffer.getBenefits());
+        offer.setStatus(OfferStatus.PENDING);
 
-    // 3. Teklif nesnesini oluştur
-    JobOffer offer = new JobOffer();
-    offer.setApplication(application);
-    offer.setEmployer(employer);
-    offer.setSalaryOffer(requestOffer.getSalaryOffer());
-    offer.setWorkHours(requestOffer.getWorkHours());
-    offer.setStartDate(requestOffer.getStartDate());
-    offer.setLocation(requestOffer.getLocation());
-    offer.setBenefits(requestOffer.getBenefits());
-    offer.setStatus(OfferStatus.PENDING);
-
-    // Maintain bidirectional relationship
-    if (application.getOffers() == null) {
-        application.setOffers(new ArrayList<>());
+        // Maintain bidirectional relationship
+        if (application.getOffers() == null) {
+            application.setOffers(new ArrayList<>());
+        }
+        application.getOffers().add(offer);
+        application.setStatus(ApplicationStatus.ACCEPTED);
+        // 4. Veritabanına kaydet
+        jobApplicationRepository.save(application); // Will cascade save the offer
     }
-    application.getOffers().add(offer);
 
-    // 4. Veritabanına kaydet
-    jobApplicationRepository.save(application); // Will cascade save the offer
 
     System.out.println("✅ Teklif başarıyla gönderildi: Aday ID = " + application.getCandidate().getId());
 }
+    public void sendJobOffer2(int id, String employerEmail, JobOffer requestOffer) {
+        // 1. İşvereni email ile bul
+        Employer employer = employerRepository.findByEmail(employerEmail)
+                .orElseThrow(() -> new RuntimeException("İşveren bulunamadı."));
+
+
+            JobOffer offer = new JobOffer();
+            offer.setEmployer(employer);
+            offer.setSalaryOffer(requestOffer.getSalaryOffer());
+            offer.setWorkHours(requestOffer.getWorkHours());
+            offer.setStartDate(requestOffer.getStartDate());
+            offer.setLocation(requestOffer.getLocation());
+            offer.setBenefits(requestOffer.getBenefits());
+            offer.setStatus(OfferStatus.PENDING);
+
+
+            jobOfferRepository.save(offer);
+        }
 
 
 public void respondToOffer(int offerId, boolean accept) {
@@ -465,4 +485,16 @@ public List<JobApplication> getApplicationObjectsForJobAdv(int jobAdvId, String 
     return jobApplicationRepository.findByJobAdv(jobAdv);
 }
 
+    public void respondToApplication(int applicationId) {
+    JobApplication jobApplication = jobApplicationRepository.findById(applicationId).orElseThrow();
+        jobApplication.setStatus(ApplicationStatus.REJECTED);
+        jobApplicationRepository.save(jobApplication);
+    }
+
+    public List<JobOffer> getJobOffers(int id) {
+    Employer emp = employerRepository.findById(id).orElseThrow();
+
+    List<JobOffer> offers = jobOfferRepository.findByEmployer(emp);
+    return offers;
+    }
 }

@@ -76,7 +76,7 @@ public class Candidate extends User {
     private List<Project> projects;
 
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference("jobapp")// Prevents circular references during serialization
+    @JsonManagedReference("jobapp")
     private List<JobApplication> jobApplications;
 
     // Getter ve setter metodları

@@ -4,10 +4,7 @@ import Backend.core.enums.ApplicationStatus;
 import Backend.entities.BaseEntity;
 import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.offer.JobOffer;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -25,11 +22,12 @@ public class JobApplication extends BaseEntity {
 
     @ManyToOne( fetch = FetchType.EAGER)
     @JoinColumn(name = "candidate_id", nullable = false)
-    @JsonBackReference("jobapp") // Marks this side of the relationship as the one to be serialized
+    @JsonBackReference("jobapp")
     private Candidate candidate;  // Aday
 
     @ManyToOne
     @JoinColumn(name = "job_adv_id")
+    @JsonBackReference("jobadv_6")
     private JobAdv jobAdv;  // İş ilanı
 
     @Column(name = "application_date")
@@ -49,6 +47,7 @@ public class JobApplication extends BaseEntity {
     
     // İş teklifleri
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonManagedReference("offer")
     private List<JobOffer> offers = new ArrayList<>();
 
     // Cover letter field

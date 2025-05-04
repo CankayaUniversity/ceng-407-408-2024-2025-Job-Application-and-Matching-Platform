@@ -11,6 +11,7 @@ import Backend.services.CandidateService;
 import Backend.services.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.support.lob.TemporaryLobCreator;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +45,13 @@ public class EmployerController {
     }
 
     @GetMapping("/profile/{id}")
-    public ResponseEntity<Company> getProfileDetails(@PathVariable("id") int id) {
+    public ResponseEntity<HashMap<Object,Object> > getProfileDetails(@PathVariable("id") int id) {
         return ResponseEntity.ok(employerService.getProfileDetails(id));
+    }
+
+    @PutMapping("/updateProfile/{id}")
+    public ResponseEntity<Company> updateProfile(@PathVariable("id") int id,@RequestBody Company company) {
+        return ResponseEntity.ok(employerService.updateProfile(id,company));
     }
 
 }

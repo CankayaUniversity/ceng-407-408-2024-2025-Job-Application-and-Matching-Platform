@@ -1,6 +1,7 @@
 package Backend.controller.jobAdv;
 
 import Backend.core.location.Country;
+import Backend.entities.dto.CandidateApplicationDto;
 import Backend.entities.dto.JobAdvDto;
 import Backend.entities.dto.JobApplicationDto;
 import Backend.entities.jobAdv.Benefit;
@@ -8,6 +9,7 @@ import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.jobAdv.JobCondition;
 import Backend.entities.jobAdv.JobQualification;
 import Backend.entities.offer.JobOffer;
+import Backend.entities.user.candidate.Candidate;
 import Backend.entities.user.candidate.JobApplication;
 import Backend.request.jobAdv.JobAdvCreateRequest;
 import Backend.request.jobAdv.JobAdvUpdateRequest;
@@ -121,7 +123,7 @@ public class JobAdvController {
 
     // 🔹 5. İlan başvurularını görüntüleme
     @GetMapping("/application/{id}")
-    public ResponseEntity<List<JobApplication>> getApplications(
+    public ResponseEntity<List<CandidateApplicationDto>> getApplications(
             @PathVariable int id,
             HttpServletRequest request) {
 
@@ -130,9 +132,12 @@ public class JobAdvController {
                 : "mock@employer.com";
 
         List<JobApplication> applications = jobAdvService.getApplicationObjectsForJobAdv(id, email);
+        List<CandidateApplicationDto> result = applications.stream()
+                .map(app -> new CandidateApplicationDto(app.getId(), app.getCandidate()))
+                .collect(Collectors.toList());
 
+        return ResponseEntity.ok(result);
 
-        return ResponseEntity.ok(applications);
     }
 
 
@@ -211,8 +216,8 @@ public class JobAdvController {
     }
 
     // 🔹 8. Adaya teklif gönderme
-    @PostMapping("/application/{applicationId}/offer")
-    public ResponseEntity<String> sendJobOffer(
+    @PostMapping("/application/{applicationId}")
+    public ResponseEntity<String> sendJobApp(
             @PathVariable int applicationId,
             @RequestBody JobOffer offerDetails,
             HttpServletRequest request) {
@@ -221,17 +226,50 @@ public class JobAdvController {
                 ? request.getUserPrincipal().getName()
                 : "mock@employer.com";
 
-        jobAdvService.sendJobOffer(applicationId, email, offerDetails);
+        jobAdvService.sendJobOffer1(applicationId, email, offerDetails);
         return ResponseEntity.ok("Teklif başarıyla gönderildi.");
     }
 
-    // 🔹 9. Adayın teklife yanıtı
-    @PutMapping("/offer/{offerId}/respond")
-    public ResponseEntity<String> respondToOffer(
-            @PathVariable int offerId,
-            @RequestParam boolean accept) {
+    @PostMapping("/offer/{candidateId}")
+    public ResponseEntity<String> sendJobOffer(
+            @PathVariable("candidateId") int candidateId,
+            @RequestBody JobOffer offerDetails,
+            HttpServletRequest request) {
 
-        jobAdvService.respondToOffer(offerId, accept);
+        String email = (request.getUserPrincipal() != null)
+                ? request.getUserPrincipal().getName()
+                : "mock@employer.com";
+
+        jobAdvService.sendJobOffer2(candidateId,email, offerDetails);
+        return ResponseEntity.ok("Teklif başarıyla gönderildi.");
+    }
+
+    @PostMapping("/offer/{id}")
+    public ResponseEntity<List<JobOffer>> getJobOffers(
+            @PathVariable int id) {
+
+        return ResponseEntity.ok(jobAdvService.getJobOffers(id));
+    }
+
+    @PutMapping("/decline/{applicationId}")
+    public ResponseEntity<String> respondToApplication(
+            @PathVariable int applicationId) {
+        jobAdvService.respondToApplication(applicationId);
         return ResponseEntity.ok("Teklif durumu güncellendi.");
     }
+
+    @PutMapping("/declineOffer/{offerId}")
+    public ResponseEntity<String> declineTheOffer(
+            @PathVariable int offerId) {
+        jobAdvService.respondToOffer(offerId,false);
+        return ResponseEntity.ok("Teklif durumu güncellendi.");
+    }
+
+    @PutMapping("/offer/{offerId}")
+    public ResponseEntity<String> respondToOffer(
+            @PathVariable int offerId) {
+        jobAdvService.respondToOffer(offerId,true);
+        return ResponseEntity.ok("Teklif durumu güncellendi.");
+    }
+
 }

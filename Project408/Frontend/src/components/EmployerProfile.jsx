@@ -1,153 +1,615 @@
-import React, { useState } from 'react';
-import JobSeekerMyJobs from "./JobSeekerMyJobs.jsx";
+import React, {useEffect, useState} from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaEdit, FaSave, FaTimes, FaPhone, FaGlobe } from "react-icons/fa";
 
 const EmployerProfile = () => {
-  const [selectedSidebar, setSelectedSidebar] = useState('Company Description');
-  const [isEditing, setIsEditing] = useState(false);
+    const [error, setError] = useState(null);
+    const [showForm, setShowForm] = useState(false);
 
-  const handleSidebarClick = (sidebar) => {
-    setSelectedSidebar(sidebar);
-  };
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
+    const [profile, setProfile] = useState({
+        company: {
+            companyName: '',
+            industry: '',
+            employeeCount: '',
+            email: '',
+            phoneNumber: '',
+            websiteUrl: '',
+            projects: [{ // <-- Change this from an object to an array
 
-  const handleCancelClick = () => {
-    setIsEditing(false);
-  };
+                projectName: '',
+                projectDescription: '',
+                projectStartDate: '',
+                projectEndDate: '',
+                projectStatus: '',
+                isPrivate: false,
+            }
+            ],
 
-  const renderContent = () => {
-    switch (selectedSidebar) {
-      case 'Company Description':
-        return (
-            <div>
-              {isEditing ? (
-                  <textarea defaultValue="Enter company description here..." rows="4" style={{ width: '100%' }} />
-              ) : (
-                  <p>Company Description: This is a description of the company.</p>
-              )}
+        }
+    });
+
+    const [currentStep, setCurrentStep] = useState(1);
+    const [direction, setDirection] = useState(1);
+    const [formKey, setFormKey] = useState(0);
+
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const id=localStorage.getItem('id');
+
+        if (!token) {
+            console.log("Kullanıcı giriş yapmamış");
+            return;
+        }
+
+        fetch(`http://localhost:9090/employer/profile/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        })
+            .then((res) => res.json())
+            .then((data) => setProfile(data))
+            .catch((err) => console.error("No Profile Data Found", err));
+    }, []);
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const token = localStorage.getItem('token');
+            const id = localStorage.getItem('id');
+
+            if (!token) {
+                console.log("Kullanıcı giriş yapmamış");
+                return;
+            }
+                console.log("giddeen"+JSON.stringify(profile.company) )
+            const response = await fetch(`http://localhost:9090/employer/updateProfile/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(profile.company)
+            });
+
+            if (!response.ok) {
+                throw new Error('Profil oluşturulamadı');
+            }
+
+            const data = await response.json();
+            console.log('Profil başarıyla oluşturuldu:', data);
+
+            // Başarılıysa pencere kapat veya yönlendir
+        } catch (error) {
+            console.error('Hata:', error);
+        }
+    };
+    // Panel open/close function
+    const handleNextStep = () => {
+        setDirection(1);
+        setCurrentStep((prev) => prev + 1);
+    };
+
+    const handleBackStep = () => {
+        setDirection(-1);
+        setCurrentStep((prev) => prev - 1);
+    };
+
+    const handleProfileFieldChange = (path, value) => {
+        setProfile(prev => {
+            const updated = { ...prev };
+            let target = updated;
+            for (let i = 0; i < path.length - 1; i++) {
+                target = target[path[i]];
+            }
+            target[path[path.length - 1]] = value;
+            return updated;
+        });
+    };
+
+
+    // const handleInputChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setProfile((prevState) => {
+    //         const newState = { ...prevState };
+    //         if (name.includes("project")) {
+    //             newState.company.projects[name] = value;
+    //         } else {
+    //             newState.company[name] = value;
+    //         }
+    //         return newState;
+    //     });
+    // };
+    const addProject = () => {
+        setProfile(prevProfile => ({
+            ...prevProfile,
+            company: {
+                ...prevProfile.company,
+                projects: [
+                    ...prevProfile.company.projects,
+                    {
+                        projectName: '',
+                        projectDescription: '',
+                        projectStartDate: '',
+                        projectEndDate: '',
+                        projectStatus: '',
+                        isPrivate: null,
+                    }
+                ]
+            }
+        }));
+    };
+
+
+
+
+    const removeProject = (index) => {
+        const updatedProjects = profile.company?.projects?.filter((_, idx) => idx !== index);
+        setProfile(prevProfile => ({
+            ...prevProfile,
+            company: {
+                ...prevProfile.company,
+                projects: updatedProjects
+            }
+        }));
+    };
+
+    const handleCloseForm = () => {
+        setDirection(1);
+        setCurrentStep(1);
+        setFormKey((prev) => prev + 1);  // Formu resetlemek için key değiştiriyoruz
+        // Step'i başa alıyoruz
+        setShowForm(false);  // Formu kapatıyoruz
+    };
+
+
+    return (
+        <div className="min-h-screen bg-gray-100 p-8">
+            <div className="w-full px-4 py-10">
+                <div className="max-w-[900px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
+                    <div className="bg-white shadow rounded-md overflow-hidden">
+                        {error && (
+                            <div className="bg-red-50 text-red-600 p-4 mb-6">
+                                {error}
+                            </div>
+                        )}
+
+                        <div className="p-6">
+
+                            {!showForm && (
+
+                            <div
+                            style={{borderRadius: "15px", padding: "10px"}}
+                            className="flex max-w-6xl mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
+                            {/* Sol Lacivert Sidebar */}
+                            <div
+                                style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+                                className="w-1/3 bg-gray-100 p-4 rounded-lg">
+                                {/* Lacivert içerik kutusu */}
+                                <div
+                                    style={{backgroundColor: "#000842", borderRadius: "15px", padding: "10px"}}
+                                    className="bg-blue-900 text-white p-6 rounded-lg space-y-4 flex flex-col items-center shadow-md">
+                                    {/* Profil Foto */}
+                                    <img src="/profile-placeholder.png" alt="Profile"
+                                         className="w-24 h-24 rounded-full border-4 border-white"/>
+                                    <h2 className="text-xl font-bold"> {profile.employerName || ''} {profile.employerLastName || ''}</h2>
+
+                                    {/* Bilgi listesi */}
+                                    <div className="space-y-2 text-sm w-full">
+                                        <p><strong>Employer Name:</strong> {profile.employerName || '-'}</p>
+                                        <p><strong>Employer Surname</strong> {profile.employerLastName  || '-'}</p>
+
+                                    </div>
+                                </div>
+                                <div className="text-center mt-3">
+                                    <button
+                                        style={{backgroundColor: '#0C21C1', borderColor: '#0C21C2'}}
+                                        onClick={handleSubmit}
+                                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    >
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+
+
+                            {/* Sağ Taraftaki Bilgi Alanları */}
+                            <div
+                                style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+                                className="w-2/3 bg-gray-100 p-4 rounded-lg">
+                                {/* İç Beyaz Kutu */}
+                                <div style={{borderRadius: "15px", padding: "10px"}}
+                                     className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-2">Company Information</h3>
+                                        <p className="text-sm">
+                                                        <span
+                                                            className="font-medium text-gray-700">Company Name:</span>{' '}
+                                            <span
+                                                className="text-gray-600">{profile.company?.companyName || 'Not specified'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                                                        <span
+                                                            className="font-medium text-gray-700">Industry:</span>{' '}
+                                            <span
+                                                className="text-gray-600">{profile.company?.industry || 'Not specified'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                                            <span className="font-medium text-gray-700">Size:</span>{' '}
+                                            <span
+                                                className="text-gray-600">{profile.company?.employeeCount || 'Not specified'}</span>
+                                        </p>
+                                    </div>
+
+                                    {/* Company Contact Information */}
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-2">Company Contact Information</h3>
+
+                                        <p className="text-sm">
+                                                            <span
+                                                                className="font-medium text-gray-700">Email:</span>{' '}
+                                            <span
+                                                className="text-gray-600">{profile.company?.email || 'Not specified'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                                                            <span
+                                                                className="font-medium text-gray-700">Phone:</span>{' '}
+                                            <span
+                                                className="text-gray-600">{profile.company?.phoneNumber || 'Not specified'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                                                            <span
+                                                                className="font-medium text-gray-700">Website Url:</span>{' '}
+                                            <span
+                                                className="text-gray-600">{profile.company?.websiteUrl || 'Not specified'}</span>
+                                        </p>
+                                    </div>
+
+
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-2">Projects</h3>
+                                        {profile.company?.projects && profile.company?.projects.length > 0 ? (
+                                            profile.company?.projects.map((proj, idx) => (
+                                                <div key={idx} className="border-b pb-2 mb-2">
+                                                    <p className="font-semibold">{proj.projectName}</p>
+                                                    <p>{proj.projectDescription}</p>
+                                                    <p>{proj.projectStartDate} - {proj.projectStatus}</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-gray-500">No projects added.</p>
+                                        )}
+                                    </div>
+
+
+                                    {/* Update Button */}
+                                    <button
+                                        style={{backgroundColor: '#0C21C1', borderColor: '#0C21C1'}}
+                                        onClick={() => setShowForm(true)}
+                                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    >
+                                        Update Information
+                                    </button>
+
+                                </div>
+                            </div>
+
+
+                            </div>
+
+
+                            )}
+                            <AnimatePresence mode="wait" custom={direction}>
+                                {currentStep === 1 && showForm && (
+                                    <motion.div
+                                        key={currentStep}
+                                        custom={direction} // ileri veya geri
+                                        initial={{x: direction === 1 ? '100%' : '-100%', opacity: 0}}
+                                        animate={{x: 0, opacity: 1}}
+                                        exit={{x: direction === 1 ? '-100%' : '100%', opacity: 0}}
+                                        transition={{type: 'tween', ease: 'easeInOut', duration: 0.4}}
+                                    >
+
+                                        <div className="bg-gray-50 p-4 rounded-md">
+
+                                            <div className="flex justify-between items-center">
+                                                <h3 className="text-xl font-semibold text-black mt-0">Company
+                                                    Informations</h3>
+                                                <button onClick={() => setShowForm(false)}
+                                                        className="text-gray-500 hover:text-gray-700">✕
+                                                </button>
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Company
+                                                        Name</label>
+                                                    <input
+                                                        type="text"
+                                                        name="companyName"
+                                                        value={profile.company?.companyName || ''}
+                                                        onChange={(e) => handleProfileFieldChange(['company', 'companyName'], e.target.value)}
+
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                                                    <input
+                                                        type="text"
+                                                        name="industry"
+                                                        value={profile.company?.industry || ''}
+                                                        onChange={(e) => handleProfileFieldChange(['company', 'industry'], e.target.value)}
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Company
+                                                        Size</label>
+                                                    <select
+                                                        name="employeeCount"
+                                                        value={profile.company?.employeeCount || ''}
+                                                        onChange={(e) => handleProfileFieldChange(['company', 'employeeCount'], e.target.value)}
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                                                    >
+                                                        <option value="">Select company size</option>
+                                                        <option value="1-10">1-10 employees</option>
+                                                        <option value="11-50">11-50 employees</option>
+                                                        <option value="51-200">51-200 employees</option>
+                                                        <option value="201-500">201-500 employees</option>
+                                                        <option value="501-1000">501-1000 employees</option>
+                                                        <option value="1001+">1001+ employees</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <br/>
+                                                <div style={{textAlign: 'right'}}>
+                                                    <div className="flex justify-between">
+                                                        <button onClick={handleBackStep}
+                                                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                                        </button>
+                                                        <div className="flex justify-end">
+                                                            <button onClick={handleNextStep}
+                                                                    className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </motion.div>
+                                )}
+                                {currentStep === 2 && showForm && (
+                                    <motion.div
+                                        key={currentStep}
+                                        custom={direction} // ileri veya geri
+                                        initial={{x: direction === 1 ? '100%' : '-100%', opacity: 0}}
+                                        animate={{x: 0, opacity: 1}}
+                                        exit={{x: direction === 1 ? '-100%' : '100%', opacity: 0}}
+                                        transition={{type: 'tween', ease: 'easeInOut', duration: 0.4}}
+                                    >
+                                        <div>
+
+                                            <div className="bg-gray-50 p-4 rounded-md">
+                                                <div className="flex justify-between items-center">
+                                                    <h3 className="text-xl font-semibold text-black mt-0">Company
+                                                        Contact Information</h3>
+                                                    <button onClick={() => setShowForm(false)}
+                                                            className="text-gray-500 hover:text-gray-700">✕
+                                                    </button>
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <label
+                                                            className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                                        <input
+                                                            type="email"
+                                                            name="email"
+                                                            value={profile.company?.email || ''}
+                                                            onChange={(e) => handleProfileFieldChange(['company', 'email'], e.target.value)}
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label
+                                                            className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                                        <input
+                                                            type="text"
+                                                            name="phoneNumber"
+                                                            value={profile.company?.phoneNumber || ''}
+                                                            onChange={(e) => handleProfileFieldChange(['company', 'phoneNumber'], e.target.value)}
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label
+                                                            className="block text-sm font-medium text-gray-700 mb-1">Website Url</label>
+                                                        <input
+                                                            type="text"
+                                                            name="websiteUrl"
+                                                            value={profile.company?.websiteUrl || ''}
+                                                            onChange={(e) => handleProfileFieldChange(['company', 'websiteUrl'], e.target.value)}
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                                                        />
+                                                    </div>
+
+                                                </div>
+                                                <div>
+                                                    <br/>
+                                                    <div style={{textAlign: 'right'}}>
+                                                        <div className="flex justify-between">
+                                                            <button onClick={handleBackStep}
+                                                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                                            </button>
+                                                            <div className="flex justify-end">
+                                                                <button onClick={handleNextStep}
+                                                                        className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                    </motion.div>
+                                )}
+
+                                {currentStep === 3 && showForm && (
+                                    <motion.div
+                                        key={currentStep}
+                                        custom={direction} // ileri veya geri
+                                        initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+                                        transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+                                    >
+                                        <div>
+                                            <div className="bg-gray-50 p-4 rounded-md">
+                                                <div className="flex justify-between items-center">
+                                                    <h3 className="text-xl font-semibold text-black mt-0">Projects</h3>
+                                                    <button
+                                                        onClick={() => setShowForm(false)}
+                                                        className="text-gray-500 hover:text-gray-700"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+
+                                                {profile.company?.projects?.map((project, index) => (
+                                                    <div key={index} className="space-y-4 mt-6">
+                                                        <div className="relative w-full flex items-center space-x-4">
+                                                            <div className="flex-1 mb-0">
+                                                                <input
+                                                                    type="text"
+                                                                    name="projectName"
+                                                                    value={project.projectName}
+                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectName'], e.target.value)}
+                                                                    placeholder="Project Name"
+                                                                    className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="relative w-full flex items-center space-x-4">
+                                                            <div className="flex-1 mb-0">
+                                                                <textarea
+                                                                    value={project.projectDescription}
+
+                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectDescription'], e.target.value)}
+                                                                    placeholder="Project Description"
+                                                                    className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="relative w-full flex items-center space-x-4">
+                                                            <div className="flex-1 mb-0">
+                                                                <input
+                                                                    type="date"
+                                                                    value={project.projectStartDate}
+                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectStartDate'], e.target.value)}
+                                                                    placeholder="Star Date"
+                                                                    className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="relative w-full flex items-center space-x-4">
+                                                            <div className="flex-1 mb-0">
+                                                                <input
+                                                                    type="date"
+                                                                    value={project.projectEndDate}
+                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectEndDate'], e.target.value)}
+                                                                    placeholder="End Date"
+                                                                    className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="relative w-full flex items-center space-x-4">
+                                                            <div className="flex-1 mb-0">
+                                                                <select
+                                                                    value={project.projectStatus || ''}
+                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectStatus'], e.target.value)}
+                                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black mb-2"
+                                                                >
+                                                                    <option value="" disabled></option>
+                                                                    <option value="ONGOING">Ongoing</option>
+                                                                    <option value="COMPLETED">Completed</option>
+                                                                    <option value="ABANDONED">Abandoned</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="relative w-full flex items-center space-x-4">
+                                                            <div className="flex items-center">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={project.isPrivate || false}
+                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'isPrivate'], e.target.value)}
+                                                                />
+                                                                <span className="text-sm">Is private?</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="text-right mb-3">
+                                                            <button
+                                                                onClick={() => removeProject(index)}
+                                                                className="text-red-600 text-sm "
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+
+                                                <div>
+                                                    <button
+                                                        onClick={addProject}
+                                                        className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                                    >
+                                                        Add Project
+                                                    </button>
+                                                    <br/>
+                                                    <div style={{textAlign: 'right'}}>
+                                                        <div className="flex justify-between">
+                                                            <button
+                                                                onClick={handleBackStep}
+                                                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                                                            >
+                                                                Back
+                                                            </button>
+                                                            <button
+                                                                onClick={handleCloseForm}
+                                                                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                                            >
+                                                                Done
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                            </AnimatePresence>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-        );
-      case 'Contact Information':
-        return (
-            <div>
-              {isEditing ? (
-                  <textarea defaultValue="Enter contact information here..." rows="4" style={{ width: '100%' }} />
-              ) : (
-                  <p>Contact Information: Phone number, email, and office address.</p>
-              )}
-            </div>
-        );
-      case 'Company Information':
-        return (
-            <div>
-              {isEditing ? (
-                  <textarea defaultValue="Enter company information here..." rows="4" style={{ width: '100%' }} />
-              ) : (
-                  <p>Company Information: Details about the company's history, vision, and mission.</p>
-              )}
-            </div>
-        );
-      case 'Company Profile':
-        return (
-            <div>
-              {isEditing ? (
-                  <textarea defaultValue="Enter company profile details here..." rows="4" style={{ width: '100%' }} />
-              ) : (
-                  <p>Company Profile: Overview of the company's culture, values, and workforce.</p>
-              )}
-            </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-      <div style={{ display: 'flex', padding: '20px' }}>
-        {/* Sidebar */}
-        <div
-            style={{
-              width: '250px',
-              borderRight: '1px solid #ddd',
-              paddingRight: '20px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-            }}
-        >
-          <h3>Sidebar Menu</h3>
-          {['Company Description', 'Contact Information', 'Company Information', 'Company Profile'].map((sidebar) => (
-              <button
-                  key={sidebar}
-                  onClick={() => handleSidebarClick(sidebar)}
-                  style={{
-                    padding: '10px',
-                    backgroundColor: selectedSidebar === sidebar ? '#151717' : '#ecf0f1',
-                    color: selectedSidebar === sidebar ? 'white' : '#2c3e50',
-                    border: 'none',
-                    borderRadius: '5px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                  }}
-              >
-                {sidebar}
-              </button>
-          ))}
         </div>
-
-        {/* Content Area */}
-        <div
-            style={{
-              flexGrow: 1,
-              padding: '20px',
-              backgroundColor: '#fff',
-              borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            }}
-        >
-          <h2>{selectedSidebar}</h2>
-          <div>{renderContent()}</div>
-
-          {/* Edit/Cancel Buttons */}
-          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
-            {isEditing ? (
-                <button
-                    onClick={handleCancelClick}
-                    style={{
-                      padding: '10px 20px',
-                      backgroundColor: '#ecf0f1',
-                      color: '#2c3e50',
-                      border: 'none',
-                      borderRadius: '5px',
-                      fontWeight: 'bold',
-                      cursor: 'pointer',
-                      marginRight: '10px',
-                    }}
-                >
-                  Cancel
-                </button>
-            ) : (
-                <button
-                    onClick={handleEditClick}
-                    style={{
-                      padding: '10px 20px',
-                      backgroundColor: '#151717',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '5px',
-                      fontWeight: 'bold',
-                      cursor: 'pointer',
-                    }}
-                >
-                  Edit
-                </button>
-            )}
-          </div>
-        </div>
-      </div>
-  );
+    );
 };
 
 export default EmployerProfile;

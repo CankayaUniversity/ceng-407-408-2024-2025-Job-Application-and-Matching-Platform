@@ -56,6 +56,8 @@ function NavbarCustom() {
             <Nav.Link href="/candidate/blog" className="text-dark fw-medium">Blog</Nav.Link>
             <Nav.Link href="/candidate/interviews" className="text-dark fw-medium">Interviews</Nav.Link>
             <Nav.Link href="/candidate/my-jobs" className="text-dark fw-medium">My Applications</Nav.Link>
+            <Nav.Link href="/employer/offers" className="text-dark fw-medium">My Offers</Nav.Link>
+
           </Nav>
         </div>
 

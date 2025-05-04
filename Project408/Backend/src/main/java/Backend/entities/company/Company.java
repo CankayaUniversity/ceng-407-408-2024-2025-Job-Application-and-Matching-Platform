@@ -42,7 +42,7 @@ public class Company extends BaseEntity {
     private String industry;
 
     @Column(name = "employee_count")
-    private int employeeCount;
+    private String employeeCount;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonManagedReference("employers") // Prevents circular references during serialization
@@ -120,11 +120,11 @@ public class Company extends BaseEntity {
         this.industry = industry;
     }
 
-    public int getEmployeeCount() {
+    public String getEmployeeCount() {
         return employeeCount;
     }
 
-    public void setEmployeeCount(int employeeCount) {
+    public void setEmployeeCount(String employeeCount) {
         this.employeeCount = employeeCount;
     }
 

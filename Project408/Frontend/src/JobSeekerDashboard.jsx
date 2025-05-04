@@ -604,8 +604,8 @@ export default function JobSeekerDashboard() {
         return;
       }
 
-      const response = await fetch('http://localhost:9090/candidate/createProfile', {
-        method: 'POST',
+      const response = await fetch('http://localhost:9090/candidate/updateProfile', {
+        method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
