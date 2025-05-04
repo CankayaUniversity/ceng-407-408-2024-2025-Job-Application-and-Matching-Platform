@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { useUser } from './UserContext.jsx';
 
 export default function JobSeekerDashboard() {
   const [showForm, setShowForm] = useState(false);
@@ -8,6 +9,8 @@ export default function JobSeekerDashboard() {
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedCountryId, setSelectedCountryId] = useState(null);
+
+  const { user } = useUser();
 
   const [profileData, setProfileData] = useState({
     profileDetails: {
@@ -555,8 +558,11 @@ export default function JobSeekerDashboard() {
               style={{backgroundColor: "#000842", borderRadius: "15px", padding: "10px"}}
               className="bg-blue-900 text-white p-6 rounded-lg space-y-4 flex flex-col items-center shadow-md">
                 {/* Profil Foto */}
-                <img src="/profile-placeholder.png" alt="Profile" className="w-24 h-24 rounded-full border-4 border-white" />
-                <h2 className="text-xl font-bold">Name Surname</h2>
+                {/* <img 
+                src={avatarUrl}
+                alt="Profile" className="w-24 h-24 rounded-full border-4 border-white"/> */}
+                <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-full border-4 border-white"/>
+                <h2 className="text-xl font-bold">{user.name} {user.surname}</h2>
                 <p className="text-gray-300">Job Title</p>
 
                 {/* Bilgi listesi */}

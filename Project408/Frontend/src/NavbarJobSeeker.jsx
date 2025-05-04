@@ -1,6 +1,6 @@
 import { FaSearch, FaBell } from 'react-icons/fa';
 import { Navbar, Nav, Container, FormControl, Button, Dropdown } from 'react-bootstrap';
-
+import { useUser } from './UserContext.jsx';
 
 function NavbarCustom() {
 
@@ -9,6 +9,8 @@ function NavbarCustom() {
     localStorage.removeItem('userType');
     navigate('/login');
   };
+
+  const { user } = useUser();
   
 
   return (
@@ -49,7 +51,7 @@ function NavbarCustom() {
             <Dropdown.Toggle 
             style={{ backgroundColor: '#0C21C1', borderColor: '#0C21C1' }}
             variant="primary" className="rounded-pill px-3 py-1 text-white fw-medium">
-              İrem
+              {user.name}
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
