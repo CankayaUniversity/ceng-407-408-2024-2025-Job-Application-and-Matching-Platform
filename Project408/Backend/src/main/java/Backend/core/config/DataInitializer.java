@@ -53,10 +53,11 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         // Temporarily comment out all initialization to isolate issues
         System.out.println("🔍 Data initialization skipped for troubleshooting");
-
+        if(employerRepository.count() == 0) {
             initializeCountries();
             initializeEmployer();
             initializeCandidate();
+        }
 
 
     }
