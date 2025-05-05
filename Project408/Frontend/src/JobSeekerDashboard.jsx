@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import axios from "axios";
+import { useUser } from './UserContext.jsx';
 
 export default function JobSeekerDashboard() {
   const [showForm, setShowForm] = useState(false);
@@ -10,15 +10,17 @@ export default function JobSeekerDashboard() {
   const [cities, setCities] = useState([]);
   const [selectedCountryId, setSelectedCountryId] = useState(null);
 
+  const { user } = useUser();
+
   const [profileData, setProfileData] = useState({
     profileDetails: {
       aboutMe: '',
-      nationality: null,
-      gender: null,
-      militaryStatus: null,
+      nationality: '',
+      gender: '',
+      militaryStatus: '',
       militaryDefermentDate: '',
-      disabilityStatus: null,
-      maritalStatus: null,
+      disabilityStatus: '',
+      maritalStatus: '',
       currentEmploymentStatus: false,
       drivingLicense: false,
       isPrivateProfile: false,
@@ -37,12 +39,12 @@ export default function JobSeekerDashboard() {
     },
     contactInformation: {
       phoneNumber: '',
-      country: null,
-      city: null
+      country: '',
+      city: ''
     },
     jobPreferences: {
-      preferredPositions: [{ positionType: null , customJobPosition: { positionName: '' } }],
-      preferredWorkType: null,
+      preferredPositions: [{ positionType: '' }],
+      preferredWorkType: '',
       minWorkHour: 0,
       maxWorkHour: 0,
       canTravel: false,
@@ -60,10 +62,10 @@ export default function JobSeekerDashboard() {
     languageProficiency: [
       {
         language: '',
-        readingLevel: null,
-        writingLevel: null,
-        speakingLevel: null,
-        listeningLevel: null
+        readingLevel: '',
+        writingLevel: '',
+        speakingLevel: '',
+        listeningLevel: ''
       }
     ],
     hobbies: [
@@ -72,24 +74,24 @@ export default function JobSeekerDashboard() {
         description: ''
       }
     ],
-    education: {
-      degreeType: null,
-      associateDepartment: null,
+    education: [{
+      degreeType: '',
+      associateDepartment: '',
       associateStartDate: '',
       associateEndDate: '',
       associateIsOngoing: false,
-      bachelorDepartment: null,
+      bachelorDepartment: '',
       bachelorStartDate: '',
       bachelorEndDate: '',
       bachelorIsOngoing: false,
-      masterDepartment: null,
+      masterDepartment: '',
       masterStartDate: '',
       masterEndDate: '',
       masterIsOngoing: false,
       masterThesisTitle: '',
       masterThesisDescription: '',
       masterThesisUrl: '',
-      doctorateDepartment: null,
+      doctorateDepartment: '',
       doctorateStartDate: '',
       doctorateEndDate: '',
       doctorateIsOngoing: false,
@@ -97,16 +99,16 @@ export default function JobSeekerDashboard() {
       doctorateThesisDescription: '',
       doctorateThesisUrl: '',
       isDoubleMajor: false,
-      doubleMajorDepartment: null,
+      doubleMajorDepartment: '',
       doubleMajorStartDate: '',
       doubleMajorEndDate: '',
       doubleMajorIsOngoing: false,
       isMinor: false,
-      minorDepartment: null,
+      minorDepartment: '',
       minorStartDate: '',
       minorEndDate: '',
       minorIsOngoing: false
-    },
+    }],
     certifications: [
       {
         certificationName: '',
@@ -121,7 +123,7 @@ export default function JobSeekerDashboard() {
         industry: '',
         jobTitle: '',
         jobDescription: '',
-        employmentType: null,
+        employmentType: '',
         startDate: '',
         endDate: '',
         isGoing: false
@@ -138,8 +140,8 @@ export default function JobSeekerDashboard() {
     uploadedDocuments: [
       {
         documentName: '',
-        documentType: null,
-        documentCategory: null,
+        documentType: '',
+        documentCategory: '',
         documentUrl: '',
         isPrivate: false
       }
@@ -147,7 +149,7 @@ export default function JobSeekerDashboard() {
     skills: [
       {
         skillName: '',
-        skillLevel: null
+        skillLevel: ''
       }
     ],
     projects: [
@@ -156,9 +158,9 @@ export default function JobSeekerDashboard() {
         projectDescription: '',
         projectStartDate: '',
         projectEndDate: '',
-        projectStatus: null,
+        projectStatus: '',
         isPrivate: false,
-        company: null
+        company: ''
       }
     ]
   });
@@ -226,33 +228,6 @@ export default function JobSeekerDashboard() {
         .catch((err) => console.error("Şehir verisi alınamadı:", err));
   }, [selectedCountryId]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const id =localStorage.getItem('id');
-    if (!token && !id) {
-      console.log('User not logged in');
-      return;
-    }
-
-
-    fetch(`http://localhost:9090/candidate/profile/${id}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    })
-        .then(res => res.json())
-        .then(data => {
-          console.log(data);
-          setProfileData(data);
-        })
-        .catch(err => console.error("Unable to fetch profile", err));
-
-
-  }, []);
-
-
   const addReference = () => {
     setProfileData({
       ...profileData,
@@ -284,10 +259,10 @@ export default function JobSeekerDashboard() {
         ...profileData. languageProficiency,
         {
           language: '',
-          readingLevel: null,
-          writingLevel: null,
-          speakingLevel: null,
-          listeningLevel: null
+          readingLevel: '',
+          writingLevel: '',
+          speakingLevel: '',
+          listeningLevel: ''
         }
       ]
     });
@@ -318,108 +293,51 @@ export default function JobSeekerDashboard() {
       hobbies: prevData.hobbies.filter((_, i) => i !== index),
     }));
   };
-
-
   const addEducation = () => {
-    setProfileData((prevData) => {
-      const updatedEducation = { ...prevData.education };
+    // Eğer education dizisi mevcut değilse, bir dizi olarak başlatıyoruz
+    const updatedEducation = Array.isArray(profileData.education) ? [...profileData.education] : [];
 
-      // Degree Type'a göre eğitim ekle
-      if (updatedEducation.degreeType === 'ASSOCIATE') {
-        updatedEducation.associateDepartment = null;
-        updatedEducation.associateStartDate = '';
-        updatedEducation.associateEndDate = '';
-        updatedEducation.associateIsOngoing = false;
-      } else if (updatedEducation.degreeType === 'BACHELOR') {
-        updatedEducation.bachelorDepartment =null;
-        updatedEducation.bachelorStartDate = '';
-        updatedEducation.bachelorEndDate = '';
-        updatedEducation.bachelorIsOngoing = false;
-      } else if (updatedEducation.degreeType === 'MASTER') {
-        updatedEducation.masterDepartment = null;
-        updatedEducation.masterStartDate = '';
-        updatedEducation.masterEndDate = '';
-        updatedEducation.masterIsOngoing = false;
-        updatedEducation.masterThesisTitle = '';
-        updatedEducation.masterThesisDescription = '';
-        updatedEducation.masterThesisUrl = '';
-      } else if (updatedEducation.degreeType === 'DOCTORATE') {
-        updatedEducation.doctorateDepartment =null;
-        updatedEducation.doctorateStartDate = '';
-        updatedEducation.doctorateEndDate = '';
-        updatedEducation.doctorateIsOngoing = false;
-        updatedEducation.doctorateThesisTitle = '';
-        updatedEducation.doctorateThesisDescription = '';
-        updatedEducation.doctorateThesisUrl = '';
-      } else if (updatedEducation.degreeType=== 'DOUBLE_MAJOR') {
-        updatedEducation.isDoubleMajor=true;
-        updatedEducation.doubleMajorDepartment = null;
-        updatedEducation.doubleMajorStartDate = '';
-        updatedEducation.doubleMajorEndDate = '';
-        updatedEducation.doubleMajorIsOngoing = false;
-      } else if (updatedEducation.degreeType==='MINOR') {
-        updatedEducation.isMinor=true;
-        updatedEducation.minorDepartment = null;
-        updatedEducation.minorStartDate = '';
-        updatedEducation.minorEndDate = '';
-        updatedEducation.minorIsOngoing = false;
-      }
-
-      return {
-        ...prevData,
-        education: updatedEducation,
-      };
+    // Yeni eğitim verisini ekliyoruz
+    updatedEducation.push({
+      degreeType: '',
+      associateDepartment: '',
+      associateStartDate: '',
+      associateEndDate: '',
+      associateIsOngoing: false,
+      bachelorDepartment: '',
+      bachelorStartDate: '',
+      bachelorEndDate: '',
+      bachelorIsOngoing: false,
+      masterDepartment: '',
+      masterStartDate: '',
+      masterEndDate: '',
+      masterIsOngoing: false,
+      masterThesisTitle: '',
+      masterThesisDescription: '',
+      masterThesisUrl: '',
+      doctorateDepartment: '',
+      doctorateStartDate: '',
+      doctorateEndDate: '',
+      doctorateIsOngoing: false,
+      doctorateThesisTitle: '',
+      doctorateThesisDescription: '',
+      doctorateThesisUrl: '',
+      isDoubleMajor: false,
+      doubleMajorDepartment: '',
+      doubleMajorStartDate: '',
+      doubleMajorEndDate: '',
+      doubleMajorIsOngoing: false,
+      isMinor: false,
+      minorDepartment: '',
+      minorStartDate: '',
+      minorEndDate: '',
+      minorIsOngoing: false
     });
-  };
 
-  const removeEducation = () => {
-    setProfileData((prevData) => {
-      const updatedEducation = { ...prevData.education };
-
-      // Degree Type'a göre eğitim sil
-      if (updatedEducation.degreeType === 'ASSOCIATE') {
-        updatedEducation.associateDepartment = null;
-        updatedEducation.associateStartDate = '';
-        updatedEducation.associateEndDate = '';
-        updatedEducation.associateIsOngoing = false;
-      } else if (updatedEducation.degreeType === 'BACHELOR') {
-        updatedEducation.bachelorDepartment = null;
-        updatedEducation.bachelorStartDate = '';
-        updatedEducation.bachelorEndDate = '';
-        updatedEducation.bachelorIsOngoing = false;
-      } else if (updatedEducation.degreeType === 'MASTER') {
-        updatedEducation.masterDepartment = null;
-        updatedEducation.masterStartDate = '';
-        updatedEducation.masterEndDate = '';
-        updatedEducation.masterIsOngoing = false;
-        updatedEducation.masterThesisTitle = '';
-        updatedEducation.masterThesisDescription = '';
-        updatedEducation.masterThesisUrl = '';
-      } else if (updatedEducation.degreeType === 'DOCTORATE') {
-        updatedEducation.doctorateDepartment = null;
-        updatedEducation.doctorateStartDate = '';
-        updatedEducation.doctorateEndDate = '';
-        updatedEducation.doctorateIsOngoing = false;
-        updatedEducation.doctorateThesisTitle = '';
-        updatedEducation.doctorateThesisDescription = '';
-        updatedEducation.doctorateThesisUrl = '';
-      } else if (updatedEducation.isDoubleMajor) {
-        updatedEducation.doubleMajorDepartment = null;
-        updatedEducation.doubleMajorStartDate = '';
-        updatedEducation.doubleMajorEndDate = '';
-        updatedEducation.doubleMajorIsOngoing = false;
-      } else if (updatedEducation.isMinor) {
-        updatedEducation.minorDepartment =null;
-        updatedEducation.minorStartDate = '';
-        updatedEducation.minorEndDate = '';
-        updatedEducation.minorIsOngoing = false;
-      }
-
-      return {
-        ...prevData,
-        education: updatedEducation,
-      };
-    });
+    setProfileData(prevState => ({
+      ...prevState,
+      education: updatedEducation
+    }));
   };
 
 
@@ -464,7 +382,7 @@ export default function JobSeekerDashboard() {
           industry: '',
           jobTitle: '',
           jobDescription: '',
-          employmentType: null,  // Enum type: 'FULL_TIME', 'PART_TIME', 'CONTRACT', 'FREELANCE'
+          employmentType: '',  // Enum type: 'FULL_TIME', 'PART_TIME', 'CONTRACT', 'FREELANCE'
           startDate: '',
           endDate: '',
           isGoing: false
@@ -505,7 +423,7 @@ export default function JobSeekerDashboard() {
         {
           documentName: "",
           documentType: "",
-          documentCategory: null,
+          documentCategory: "",
           documentUrl: "",
           isPrivate: false,
         }
@@ -593,39 +511,13 @@ export default function JobSeekerDashboard() {
     });
   };
 
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.log("Kullanıcı giriş yapmamış");
-        return;
-      }
-
-      const response = await fetch('http://localhost:9090/candidate/updateProfile', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(profileData)
-      });
-
-      if (!response.ok) {
-        throw new Error('Profil oluşturulamadı');
-      }
-
-      const data = await response.json();
-      console.log('Profil başarıyla oluşturuldu:', data);
-
-      // Başarılıysa pencere kapat veya yönlendir
-    } catch (error) {
-      console.error('Hata:', error);
-    }
+    console.log('Form gönderildi:', formData); // Burada API'ye gönderebilirsin.
+  
+    // Form başarılıysa pencereyi kapat:
+    onClose();
   };
-
 
 
   const handleCloseForm = () => {
@@ -634,55 +526,9 @@ export default function JobSeekerDashboard() {
     setFormKey((prev) => prev + 1);  // Formu resetlemek için key değiştiriyoruz
     setShowForm(false);  // Formu kapatıyoruz
   };
+  
+  
 
-  const handlePositionSelectChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-
-    const updatedPreferredPositions = selectedOptions.map(positionType => {
-      if (positionType === "CUSTOM") {
-        // Önceki custom değer varsa onu koru
-        const existingCustom = profileData.jobPreferences.preferredPositions.find(pos => pos.positionType === "CUSTOM");
-        return {
-          positionType: "CUSTOM",
-          customJobPosition: { positionName: existingCustom?.customJobPosition?.positionName || '' }
-        };
-      } else {
-        return {
-          positionType,
-          customJobPosition: { positionName: '' }
-        };
-      }
-    });
-
-    setProfileData(prev => ({
-      ...prev,
-      jobPreferences: {
-        ...prev.jobPreferences,
-        preferredPositions: updatedPreferredPositions
-      }
-    }));
-  };
-  const handleCustomPositionChange = (e) => {
-    const customName = e.target.value;
-
-    const updatedPreferredPositions = profileData.jobPreferences.preferredPositions.map(pos => {
-      if (pos.positionType === "CUSTOM") {
-        return {
-          ...pos,
-          customJobPosition: { positionName: customName }
-        };
-      }
-      return pos;
-    });
-
-    setProfileData(prev => ({
-      ...prev,
-      jobPreferences: {
-        ...prev.jobPreferences,
-        preferredPositions: updatedPreferredPositions
-      }
-    }));
-  };
 
 
   return (
@@ -705,76 +551,63 @@ export default function JobSeekerDashboard() {
           className="flex max-w-6xl mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
             {/* Sol Lacivert Sidebar */}
             <div
-                style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
-                className="w-1/3 bg-gray-100 p-4 rounded-lg">
+            style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+            className="w-1/3 bg-gray-100 p-4 rounded-lg">
               {/* Lacivert içerik kutusu */}
-              <div
-                  style={{backgroundColor: "#000842", borderRadius: "15px", padding: "10px"}}
-                  className="bg-blue-900 text-white p-6 rounded-lg space-y-4 flex flex-col items-center shadow-md">
+              <div 
+              style={{backgroundColor: "#000842", borderRadius: "15px", padding: "10px"}}
+              className="bg-blue-900 text-white p-6 rounded-lg space-y-4 flex flex-col items-center shadow-md">
                 {/* Profil Foto */}
-                <img src="/profile-placeholder.png" alt="Profile"
-                     className="w-24 h-24 rounded-full border-4 border-white"/>
-                <h2 className="text-xl font-bold">Name Surname</h2>
+                {/* <img 
+                src={avatarUrl}
+                alt="Profile" className="w-24 h-24 rounded-full border-4 border-white"/> */}
+                <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-full border-4 border-white"/>
+                <h2 className="text-xl font-bold">{user.name} {user.surname}</h2>
                 <p className="text-gray-300">Job Title</p>
 
                 {/* Bilgi listesi */}
                 <div className="space-y-2 text-sm w-full">
-                  <p><strong>Nationality:</strong> {profileData.profileDetails?.nationality || '-'}</p>
-                  <p><strong>Currently
-                    Working:</strong> {profileData.profileDetails?.currentEmploymentStatus ? 'Yes' : 'No'}</p>
-                  <p><strong>Phone:</strong> {profileData.contactInformation?.phoneNumber || '-'}</p>
-                  <p>
-                    <strong>Location:</strong> {profileData.contactInformation?.city?.name || '-'}, {profileData.contactInformation?.country?.name || '-'}
-                  </p>
-                  <p><strong>Gender:</strong> {profileData.profileDetails?.gender || '-'}</p>
-                  <p><strong>Military Status:</strong> {profileData.profileDetails?.militaryStatus || '-'}</p>
-
-                  {profileData.profileDetails?.militaryStatus === "DEFERRED" && (
-                      <p><strong>Military Deferment
-                        Date:</strong> {profileData.profileDetails?.militaryDefermentDate || '-'}</p>
+                  <p><strong>Nationality:</strong> {profileData.profileDetails.nationality || '-'}</p>
+                  <p><strong>Currently Working:</strong> {profileData.profileDetails.currentEmploymentStatus ? 'Yes' : 'No'}</p>
+                  <p><strong>Phone:</strong> {profileData.contactInformation.phoneNumber || '-'}</p>
+                  <p><strong>Location:</strong> {profileData.contactInformation.city || '-'}, {profileData.contactInformation.country || '-'}</p>
+                  <p><strong>Gender:</strong> {profileData.profileDetails.gender || '-'}</p>
+                  <p><strong>Military Status:</strong> {profileData.profileDetails.militaryStatus || '-'}</p>
+                  
+                  {profileData.profileDetails.militaryStatus === "DEFERRED" && (
+                    <p><strong>Military Deferment Date:</strong> {profileData.profileDetails.militaryDefermentDate || '-'}</p>
                   )}
 
-                  <p><strong>Disability Status:</strong> {profileData.profileDetails?.disabilityStatus || '-'}</p>
-                  <p><strong>Marital Status:</strong> {profileData.profileDetails?.maritalStatus || '-'}</p>
-                  <p><strong>Driving License:</strong> {profileData.profileDetails?.drivingLicense ? 'Yes' : 'No'}</p>
-                  <p><strong>Profile
-                    Privacy:</strong> {profileData.profileDetails?.isPrivateProfile ? 'Private' : 'Public'}</p>
-                  <p><strong>Github:</strong> {profileData.socialLinks?.githubUrl || '-'}</p>
-                  <p><strong>LinkedIn:</strong> {profileData.socialLinks?.linkedinUrl || '-'}</p>
-                  <p><strong>Portfolio:</strong> {profileData.socialLinks?.websiteUrl || '-'}</p>
+                  <p><strong>Disability Status:</strong> {profileData.profileDetails.disabilityStatus || '-'}</p>
+                  <p><strong>Marital Status:</strong> {profileData.profileDetails.maritalStatus || '-'}</p>
+                  <p><strong>Driving License:</strong> {profileData.profileDetails.drivingLicense ? 'Yes' : 'No'}</p>
+                  <p><strong>Profile Privacy:</strong> {profileData.profileDetails.isPrivateProfile ? 'Private' : 'Public'}</p>
+                  <p><strong>Github:</strong> {profileData.socialLinks.githubUrl || '-'}</p>
+                  <p><strong>LinkedIn:</strong> {profileData.socialLinks.linkedinUrl || '-'}</p>
+                  <p><strong>Portfolio:</strong> {profileData.socialLinks.websiteUrl || '-'}</p>
                 </div>
 
-              </div>
-              <div className="text-center mt-3">
-                <button
-                    style={{backgroundColor: '#0C21C1', borderColor: '#0C21C2'}}
-                    onClick={handleSubmit}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Save Changes
-                </button>
               </div>
             </div>
 
 
             {/* Sağ Taraftaki Bilgi Alanları */}
-            <div
-                style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
-                className="w-2/3 bg-gray-100 p-4 rounded-lg">
-              {/* İç Beyaz Kutu */}
-              <div style={{borderRadius: "15px", padding: "10px"}}
-                   className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+            <div 
+            style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+            className="w-2/3 bg-gray-100 p-4 rounded-lg">
+            {/* İç Beyaz Kutu */}
+            <div style={{borderRadius: "15px", padding: "10px"}} className="bg-white p-8 rounded-lg space-y-6 shadow-md">
               
               {/* About Me */}
               <div>
                 <h3 className="text-lg font-semibold mb-2">About Me</h3>
-                <p className="text-gray-700">{profileData.profileDetails?.aboutMe || '-'}</p>
+                <p className="text-gray-700">{profileData.profileDetails.aboutMe || '-'}</p>
               </div>
 
               {/* Work Experiences */}
               <div>
                 <h3 className="text-lg font-semibold mb-2">Work Experiences</h3>
-                {profileData.workExperiences?.length > 0 && profileData.workExperiences[0].companyName ? (
+                {profileData.workExperiences.length > 0 && profileData.workExperiences[0].companyName ? (
                   profileData.workExperiences.map((exp, idx) => (
                     <div key={idx} className="border-b pb-2 mb-2">
                       <p className="font-semibold">{exp.companyName}</p>
@@ -790,7 +623,7 @@ export default function JobSeekerDashboard() {
               {/* Education */}
               <div>
                 <h3 className="text-lg font-semibold mb-2">Education</h3>
-                {profileData.education?.length > 0 && profileData.education[0].bachelorDepartment ? (
+                {profileData.education.length > 0 && profileData.education[0].bachelorDepartment ? (
                   <div className="border-b pb-2">
                     <p><strong>Bachelor:</strong> {profileData.education[0].bachelorDepartment} ({profileData.education[0].bachelorStartDate} - {profileData.education[0].bachelorIsOngoing ? 'Present' : profileData.education[0].bachelorEndDate})</p>
                     {profileData.education[0].masterDepartment && (
@@ -805,9 +638,9 @@ export default function JobSeekerDashboard() {
               {/* Skills */}
               <div>
                 <h3 className="text-lg font-semibold mb-2">Skills</h3>
-                {profileData.skills?.length > 0 && profileData.skills[0].skillName ? (
+                {profileData.skills.length > 0 && profileData.skills[0].skillName ? (
                   <div className="flex flex-wrap gap-2">
-                    {profileData.skills?.map((skill, idx) => (
+                    {profileData.skills.map((skill, idx) => (
                       <span key={idx} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">{skill.skillName} ({skill.skillLevel})</span>
                     ))}
                   </div>
@@ -819,7 +652,7 @@ export default function JobSeekerDashboard() {
               {/* Languages */}
               <div>
                 <h3 className="text-lg font-semibold mb-2">Language Proficiency</h3>
-                {profileData.languageProficiency?.length > 0 && profileData.languageProficiency[0].language ? (
+                {profileData.languageProficiency.length > 0 && profileData.languageProficiency[0].language ? (
                   profileData.languageProficiency.map((lang, idx) => (
                     <div key={idx} className="border-b pb-2 mb-2">
                       <p className="font-semibold">{lang.language}</p>
@@ -834,7 +667,7 @@ export default function JobSeekerDashboard() {
               {/* Certifications */}
               <div>
                 <h3 className="text-lg font-semibold mb-2">Certifications</h3>
-                {profileData.certifications?.length > 0 && profileData.certifications[0].certificationName ? (
+                {profileData.certifications.length > 0 && profileData.certifications[0].certificationName ? (
                   profileData.certifications.map((cert, idx) => (
                     <div key={idx} className="border-b pb-2 mb-2">
                       <p className="font-semibold">{cert.certificationName}</p>
@@ -865,7 +698,7 @@ export default function JobSeekerDashboard() {
               {/* Exams & Achievements */}
               <div>
                 <h3 className="text-lg font-semibold mb-2">Exams & Achievements</h3>
-                {profileData.examsAndAchievements?.length > 0 && profileData.examsAndAchievements[0].examName ? (
+                {profileData.examsAndAchievements.length > 0 && profileData.examsAndAchievements[0].examName ? (
                   profileData.examsAndAchievements.map((exam, idx) => (
                     <div key={idx} className="border-b pb-2 mb-2">
                       <p className="font-semibold">{exam.examName} ({exam.examYear})</p>
@@ -880,7 +713,7 @@ export default function JobSeekerDashboard() {
               {/* Hobbies */}
               <div>
                 <h3 className="text-lg font-semibold mb-2">Hobbies</h3>
-                {profileData.hobbies?.length > 0 && profileData.hobbies[0].hobbyName ? (
+                {profileData.hobbies.length > 0 && profileData.hobbies[0].hobbyName ? (
                   profileData.hobbies.map((hobby, idx) => (
                     <div key={idx} className="border-b pb-2 mb-2">
                       <p className="font-semibold">{hobby.hobbyName}</p>
@@ -921,9 +754,10 @@ export default function JobSeekerDashboard() {
               transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
             >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Update Profile Informations</h2>
+              <h2 className="text-xl font-semibold">Profil Bilgilerini Güncelle</h2>
               <button onClick={() => setShowForm(false)} className="text-gray-500 hover:text-gray-700">✕</button>
             </div>
+            <p>Burada profil detaylarını güncelleyebilirsin!</p>
                 <div className="space-y-6">
                   <h3 className="text-xl font-semibold text-black mb-0">Profile Details</h3>
 
@@ -935,13 +769,11 @@ export default function JobSeekerDashboard() {
                       className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                   />
 
+                  {/* Profile Picture */}
                   <div className="relative w-full flex items-center space-x-4 mb-0">
                     <div className="flex-1 mb-0">
                       <div className="w-full border border-gray-300 p-3 rounded-md bg-white text-black">
-                        <label
-                            htmlFor="profilePicture"
-                            className="text-sm font-semibold text-gray-500"
-                        >
+                        <label htmlFor="profilePicture" className="text-sm font-semibold text-gray-500">
                           Profile Picture
                         </label>
                       </div>
@@ -951,14 +783,12 @@ export default function JobSeekerDashboard() {
                           type="file"
                           id="profilePicture"
                           accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            handleProfileFieldChange(['profileDetails', 'profilePicture'], file);
-                          }}
-                          className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 mb-0"
+                          onChange={(e) => handleProfileFieldChange(['profileDetails', 'profilePicture'], e.target.files[0])}
+                          className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500  text-sm"
                       />
                     </div>
                   </div>
+
                   {/* Birth Date */}
                   <div className="relative w-full flex items-center space-x-4 mb-0">
                     <div className="flex-1 mb-0">
@@ -1095,7 +925,7 @@ export default function JobSeekerDashboard() {
                             className="border-gray-300"
                         />
                         <span className="text-sm "> Has Driving License</span>
-                      </div>
+                    </div>
 
                       {/* Private Profile Checkbox */}
                       <div className="flex-1 mb-0">
@@ -1129,23 +959,23 @@ export default function JobSeekerDashboard() {
 
             {/* Step 2: Social Links Section */}
             {currentStep === 2 && showForm && (
-                <motion.div
-                    key={currentStep}
-                    custom={direction} // ileri veya geri
-                    initial={{x: direction === 1 ? '100%' : '-100%', opacity: 0}}
-                    animate={{x: 0, opacity: 1}}
-                    exit={{x: direction === 1 ? '-100%' : '100%', opacity: 0}}
-                    transition={{type: 'tween', ease: 'easeInOut', duration: 0.4}}
-                >
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold">Social Links</h3>
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold">Social Links</h3>
 
-                    <input
-                        type="text"
-                        placeholder="GitHub URL"
-                        value={profileData.socialLinks.githubUrl}
-                        onChange={(e) => handleProfileFieldChange(['socialLinks', 'githubUrl'], e.target.value)}
-                        className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
+                  <input
+                      type="text"
+                      placeholder="GitHub URL"
+                      value={profileData.socialLinks.githubUrl}
+                      onChange={(e) => handleProfileFieldChange(['socialLinks', 'githubUrl'], e.target.value)}
+                      className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                   />
 
                   <input
@@ -1283,50 +1113,9 @@ export default function JobSeekerDashboard() {
               transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
             >
                 <div className="space-y-6">
-                  <div>
-                    <select
-                        multiple
-                        value={profileData.jobPreferences.preferredPositions.map(pos => pos.positionType)}
-                        onChange={handlePositionSelectChange}
-                        className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none mt-3 font-size:14px"
-                    >
-                      <option value="" disabled>Preferred Positions</option>
-                      <option value="SOFTWARE_ENGINEER" className="border border-gray-300 p-2hover:bg-blue-200 " >Software
-                        Engineer
-                      </option>
-                      <option value="FRONTEND_DEVELOPER" className="border border-gray-300 p-2 hover:bg-blue-200">Frontend
-                        Developer
-                      </option>
-                      <option value="BACKEND_DEVELOPER" className="border border-gray-300 p-2 hover:bg-blue-200">Backend
-                        Developer
-                      </option>
-                      <option value="MOBILE_DEVELOPER" className="border border-gray-300 p-2 hover:bg-blue-200">Mobile
-                        Developer
-                      </option>
-                      <option value="GAME_DEVELOPER" className="border border-gray-300 p-2 hover:bg-blue-200">Game
-                        Developer
-                      </option>
-                      <option value="EMBEDDED_SOFTWARE_ENGINEER"
-                              className="border border-gray-300 p-2 hover:bg-blue-200">Embedded Software Engineer
-                      </option>
-                      <option value="CUSTOM" className="border border-gray-300 p-2 hover:bg-blue-200">Custom Position
-                      </option>
-                    </select>
+                  <h3 className="text-xl font-semibold">Job Preferences</h3>
 
-                    {/* Eğer "Custom" seçeneği seçildiyse input alanı göster */}
-                    {profileData.jobPreferences.preferredPositions.some(pos => pos.positionType === "CUSTOM") && (
-                        <div>
-                          <input
-                              type="text"
-                              value={profileData.jobPreferences.preferredPositions.find(pos => pos.positionType === "CUSTOM")?.customJobPosition?.positionName || ''}
-                              onChange={handleCustomPositionChange}
-                              className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
-                              placeholder="Enter Custom Job Position"
-                          />
-                        </div>
-                    )}
-                  </div>
-
+                  { /*List<JobPositions> preferredPositions; eklemeyi unutma */}
 
                   {/* Preferred Work Type */}
                   <select
@@ -1404,52 +1193,48 @@ export default function JobSeekerDashboard() {
                   <div>
                     <br/>
                     <div style={{textAlign: 'right'}}>
-                      <div className="flex justify-between">
-                        <button onClick={handleBackStep}
-                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
-                        </button>
-                        <div className="flex justify-end">
-                          <button onClick={handleNextStep}
-                                  className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
-                          </button>
-                        </div>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
                       </div>
+                    </div>
                     </div>
                   </div>
                 </div>
-              </motion.div>
+                </motion.div>
             )}
             {currentStep === 5 && (
-                <motion.div
-                    key={currentStep}
-                    custom={direction} // ileri veya geri
-                    initial={{x: direction === 1 ? '100%' : '-100%', opacity: 0}}
-                    animate={{x: 0, opacity: 1}}
-                    exit={{x: direction === 1 ? '-100%' : '100%', opacity: 0}}
-                    transition={{type: 'tween', ease: 'easeInOut', duration: 0.4}}
-                >
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold">References</h3>
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+            >
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold">References</h3>
 
-                    {/* List of References */}
-                    {profileData.references.map((reference, index) => (
-                        <div key={index} className="space-y-4 mt-6">
-                          <div className="relative w-full flex items-center space-x-4">
-                            <div className="flex-1 mb-0">
-                              <input
-                                  type="text"
-                                  value={reference.referenceName}
-                                  onChange={(e) => handleProfileFieldChange(['references', index, 'referenceName'], e.target.value)}
-                                  placeholder="Reference Name"
-                                  className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
-                              />
-                            </div>
+                  {/* List of References */}
+                  {profileData.references.map((reference, index) => (
+                      <div key={index} className="space-y-4 mt-6">
+                        <div className="relative w-full flex items-center space-x-4">
+                          <div className="flex-1 mb-0">
+                            <input
+                                type="text"
+                                value={reference.referenceName}
+                                onChange={(e) => handleProfileFieldChange(['references', index, 'referenceName'], e.target.value)}
+                                placeholder="Reference Name"
+                                className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
+                            />
                           </div>
+                        </div>
 
-                          <div className="relative w-full flex items-center space-x-4">
-                            <div className="flex-1 mb-0">
-                              <input
-                                  type="text"
+                        <div className="relative w-full flex items-center space-x-4">
+                          <div className="flex-1 mb-0">
+                            <input
+                                type="text"
                                 value={reference.referenceJobTitle}
                                 onChange={(e) => handleProfileFieldChange(['references', index, 'referenceJobTitle'], e.target.value)}
                                 placeholder="Job Title"
@@ -1748,7 +1533,6 @@ export default function JobSeekerDashboard() {
 
                   {/* Degree Type */}
                   <select
-
                       value={profileData.education.degreeType}
                       onChange={(e) => handleProfileFieldChange(['education', 'degreeType'], e.target.value)}
                       className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
@@ -2216,51 +2000,38 @@ export default function JobSeekerDashboard() {
                         </div>
 
                       </div>
-
                   )}
 
                   <div>
-                    <div className="text-right mb-3">
-                      <button
-                          onClick={() => removeEducation()}
-                          className="text-red-600 text-sm "
-                      >
-                        Remove
-                      </button>
-                    </div>
                     <br/>
                     <button
                         type="button"
                         onClick={addEducation}
                         className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
                     >
-                      + Add Education
+                    + Add Education
                     </button>
 
                     <div style={{textAlign: 'right'}}>
-                      <div className="flex justify-between">
-                        <button onClick={handleBackStep}
-                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
-                        </button>
-                        <div className="flex justify-end">
-                          <button onClick={handleNextStep}
-                                  className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
-                          </button>
-                        </div>
+                    <div className="flex justify-between">
+                      <button onClick={handleBackStep} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back</button>
+                      <div className="flex justify-end">
+                        <button onClick={handleNextStep} className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
                       </div>
+                    </div>
                     </div>
                   </div>
 
                 </div>
 
-              </motion.div>
+                </motion.div>
             )}
             {currentStep === 9 && (
-                <motion.div
-                    key={currentStep}
-                    custom={direction} // ileri veya geri
-                    initial={{x: direction === 1 ? '100%' : '-100%', opacity: 0}}
-                    animate={{x: 0, opacity: 1 }}
+              <motion.div
+              key={currentStep}
+              custom={direction} // ileri veya geri
+              initial={{ x: direction === 1 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
               exit={{ x: direction === 1 ? '-100%' : '100%', opacity: 0 }}
               transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
             >
