@@ -47,7 +47,16 @@ public class EmployerService {
 
         Employer emp= employerRepository.findCompanyById(id);
         Company cmp= companyRepository.findById(company.getId()).get();
-        BeanUtils.copyProperties(company,cmp);
+        cmp.setCompanyName(company.getCompanyName());
+        cmp.setEmail(company.getEmail());
+        cmp.setPhoneNumber(company.getPhoneNumber());
+        cmp.setWebsiteUrl(company.getWebsiteUrl());
+        cmp.setVision(company.getVision());
+        cmp.setMission(company.getMission());
+        cmp.setEstablishedDate(company.getEstablishedDate());
+        cmp.setIndustry(company.getIndustry());
+        cmp.setEmployeeCount(company.getEmployeeCount());
+        cmp.setProjects(company.getProjects());
 
          companyRepository.save(cmp);
 

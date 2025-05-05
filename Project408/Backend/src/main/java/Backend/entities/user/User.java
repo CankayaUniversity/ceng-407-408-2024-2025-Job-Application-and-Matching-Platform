@@ -39,6 +39,7 @@ public class User extends BaseEntity implements UserDetails {
 
     //return user roles
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //return all roles
         return List.of(new SimpleGrantedAuthority(userType.name()));

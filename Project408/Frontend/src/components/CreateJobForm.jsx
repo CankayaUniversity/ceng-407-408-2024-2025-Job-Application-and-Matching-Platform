@@ -3,6 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CreateJobForm() {
   const [step, setStep] = useState(1);
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountryId, setSelectedCountryId] = useState(null);
+
   const [formData, setFormData] = useState({
     company: {
       companyName: '',
@@ -85,6 +89,38 @@ export default function CreateJobForm() {
         .catch((err) => console.error("No Profile Data Found", err));
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("Kullanıcı giriş yapmamış");
+      return;
+    }
+
+    fetch("http://localhost:9090/location/countries", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+        .then((res) => res.json())
+        .then((data) => setCountries(data))
+        .catch((err) => console.error("Ülke verisi alınamadı:", err));
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token || !selectedCountryId) return;
+
+    fetch(`http://localhost:9090/location/cities/${selectedCountryId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+        .then((res) => res.json())
+        .then((data) => setCities(data))
+        .catch((err) => console.error("Şehir verisi alınamadı:", err));
+  }, [selectedCountryId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,15 +162,15 @@ export default function CreateJobForm() {
     setDirection(-1);       // Yönü geri ayarla
     setStep((prev) => prev - 1);
   };
-  
-  
+
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({ 
-      ...formData, 
-      [name]: type === 'checkbox' ? checked : value 
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const addBenefits= () => {
@@ -294,13 +330,13 @@ export default function CreateJobForm() {
                           <span
                               className="font-medium text-gray-700">City:</span>{' '}
                               <span
-                                  className="text-gray-600">{formData.city || 'Not specified'}</span>
+                                  className="text-gray-600">{formData.city?.name || 'Not specified'}</span>
                             </p>
                             <p className="text-sm">
                           <span
                               className="font-medium text-gray-700">Country:</span>{' '}
                               <span
-                                  className="text-gray-600">{formData.country || 'Not specified'}</span>
+                                  className="text-gray-600">{formData.country?.name || 'Not specified'}</span>
                             </p>
                             <p className="text-sm">
                           <span
@@ -499,16 +535,40 @@ export default function CreateJobForm() {
                               <option value="FREELANCE">Freelance</option>
                             </select>
                           </label>
-                          <label className="block">
-                            <span className="text-gray-700">City</span>
-                            <input type="text" name="city" value={formData.city} onChange={handleChange}
-                                   className="mt-1 block w-full border border-gray-300 rounded-md bg-white text-black "/>
-                          </label>
-                          <label className="block">
-                            <span className="text-gray-700">Country</span>
-                            <input type="text" name="country" value={formData.country} onChange={handleChange}
-                                   className="mt-1 block w-full border border-gray-300 rounded-md bg-white text-black"/>
-                          </label>
+                          {/* Country */}
+                          <select
+                              name="country" // gerekli
+                              value={selectedCountryId || ""}
+                              onChange={(e) => {
+                                const countryId = e.target.value;
+                                setSelectedCountryId(countryId);
+                                handleChange(e); // Doğru çağrı
+                              }}
+                              className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
+                          >
+                            <option value="">Select Country</option>
+                            {countries.map((country) => (
+                                <option key={country.id} value={country.id}>
+                                  {country.name}
+                                </option>
+                            ))}
+                          </select>
+
+                          {/* City */}
+                          <select
+                              name="city" // gerekli
+                              value={formData.city || ""}
+                              onChange={handleChange}
+                              className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
+                          >
+                            <option value="">Select City</option>
+                            {cities.map((city) => (
+                                <option key={city.id} value={city.id}>
+                                  {city.name}
+                                </option>
+                            ))}
+                          </select>
+
                           <div className="flex space-x-4">
                             <label className="block flex-1">
                               <span className="text-gray-700">Min Work Hours</span>
