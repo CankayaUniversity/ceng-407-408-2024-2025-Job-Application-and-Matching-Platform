@@ -18,6 +18,9 @@ import ApplicationsPage from "./components/ApplicationsPage.jsx";
 import CandidateList from "./components/CandidateList.jsx";
 import EmployerProfile from "./components/EmployerProfile.jsx";
 import JobOffersEmployer from "./components/JobOffersEmployer.jsx";
+import Chat from './Chat';
+import Blog from './Blog';
+import PostDetail from './PostDetail';
 
 function App() {
   return (
@@ -44,7 +47,9 @@ function App() {
               <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs/>}/>
               <Route path="/employer/applications" element={<ApplicationsPage/>}/>
               <Route path="/candidates" element={<CandidateList />} />
-
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/post/:id" element={<PostDetail />} />
           </Route>
         </Route>
       </Routes>

@@ -10,7 +10,7 @@ export default function JobSeekerDashboard() {
   const [cities, setCities] = useState([]);
   const [selectedCountryId, setSelectedCountryId] = useState(null);
 
-  const { user } = useUser();
+  // const { user } = useUser();
 
   const [profileData, setProfileData] = useState({
     profileDetails: {
