@@ -37,6 +37,7 @@ public class JobCondition extends BaseEntity {
     @JsonBackReference ("jobadv")// Prevents circular references during serialization
     private JobAdv jobAdv;
 
+
     public WorkType getWorkType() {
         return workType;
     }

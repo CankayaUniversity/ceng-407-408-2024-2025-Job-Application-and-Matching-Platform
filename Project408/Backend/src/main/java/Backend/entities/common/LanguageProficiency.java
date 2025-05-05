@@ -31,6 +31,8 @@ public class LanguageProficiency extends BaseEntity {
     @Column(name = "listening_level")
     private LanguageLevel listeningLevel;
 
+
+
     public String getLanguage() {
         return language;
     }

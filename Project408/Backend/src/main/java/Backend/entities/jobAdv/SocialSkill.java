@@ -26,6 +26,7 @@ public class SocialSkill extends BaseEntity {
     @JoinColumn(name = "job_qualification_id")
     private JobQualification jobQualification;
 
+
     public String getPositionName() {
         return positionName;
     }

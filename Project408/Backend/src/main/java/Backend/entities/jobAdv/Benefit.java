@@ -25,6 +25,7 @@ public class Benefit extends BaseEntity {
     @JsonBackReference ("jobadv_4")// Prevents circular references during serialization
     private JobAdv jobAdv;
 
+
     public BenefitType getBenefitType() {
         return benefitType;
     }

@@ -50,7 +50,7 @@ function NavbarCustom() {
         <Container fluid className="d-flex justify-content-between align-items-center">
           {/* Sol kısım: Logo + Menü */}
           <div className="d-flex align-items-center gap-5">
-            <Navbar.Brand href="/" className="fw-bold text-primary">Logo</Navbar.Brand>
+            <Navbar.Brand href="/employerDashboard" className="fw-bold text-primary">Logo</Navbar.Brand>
             <Nav className="d-flex gap-4">
               <Nav.Link href="/employer/profile" className="text-dark fw-medium">Profile</Nav.Link>
               <Nav.Link href="/employer/create-job" className="text-dark fw-medium">Post Job</Nav.Link>

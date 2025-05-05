@@ -47,6 +47,7 @@ public class JobQualification extends BaseEntity {
     @JsonBackReference ("jobadv_2")// Prevents circular references during serialization
     private JobAdv jobAdv;
 
+
     public DegreeType getDegreeType() {
         return degreeType;
     }

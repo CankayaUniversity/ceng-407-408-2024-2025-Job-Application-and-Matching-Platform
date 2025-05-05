@@ -930,7 +930,7 @@ export default function JobSeekerDashboard() {
                       {/* About Me */}
                       <textarea
                           placeholder="About Me"
-                          value={profileData.profileDetails.aboutMe}
+                          value={profileData.profileDetails?.aboutMe}
                           onChange={(e) => handleProfileFieldChange(['profileDetails', 'aboutMe'], e.target.value)}
                           className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                       />
@@ -972,7 +972,7 @@ export default function JobSeekerDashboard() {
                           <input
                               type="date"
                               id="birthDate"
-                              value={profileData.profileDetails.birthDate}
+                              value={profileData.profileDetails?.birthDate}
                               onChange={(e) => handleProfileFieldChange(['profileDetails', 'birthDate'], e.target.value)}
                               className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 mb-0"
                           />
@@ -981,7 +981,7 @@ export default function JobSeekerDashboard() {
 
                       {/* Nationality */}
                       <select
-                          value={profileData.profileDetails.nationality}
+                          value={profileData.profileDetails?.nationality}
                           onChange={(e) => handleProfileFieldChange(['profileDetails', 'nationality'], e.target.value)}
                           className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none mb-0"
                       >
@@ -995,7 +995,7 @@ export default function JobSeekerDashboard() {
 
                       {/* Gender */}
                       <select
-                          value={profileData.profileDetails.gender}
+                          value={profileData.profileDetails?.gender}
                           onChange={(e) => handleProfileFieldChange(['profileDetails', 'gender'], e.target.value)}
                           className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none mb-0"
                       >
@@ -1009,7 +1009,7 @@ export default function JobSeekerDashboard() {
 
                       {/* Military Status */}
                       <select
-                          value={profileData.profileDetails.militaryStatus}
+                          value={profileData.profileDetails?.militaryStatus}
                           onChange={(e) => handleProfileFieldChange(['profileDetails', 'militaryStatus'], e.target.value)}
                           className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none mb-0"
                       >
@@ -1023,7 +1023,7 @@ export default function JobSeekerDashboard() {
                       </select>
 
                       {/* Military Deferment Date (if DEFERRED) */}
-                      {profileData.profileDetails.militaryStatus === "DEFERRED" && (
+                      {profileData.profileDetails?.militaryStatus === "DEFERRED" && (
                           <div className="relative w-full flex items-center space-x-4 mb-0">
                             <div className="flex-1 mb-0">
                               <div className="w-full border border-gray-300 p-3 rounded-md bg-white text-black">
@@ -1036,7 +1036,7 @@ export default function JobSeekerDashboard() {
                               <input
                                   type="date"
                                   id="militaryDefermentDate"
-                                  value={profileData.profileDetails.militaryDefermentDate}
+                                  value={profileData.profileDetails?.militaryDefermentDate}
                                   onChange={(e) => handleProfileFieldChange(['profileDetails', 'militaryDefermentDate'], e.target.value)}
                                   className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 mb-0"
                               />
@@ -1046,7 +1046,7 @@ export default function JobSeekerDashboard() {
 
                       {/* Disability Status */}
                       <select
-                          value={profileData.profileDetails.disabilityStatus}
+                          value={profileData.profileDetails?.disabilityStatus}
                           onChange={(e) => handleProfileFieldChange(['profileDetails', 'disabilityStatus'], e.target.value)}
                           className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none mb-0"
                       >
@@ -1059,7 +1059,7 @@ export default function JobSeekerDashboard() {
 
                       {/* Marital Status */}
                       <select
-                          value={profileData.profileDetails.maritalStatus}
+                          value={profileData.profileDetails?.maritalStatus}
                           onChange={(e) => handleProfileFieldChange(['profileDetails', 'maritalStatus'], e.target.value)}
                           className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none mb-0"
                       >
@@ -1079,7 +1079,7 @@ export default function JobSeekerDashboard() {
                           <div className="flex-1 mb-0">
                             <input
                                 type="checkbox"
-                                checked={profileData.profileDetails.currentEmploymentStatus}
+                                checked={profileData.profileDetails?.currentEmploymentStatus}
                                 onChange={(e) => handleProfileFieldChange(['profileDetails', 'currentEmploymentStatus'], e.target.checked)}
                                 className="border-gray-300"
                             />
@@ -1090,7 +1090,7 @@ export default function JobSeekerDashboard() {
                           <div className="flex-1 mb-0">
                             <input
                                 type="checkbox"
-                                checked={profileData.profileDetails.drivingLicense}
+                                checked={profileData.profileDetails?.drivingLicense}
                                 onChange={(e) => handleProfileFieldChange(['profileDetails', 'drivingLicense'], e.target.checked)}
                                 className="border-gray-300"
                             />
@@ -1101,7 +1101,7 @@ export default function JobSeekerDashboard() {
                           <div className="flex-1 mb-0">
                             <input
                                 type="checkbox"
-                                checked={profileData.profileDetails.isPrivateProfile}
+                                checked={profileData.profileDetails?.isPrivateProfile}
                                 onChange={(e) => handleProfileFieldChange(['profileDetails', 'isPrivateProfile'], e.target.checked)}
                                 className="border-gray-300"
                             />

@@ -27,6 +27,10 @@ public class JobPositions extends BaseEntity {
     @JoinColumn(name = "job_adv_id") // Veritabanındaki yabancı anahtar
     private JobAdv jobAdv;
 
+    public JobPositions(int i, JobPosition jobPosition, Object o, Object o1) {
+        super();
+    }
+
 
     public JobPosition getPositionType() {
         return positionType;
