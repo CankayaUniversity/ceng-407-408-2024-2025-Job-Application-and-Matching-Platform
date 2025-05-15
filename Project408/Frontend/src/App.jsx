@@ -1,7 +1,9 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
 import { PostProvider, usePostContext } from './PostContext.jsx';
 import { UserProvider } from './UserContext.jsx';
+import { NotificationProvider } from "./NotificationContext.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Layout from './Layout';
 import PrivateRoute from './PrivateRoute';
@@ -19,11 +21,24 @@ import Chat from './Chat';
 import Blog from './Blog';
 import PostDetail from './PostDetail';
 import InterviewPage from './InterviewPage.jsx';
+import NotificationsPage from './NotificationsPage.jsx';
 
 
 
 function App() {
+
+  const [notifications, setNotifications] = useState([]);
+
+  const markAsRead = (id) => {
+    setNotifications(prev =>
+      prev.map(notification =>
+        notification.id === id ? { ...notification, isRead: true } : notification
+      )
+    );
+  };
+
   return (
+    <NotificationProvider>
     <UserProvider>
     <PostProvider>
       <Routes>
@@ -47,11 +62,14 @@ function App() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/post/:id" element={<PostDetail />} />
             <Route path="/interviews" element={<InterviewPage />} />
+            <Route path="/notifications" element={<NotificationsPage notifications={notifications} markAsRead={markAsRead} />} />
+
           </Route>
         </Route>
       </Routes>
       </PostProvider>
       </UserProvider>
+      </NotificationProvider>
   );
 }
 
