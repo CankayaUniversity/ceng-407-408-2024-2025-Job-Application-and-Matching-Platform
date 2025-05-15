@@ -9,6 +9,33 @@ html, body, #root {
   padding: 0;
 }
 
+.highlight-confirmed {
+  background: green;
+  color: white;
+  border-radius: 50%;
+}
+
+.highlight-waiting {
+  background: orange;
+  color: white;
+  border-radius: 50%;
+}
+
+.highlight-cancelled {
+  background: red;
+  color: white;
+  border-radius: 50%;
+}
+
+.highlight-multi {
+  background: purple;
+  color: white;
+  border-radius: 50%;
+}
+
+
+
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

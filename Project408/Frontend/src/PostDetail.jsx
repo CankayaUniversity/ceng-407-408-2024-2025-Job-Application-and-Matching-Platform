@@ -5,7 +5,7 @@ import { usePostContext } from './PostContext';
 import { avatarStyle, buttonStyle } from './styles/inlineStyles';
 import { useUser } from './UserContext.jsx';
 import { motion } from 'framer-motion';
-import DOMPurify from 'dompurify';
+// import DOMPurify from 'dompurify';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';

@@ -1,5 +1,7 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { PostProvider, usePostContext } from './PostContext.jsx';
+import { UserProvider } from './UserContext.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Layout from './Layout';
 import PrivateRoute from './PrivateRoute';
@@ -11,20 +13,19 @@ import JobOffers from './components/JobOffers';
 import EditJobForm from './components/EditJobForm';
 import JobAdvList from "./JobAdvList";
 import JobAdvDetail from "./JobAdvDetail";
+import EmployerProfile from './components/EmployerProfile';
 import CreateJobForm from './components/CreateJobForm';
-import JobListings from "./components/JobListings.jsx";
-import JobSeekerMyJobs from "./components/JobSeekerMyJobs.jsx";
-import ApplicationsPage from "./components/ApplicationsPage.jsx";
-import CandidateList from "./components/CandidateList.jsx";
-import EmployerProfile from "./components/EmployerProfile.jsx";
-import JobOffersEmployer from "./components/JobOffersEmployer.jsx";
 import Chat from './Chat';
 import Blog from './Blog';
 import PostDetail from './PostDetail';
+import InterviewPage from './InterviewPage.jsx';
+
+
 
 function App() {
   return (
-    
+    <UserProvider>
+    <PostProvider>
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<SignUp />} />
@@ -34,26 +35,23 @@ function App() {
         {/* <Route element={<PrivateRoute />}> */}
         <Route>
           <Route element={<Layout />}>
-
-              <Route path="/candidate/dashboard" element={<JobSeekerDashboard/>}/>
-              <Route path="/employerDashboard" element={<EmployerDashboard/>}/>
-              <Route path="/job-offers" element={<JobOffersEmployer/>}/>
-              <Route path="/candidate/jobs" element={<JobAdvList/>}/>
-              <Route path="/employer/jobs/:id/edit" element={<EditJobForm/>}/>
-              <Route path="/employer/create-job" element={<CreateJobForm/>}/>
-              <Route path="/employer/profile" element={<EmployerProfile/>}/>
-              <Route path="/employer/my-jobs" element={<JobListings/>}/>
-              <Route path="/employer/offers" element={<JobOffers/>}/>
-              <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs/>}/>
-              <Route path="/employer/applications" element={<ApplicationsPage/>}/>
-              <Route path="/candidates" element={<CandidateList />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/post/:id" element={<PostDetail />} />
+            <Route path="/dashboard" element={<JobSeekerDashboard />} />
+            <Route path="/employerDashboard" element={<EmployerDashboard />} />
+            <Route path="/job-offers" element={<JobOffers />} />
+            <Route path="/jobs" element={<JobAdvList />} />
+            <Route path="/jobs/:id" element={<JobAdvDetail />} />
+            <Route path="/employer/jobs/:id/edit" element={<EditJobForm />} />
+            <Route path="/employer/profile" element={<EmployerProfile />} />
+            <Route path="/employer/create-job" element={<CreateJobForm />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/post/:id" element={<PostDetail />} />
+            <Route path="/interviews" element={<InterviewPage />} />
           </Route>
         </Route>
       </Routes>
-    
+      </PostProvider>
+      </UserProvider>
   );
 }
 
