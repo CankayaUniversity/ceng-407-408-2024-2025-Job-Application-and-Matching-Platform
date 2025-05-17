@@ -22,6 +22,11 @@ import Blog from './Blog';
 import PostDetail from './PostDetail';
 import InterviewPage from './InterviewPage.jsx';
 import NotificationsPage from './NotificationsPage.jsx';
+import JobOffersEmployer from "./components/JobOffersEmployer.jsx";
+import JobListings from "./components/JobListings.jsx";
+import ApplicationsPage from "./components/ApplicationsPage.jsx";
+import CandidateList from "./components/CandidateList.jsx";
+import JobSeekerMyJobs from "./components/JobSeekerMyJobs.jsx";
 
 
 
@@ -50,14 +55,20 @@ function App() {
         {/* <Route element={<PrivateRoute />}> */}
         <Route>
           <Route element={<Layout />}>
-            <Route path="/dashboard" element={<JobSeekerDashboard />} />
-            <Route path="/employerDashboard" element={<EmployerDashboard />} />
-            <Route path="/job-offers" element={<JobOffers />} />
-            <Route path="/jobs" element={<JobAdvList />} />
-            <Route path="/jobs/:id" element={<JobAdvDetail />} />
-            <Route path="/employer/jobs/:id/edit" element={<EditJobForm />} />
-            <Route path="/employer/profile" element={<EmployerProfile />} />
-            <Route path="/employer/create-job" element={<CreateJobForm />} />
+
+            <Route path="/candidate/dashboard" element={<JobSeekerDashboard/>}/>
+            <Route path="/employerDashboard" element={<EmployerDashboard/>}/>
+            <Route path="/job-offers" element={<JobOffersEmployer/>}/>
+            <Route path="/candidate/jobs" element={<JobAdvList/>}/>
+            <Route path="/employer/jobs/:id/edit" element={<EditJobForm/>}/>
+            <Route path="/employer/create-job" element={<CreateJobForm/>}/>
+            <Route path="/employer/profile" element={<EmployerProfile/>}/>
+            <Route path="/employer/my-jobs" element={<JobListings/>}/>
+            <Route path="/employer/offers" element={<JobOffers/>}/>
+            <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs/>}/>
+            <Route path="/employer/applications" element={<ApplicationsPage/>}/>
+            <Route path="/candidates" element={<CandidateList/>} />
+
             <Route path="/chat" element={<Chat />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/post/:id" element={<PostDetail />} />

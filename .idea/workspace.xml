@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="af5e9ab0-f157-44fb-a158-8739b861992b" name="Changes" comment="" />
+    <list default="true" id="af5e9ab0-f157-44fb-a158-8739b861992b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/Login.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/NavbarJobSeeker.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/NavbarJobSeeker.jsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -52,7 +57,7 @@
     "Spring Boot.BackendApplication.executor": "Debug",
     "git-widget-placeholder": "first__release__branch",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/blgsy/OneDrive/Belgeler/GitHub/ceng382/ceng-407-408-2024-2025-Job-Application-and-Matching-Platform/Project408/Backend/src/main/resources",
+    "last_opened_file_path": "C:/Users/blgsy/OneDrive/Belgeler/GitHub/ceng382/ceng-bitirme/ceng-407-408-2024-2025-Job-Application-and-Matching-Platform/Project408/Backend/src/main/resources",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -70,6 +75,7 @@
       <recent name="Backend.repository" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\blgsy\OneDrive\Belgeler\GitHub\ceng382\ceng-bitirme\ceng-407-408-2024-2025-Job-Application-and-Matching-Platform\Project408\Backend\src\main\resources" />
       <recent name="C:\Users\blgsy\OneDrive\Belgeler\GitHub\ceng382\ceng-407-408-2024-2025-Job-Application-and-Matching-Platform\Project408\Backend\src\main\resources" />
     </key>
   </component>
@@ -133,6 +139,7 @@
       <workItem from="1746106449776" duration="19632000" />
       <workItem from="1746346274564" duration="10077000" />
       <workItem from="1746461928630" duration="5813000" />
+      <workItem from="1747473442212" duration="1602000" />
     </task>
     <servers />
   </component>
