@@ -714,8 +714,7 @@ export default function JobSeekerDashboard() {
                       {/* Profil Foto */}
                       <img src="/profile-placeholder.png" alt="Profile"
                            className="w-24 h-24 rounded-full border-4 border-white"/>
-                      <h2 className="text-xl font-bold">Name Surname</h2>
-                      <p className="text-gray-300">Job Title</p>
+                      <h2 className="text-xl font-bold">{profileData.firstName || '-'} - {profileData.lastName || '-'}</h2>
 
                       {/* Bilgi listesi */}
                       <div className="space-y-2 text-sm w-full">

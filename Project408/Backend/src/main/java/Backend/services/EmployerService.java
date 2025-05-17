@@ -1,12 +1,15 @@
 package Backend.services;
 
+import Backend.entities.common.Project;
 import Backend.entities.company.Company;
 import Backend.entities.user.User;
 import Backend.entities.user.candidate.Candidate;
 import Backend.entities.user.employer.Employer;
 import Backend.repository.CompanyRepository;
 import Backend.repository.EmployerRepository;
+import Backend.repository.ProjectRepository;
 import Backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,8 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployerService {
@@ -25,6 +28,8 @@ public class EmployerService {
     private EmployerRepository employerRepository;
     @Autowired
     private CompanyRepository companyRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     public HashMap<Object,Object>  getProfileDetails(@PathVariable("id") int id) {
 
@@ -43,10 +48,12 @@ public class EmployerService {
     }
 
 
-    public  Company updateProfile(int id,Company company) {
+    @Transactional
+    public Company updateProfile(int id, Company company) {
+        Employer emp = employerRepository.findCompanyById(id);
 
-        Employer emp= employerRepository.findCompanyById(id);
-        Company cmp= companyRepository.findById(company.getId()).get();
+        Company cmp = companyRepository.findById(company.getId()).orElse(new Company());
+
         cmp.setCompanyName(company.getCompanyName());
         cmp.setEmail(company.getEmail());
         cmp.setPhoneNumber(company.getPhoneNumber());
@@ -56,10 +63,55 @@ public class EmployerService {
         cmp.setEstablishedDate(company.getEstablishedDate());
         cmp.setIndustry(company.getIndustry());
         cmp.setEmployeeCount(company.getEmployeeCount());
-        cmp.setProjects(company.getProjects());
 
-         companyRepository.save(cmp);
+        companyRepository.save(cmp);
 
-         return cmp;
+        if (company.getProjects() != null) {
+            List<Project> updatedProjects = new ArrayList<>();
+
+            List<Project> existingProjects = projectRepository.findByCompanyId(cmp.getId());
+
+            Set<Integer> updatedProjectIds = company.getProjects().stream()
+                    .filter(p -> p.getId() != 0)
+                    .map(Project::getId)
+                    .collect(Collectors.toSet());
+
+            for (Project oldProject : existingProjects) {
+                if (!updatedProjectIds.contains(oldProject.getId())) {
+                    projectRepository.delete(oldProject);
+                }
+            }
+
+
+            for (Project p : company.getProjects()) {
+                if (p.getId() != 0) {
+                    Project existingProject = projectRepository.findById(p.getId()).orElse(new Project());
+                    existingProject.setProjectName(p.getProjectName());
+                    existingProject.setProjectDescription(p.getProjectDescription());
+                    existingProject.setProjectStartDate(p.getProjectStartDate());
+                    existingProject.setProjectEndDate(p.getProjectEndDate());
+                    existingProject.setProjectStatus(p.getProjectStatus());
+                    existingProject.setIsPrivate(p.getIsPrivate());
+                    existingProject.setCompany(cmp);
+
+                    updatedProjects.add(existingProject);
+                } else {
+                    p.setCompany(cmp);
+                    updatedProjects.add(p);
+                }
+            }
+
+            projectRepository.saveAll(updatedProjects);
+            cmp.setProjects(updatedProjects);
+        }
+
+
+        companyRepository.save(cmp);
+
+        emp.setCompany(cmp);
+        employerRepository.save(emp);
+
+        return cmp;
     }
+
 }

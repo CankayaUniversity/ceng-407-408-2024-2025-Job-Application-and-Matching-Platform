@@ -10,13 +10,15 @@ const EmployerProfile = () => {
     const [profile, setProfile] = useState({
         company: {
             companyName: '',
+            vision:'',
+            mission:'',
             industry: '',
             employeeCount: '',
             email: '',
             phoneNumber: '',
             websiteUrl: '',
-            projects: [{ // <-- Change this from an object to an array
-
+            projects: [{
+                id:'',
                 projectName: '',
                 projectDescription: '',
                 projectStartDate: '',
@@ -100,49 +102,45 @@ const EmployerProfile = () => {
     };
 
     const handleProfileFieldChange = (path, value) => {
+
         setProfile(prev => {
             const updated = { ...prev };
             let target = updated;
+
             for (let i = 0; i < path.length - 1; i++) {
-                target = target[path[i]];
+                const key = path[i];
+                if (target[key] === null || typeof target[key] !== 'object') {
+                    target[key] = {}; // null ya da undefined ise boş obje yap
+                }
+                target = target[key];
             }
+
             target[path[path.length - 1]] = value;
             return updated;
         });
     };
 
-
-    // const handleInputChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setProfile((prevState) => {
-    //         const newState = { ...prevState };
-    //         if (name.includes("project")) {
-    //             newState.company.projects[name] = value;
-    //         } else {
-    //             newState.company[name] = value;
-    //         }
-    //         return newState;
-    //     });
-    // };
     const addProject = () => {
         setProfile(prevProfile => ({
             ...prevProfile,
             company: {
                 ...prevProfile.company,
                 projects: [
-                    ...prevProfile.company.projects,
+                    ...(prevProfile.company?.projects || []),
                     {
+                        id:'',
                         projectName: '',
                         projectDescription: '',
                         projectStartDate: '',
                         projectEndDate: '',
                         projectStatus: '',
-                        isPrivate: null,
+                        isPrivate: false,
                     }
                 ]
             }
         }));
     };
+
 
 
 
@@ -194,8 +192,8 @@ const EmployerProfile = () => {
                                     style={{backgroundColor: "#000842", borderRadius: "15px", padding: "10px"}}
                                     className="bg-blue-900 text-white p-6 rounded-lg space-y-4 flex flex-col items-center shadow-md">
                                     {/* Profil Foto */}
-                                    <img src="/profile-placeholder.png" alt="Profile"
-                                         className="w-24 h-24 rounded-full border-4 border-white"/>
+                                    {/*<img src="/profile-placeholder.png" alt="Profile"*/}
+                                    {/*     className="w-24 h-24 rounded-full border-4 border-white"/>*/}
                                     <h2 className="text-xl font-bold"> {profile.employerName || ''} {profile.employerLastName || ''}</h2>
 
                                     {/* Bilgi listesi */}
@@ -232,6 +230,19 @@ const EmployerProfile = () => {
                                             <span
                                                 className="text-gray-600">{profile.company?.companyName || 'Not specified'}</span>
                                         </p>
+                                        <p className="text-sm">
+                                                        <span
+                                                            className="font-medium text-gray-700">Company Vision:</span>{' '}
+                                            <span
+                                                className="text-gray-600">{profile.company?.vision || 'Not specified'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                                                        <span
+                                                            className="font-medium text-gray-700">Company Mission:</span>{' '}
+                                            <span
+                                                className="text-gray-600">{profile.company?.mission || 'Not specified'}</span>
+                                        </p>
+
                                         <p className="text-sm">
                                                         <span
                                                             className="font-medium text-gray-700">Industry:</span>{' '}
@@ -272,17 +283,40 @@ const EmployerProfile = () => {
 
                                     <div>
                                         <h3 className="text-lg font-semibold mb-2">Projects</h3>
+
                                         {profile.company?.projects && profile.company?.projects.length > 0 ? (
-                                            profile.company?.projects.map((proj, idx) => (
+                                            profile.company.projects.map((proj, idx) => (
                                                 <div key={idx} className="border-b pb-2 mb-2">
-                                                    <p className="font-semibold">{proj.projectName}</p>
-                                                    <p>{proj.projectDescription}</p>
-                                                    <p>{proj.projectStartDate} - {proj.projectStatus}</p>
+                                                    <p>
+                                                        <span className="font-semibold mr-2">Project Name: </span>
+                                                        <span>{proj.projectName || '-'}</span>
+                                                    </p>
+                                                    <p>
+                                                        <span className="font-semibold mr-2">Description: </span>
+                                                        <span>{proj.projectDescription || '-'}</span>
+                                                    </p>
+                                                    <p>
+                                                        <span className="font-semibold mr-2">Status: </span>
+                                                        <span>{proj.projectStatus || '-'}</span>
+                                                    </p>
+                                                    <p>
+                                                        <span className="font-semibold mr-2">Start Date: </span>
+                                                        <span>{proj.projectStartDate || '-'}</span>
+                                                    </p>
+                                                    <p>
+                                                        <span className="font-semibold mr-2">End Date: </span>
+                                                        <span>{proj.projectEndDate || '-'}</span>
+                                                    </p>
+                                                    <p>
+                                                        <span className="font-semibold mr-2">Private: </span>
+                                                        <span>{proj.isPrivate ? 'Yes' : 'No'}</span>
+                                                    </p>
                                                 </div>
                                             ))
                                         ) : (
                                             <p className="text-gray-500">No projects added.</p>
                                         )}
+
                                     </div>
 
 
@@ -330,8 +364,32 @@ const EmployerProfile = () => {
                                                     <input
                                                         type="text"
                                                         name="companyName"
-                                                        value={profile.company?.companyName || ''}
+                                                        value={profile?.company?.companyName || ''}
                                                         onChange={(e) => handleProfileFieldChange(['company', 'companyName'], e.target.value)}
+
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Company
+                                                        Vision</label>
+                                                    <input
+                                                        type="text"
+                                                        name="vision"
+                                                        value={profile?.company?.vision || ''}
+                                                        onChange={(e) => handleProfileFieldChange(['company', 'vision'], e.target.value)}
+
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Company
+                                                        Mission</label>
+                                                    <input
+                                                        type="text"
+                                                        name="mission"
+                                                        value={profile?.company?.mission || ''}
+                                                        onChange={(e) => handleProfileFieldChange(['company', 'mission'], e.target.value)}
 
                                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                                                     />
@@ -342,7 +400,7 @@ const EmployerProfile = () => {
                                                     <input
                                                         type="text"
                                                         name="industry"
-                                                        value={profile.company?.industry || ''}
+                                                        value={profile?.company?.industry || ''}
                                                         onChange={(e) => handleProfileFieldChange(['company', 'industry'], e.target.value)}
                                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                                                     />
@@ -492,7 +550,7 @@ const EmployerProfile = () => {
                                                                     type="text"
                                                                     name="projectName"
                                                                     value={project.projectName}
-                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectName'], e.target.value)}
+                                                                    onChange={(e) => handleProfileFieldChange(['company','projects', index, 'projectName'], e.target.value)}
                                                                     placeholder="Project Name"
                                                                     className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                                                                 />
@@ -504,7 +562,7 @@ const EmployerProfile = () => {
                                                                 <textarea
                                                                     value={project.projectDescription}
 
-                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectDescription'], e.target.value)}
+                                                                    onChange={(e) => handleProfileFieldChange(['company','projects', index, 'projectDescription'], e.target.value)}
                                                                     placeholder="Project Description"
                                                                     className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                                                                 />
@@ -513,10 +571,19 @@ const EmployerProfile = () => {
 
                                                         <div className="relative w-full flex items-center space-x-4">
                                                             <div className="flex-1 mb-0">
+                                                                <div
+                                                                    className="w-full border border-gray-300 p-3 rounded-md bg-white text-black">
+                                                                    <label htmlFor="projectStartDate"
+                                                                           className="text-sm font-semibold text-gray-500">
+                                                                        Project Start Date
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex-1 mb-0">
                                                                 <input
                                                                     type="date"
                                                                     value={project.projectStartDate}
-                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectStartDate'], e.target.value)}
+                                                                    onChange={(e) => handleProfileFieldChange(['company', 'projects', index, 'projectStartDate'], e.target.value)}
                                                                     placeholder="Star Date"
                                                                     className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                                                                 />
@@ -525,10 +592,19 @@ const EmployerProfile = () => {
 
                                                         <div className="relative w-full flex items-center space-x-4">
                                                             <div className="flex-1 mb-0">
+                                                                <div
+                                                                    className="w-full border border-gray-300 p-3 rounded-md bg-white text-black">
+                                                                    <label htmlFor="projectEndDate"
+                                                                           className="text-sm font-semibold text-gray-500">
+                                                                        Project End Date
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex-1 mb-0">
                                                                 <input
                                                                     type="date"
                                                                     value={project.projectEndDate}
-                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectEndDate'], e.target.value)}
+                                                                    onChange={(e) => handleProfileFieldChange(['company', 'projects', index, 'projectEndDate'], e.target.value)}
                                                                     placeholder="End Date"
                                                                     className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                                                                 />
@@ -539,10 +615,10 @@ const EmployerProfile = () => {
                                                             <div className="flex-1 mb-0">
                                                                 <select
                                                                     value={project.projectStatus || ''}
-                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'projectStatus'], e.target.value)}
-                                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black mb-2"
+                                                                    onChange={(e) => handleProfileFieldChange(['company', 'projects', index, 'projectStatus'], e.target.value)}
+                                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black mb-0"
                                                                 >
-                                                                    <option value="" disabled></option>
+                                                                    <option value="" disabled>Project Status</option>
                                                                     <option value="ONGOING">Ongoing</option>
                                                                     <option value="COMPLETED">Completed</option>
                                                                     <option value="ABANDONED">Abandoned</option>
@@ -550,15 +626,22 @@ const EmployerProfile = () => {
                                                             </div>
                                                         </div>
 
-                                                        <div className="relative w-full flex items-center space-x-4">
+                                                        <div className="w-full border border-gray-300 p-3 rounded-md bg-white text-black mb-1">
+
                                                             <div className="flex items-center">
                                                                 <input
                                                                     type="checkbox"
-                                                                    checked={project.isPrivate || false}
-                                                                    onChange={(e) => handleProfileFieldChange(['projects', index, 'isPrivate'], e.target.value)}
+                                                                    checked={project.isPrivate}
+                                                                    onChange={(e) => {
+                                                                        handleProfileFieldChange(['company', 'projects', index, 'isPrivate'], e.target.checked);
+                                                                        console.log('After change:', project.isPrivate);
+                                                                    }}
                                                                 />
+
                                                                 <span className="text-sm">Is private?</span>
+
                                                             </div>
+
                                                         </div>
 
                                                         <div className="text-right mb-3">

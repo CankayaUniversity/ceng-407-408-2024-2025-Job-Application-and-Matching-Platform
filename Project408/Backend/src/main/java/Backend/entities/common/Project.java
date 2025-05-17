@@ -82,12 +82,12 @@ public class Project extends BaseEntity {
         this.projectStatus = projectStatus;
     }
 
-    public boolean isPrivate() {
+    public boolean getIsPrivate() {
         return isPrivate;
     }
 
-    public void setPrivate(boolean aPrivate) {
-        isPrivate = aPrivate;
+    public void setIsPrivate(boolean aPrivate) {
+        this.isPrivate = aPrivate;
     }
 
     public Company getCompany() {

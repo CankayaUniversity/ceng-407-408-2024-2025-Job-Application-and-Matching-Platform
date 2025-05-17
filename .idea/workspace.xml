@@ -6,10 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="af5e9ab0-f157-44fb-a158-8739b861992b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/SignUp.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/SignUp.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/common/Project.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/common/Project.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/employer/Employer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/employer/Employer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/repository/ProjectRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/repository/ProjectRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/EmployerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/EmployerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/JobSeekerDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/JobSeekerDashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/components/EmployerProfile.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/components/EmployerProfile.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +60,7 @@
     "Spring Boot.BackendApplication.executor": "Debug",
     "git-widget-placeholder": "first__release__branch",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/blgsy/OneDrive/Belgeler/GitHub/ceng382/ceng-bitirme/ceng-407-408-2024-2025-Job-Application-and-Matching-Platform/Project408/Backend/src/main/resources",
+    "last_opened_file_path": "C:/Users/blgsy/OneDrive/Belgeler/GitHub/ceng382/ceng-bitirme/ceng-407-408-2024-2025-Job-Application-and-Matching-Platform/Project408/Frontend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -140,7 +142,9 @@
       <workItem from="1746106449776" duration="19632000" />
       <workItem from="1746346274564" duration="10077000" />
       <workItem from="1746461928630" duration="5813000" />
-      <workItem from="1747473442212" duration="8939000" />
+      <workItem from="1747473442212" duration="11134000" />
+      <workItem from="1747495472818" duration="340000" />
+      <workItem from="1747504405657" duration="7207000" />
     </task>
     <servers />
   </component>
@@ -166,16 +170,6 @@
           <option name="timeStamp" value="43" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/CandidateController.java</url>
-          <line>109</line>
-          <option name="timeStamp" value="113" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/EmployerController.java</url>
-          <line>43</line>
-          <option name="timeStamp" value="120" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/JobAdvService.java</url>
           <line>351</line>
           <option name="timeStamp" value="121" />
@@ -194,16 +188,6 @@
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobOfferController.java</url>
           <line>28</line>
           <option name="timeStamp" value="131" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/EmployerController.java</url>
-          <line>53</line>
-          <option name="timeStamp" value="132" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/EmployerService.java</url>
-          <line>47</line>
-          <option name="timeStamp" value="133" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobAdvController.java</url>
@@ -254,6 +238,16 @@
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
           <line>159</line>
           <option name="timeStamp" value="144" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/EmailService.java</url>
+          <line>16</line>
+          <option name="timeStamp" value="145" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/EmployerService.java</url>
+          <line>68</line>
+          <option name="timeStamp" value="154" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/repository/CandidateRepository.java</url>
