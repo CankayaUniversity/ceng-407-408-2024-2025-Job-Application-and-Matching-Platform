@@ -6,9 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="af5e9ab0-f157-44fb-a158-8739b861992b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/Login.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/NavbarJobSeeker.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/NavbarJobSeeker.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/SignUp.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/SignUp.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,8 +19,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -139,7 +140,7 @@
       <workItem from="1746106449776" duration="19632000" />
       <workItem from="1746346274564" duration="10077000" />
       <workItem from="1746461928630" duration="5813000" />
-      <workItem from="1747473442212" duration="1602000" />
+      <workItem from="1747473442212" duration="8939000" />
     </task>
     <servers />
   </component>
@@ -160,24 +161,9 @@
           <option name="timeStamp" value="31" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
-          <line>37</line>
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
-          <line>45</line>
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/candidate/JobPreferences.java</url>
           <line>13</line>
           <option name="timeStamp" value="43" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java</url>
-          <line>21</line>
-          <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/CandidateController.java</url>
@@ -223,6 +209,51 @@
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobAdvController.java</url>
           <line>149</line>
           <option name="timeStamp" value="134" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java</url>
+          <line>24</line>
+          <option name="timeStamp" value="135" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>47</line>
+          <option name="timeStamp" value="136" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java</url>
+          <line>39</line>
+          <option name="timeStamp" value="137" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java</url>
+          <line>44</line>
+          <option name="timeStamp" value="138" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AuthenticationController.java</url>
+          <line>55</line>
+          <option name="timeStamp" value="139" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>95</line>
+          <option name="timeStamp" value="140" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>116</line>
+          <option name="timeStamp" value="141" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>133</line>
+          <option name="timeStamp" value="143" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>159</line>
+          <option name="timeStamp" value="144" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/repository/CandidateRepository.java</url>

@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,10 +33,19 @@ public class User extends BaseEntity implements UserDetails {
     @JsonIgnore // Don't serialize the password
     private String password;
 
+    private boolean enabled;
+
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false)
     private UserType userType;
+
+    @Column(name="verification_code")
+    private String verificationCode;
+
+    @Column(name="verification_expiration")
+    private LocalDateTime verificationCodeExpireAt;
+
 
     //return user roles
     @Override
@@ -72,10 +82,7 @@ public class User extends BaseEntity implements UserDetails {
         return true;
     }
     //kullanici aktif mi değil mi
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+
 
     public void setUserType(UserType role) {
         this.userType = role;
@@ -103,5 +110,30 @@ public class User extends BaseEntity implements UserDetails {
         return lastName;
     }
 
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+
+    public LocalDateTime getVerificationCodeExpireAt() {
+        return verificationCodeExpireAt;
+    }
+
+    public void setVerificationCodeExpireAt(LocalDateTime verificationCodeExpireAt) {
+        this.verificationCodeExpireAt = verificationCodeExpireAt;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }
 
