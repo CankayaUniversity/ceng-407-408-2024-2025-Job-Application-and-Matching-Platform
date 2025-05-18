@@ -5,6 +5,7 @@ import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.common.Project;
 import Backend.entities.user.employer.Employer;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -54,6 +55,7 @@ public class Company extends BaseEntity {
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonManagedReference ("jobadv_1")// Prevents circular references during serialization
+    @JsonIgnore
     private List<JobAdv> jobAdvs;
 
     public String getCompanyName() {
