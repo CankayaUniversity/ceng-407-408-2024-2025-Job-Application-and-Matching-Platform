@@ -27,6 +27,7 @@ import JobListings from "./components/JobListings.jsx";
 import ApplicationsPage from "./components/ApplicationsPage.jsx";
 import CandidateList from "./components/CandidateList.jsx";
 import JobSeekerMyJobs from "./components/JobSeekerMyJobs.jsx";
+import EmailVerification from './EmailVerification.jsx';
 
 
 
@@ -50,6 +51,7 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/verification" element={<EmailVerification />} />
 
         {/* Protected routes with navbar */}
         {/* <Route element={<PrivateRoute />}> */}

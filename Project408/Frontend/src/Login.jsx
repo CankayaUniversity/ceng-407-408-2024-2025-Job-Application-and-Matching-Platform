@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import RightIllustration from "./components/RightIllustration";
 import illustration from './assets/Saly-10.png';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -34,13 +35,13 @@ export default function Login() {
 
                 // Token'ı localStorage’a kaydet
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('userType',data.userType);
-                localStorage.setItem('id',data.id);
+                localStorage.setItem('userType', data.userType);
+                localStorage.setItem('id', data.id);
                 // Yönlendirme
-                if(data.userType==='EMPLOYER'){
+                if (data.userType === 'EMPLOYER') {
                     navigate('/employerDashboard');
                 }
-                else if(data.userType==='CANDIDATE'){
+                else if (data.userType === 'CANDIDATE') {
                     // navigate('/dashboard');
                     navigate('/candidate/jobs');
                 }
@@ -56,7 +57,7 @@ export default function Login() {
             console.error('Bağlantı hatası:', err);
             setError('Sunucuya ulaşılamadı');
 
-            // navigate('/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+            // navigate('/candidate/dashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
         }
     };
 
@@ -64,97 +65,138 @@ export default function Login() {
 
 
     return (
-      <div className="flex min-h-screen">
+        <div className="flex min-h-screen">
 
-      {/* Left: Form */}
-      <div className="w-1/2 bg-white p-10 flex items-center justify-center">
-          <div className="w-full max-w-[400px]">
-              <h2 className="text-3xl font-bold mb-2">Login</h2>
-              <p className="text-sm mb-6">
-                  If you don’t have an account register <br/>
-                  You can{' '}
-                  <Link to="/" className="text-blue-600 font-medium hover:underline">
-                      Sign Up here !
-                  </Link>
-              </p>
+            {/* Left: Form */}
+            <div className="w-1/2 bg-white p-10 flex items-center justify-center">
+                <div className="w-full max-w-[400px]">
+                    <h2 className="text-3xl font-bold mb-2">Login</h2>
+                    <p className="text-sm mb-6">
+                        If you don’t have an account register <br />
+                        You can{' '}
+                        <Link to="/" className="text-blue-600 font-medium hover:underline">
+                            Sign Up here !
+                        </Link>
+                    </p>
 
-              <form className="space-y-5" onSubmit={handleSubmit}>
+                    <form className="space-y-5" onSubmit={handleSubmit}>
 
-                  <div className="flex flex-col">
-                      <label htmlFor="email" className="mb-1 font-medium text-sm">Email</label>
-                      <input
-                          type="email"
-                          placeholder="Enter your email address"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="w-full bg-white text-black border border-gray-300 pb-2 placeholder-gray-500 focus:outline-none focus:border-gray-500"
-                      />
-                  </div>
+                        {/* Email */}
+                        <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
+                            <label htmlFor="email" style={{ marginBottom: '6px', fontWeight: '500', fontSize: '16px', color: '#333' }}>
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                placeholder="Enter your email address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    border: 'none',
+                                    borderBottom: '2px solid #ccc',
+                                    padding: '8px 0',
+                                    outline: 'none',
+                                    fontSize: '16px',
+                                    backgroundColor: 'transparent',
+                                    color: '#000'
+                                }}
+                                onFocus={(e) => e.target.style.borderBottom = '2px solid #0C21C1'}
+                                onBlur={(e) => e.target.style.borderBottom = '2px solid #ccc'}
+                            />
+                        </div>
 
-                  <div className="flex flex-col">
-                      <label htmlFor="password" className="mb-1 font-medium text-sm">Password</label>
+                        {/* Password */}
+                        <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
+                            <label htmlFor="password" style={{ marginBottom: '6px', fontWeight: '500', fontSize: '16px', color: '#333' }}>
+                                Password
+                            </label>
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    id="password"
+                                    name="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="Enter your Password"
+                                    style={{
+                                        width: '100%',
+                                        border: 'none',
+                                        borderBottom: '2px solid #ccc',
+                                        padding: '8px 36px 8px 0',
+                                        outline: 'none',
+                                        fontSize: '16px',
+                                        backgroundColor: 'transparent',
+                                        color: '#000'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderBottom = '2px solid #0C21C1'}
+                                    onBlur={(e) => e.target.style.borderBottom = '2px solid #ccc'}
+                                />
+                                <span
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '8px',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        cursor: 'pointer',
+                                        fontSize: '16px',
+                                        color: '#666'
+                                    }}
+                                >
+                                    {showPassword ? "🙈" : "👁️"}
+                                </span>
+                            </div>
+                        </div>
 
-                      <div className="relative">
-                          <input
-                              type={showPassword ? "text" : "password"}
-                              id="password"
-                              name="password"
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                              placeholder="Enter your Password"
-                              className="bg-white text-black border border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500 pr-10 w-full mb-3"
-                          />
 
-                          <span
-                              onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-[#0C21C1]"
-                          >
-                  {showPassword ? "🙈" : "👁️"}
-                </span>
-                      </div>
-                  </div>
+                        {/* Remember me & Forgot password */}
+                        <div className="flex justify-between items-center text-sm text-gray-500 mb-6">
+                            <label className="flex items-center gap-2">
+                                <input type="checkbox" />
+                                Remember me
+                            </label>
+                            <a href="#" className="hover:underline">Forgot Password?</a>
+                        </div>
 
 
-                  {error && (
-                      <p className="text-sm text-red-500 font-medium">{error}</p>
-                  )}
+                        {error && (
+                            <p className="text-sm text-red-500 font-medium">{error}</p>
+                        )}
 
-                  <button
-                      type="submit"
-                      className="w-full bg-[#0C21C1] text-white py-3 rounded-full hover:bg-[#0a1ba6] transition"
-                  >
-                      Login
-                  </button>
-              </form>
+                        <button
+                            style={{ marginTop: '30px', marginBottom: '20px' }}
+                            type="submit"
+                            className="w-full bg-[#0C21C1] text-white py-3 rounded-full hover:bg-[#0a1ba6] transition"
+                        >
+                            Login
+                        </button>
+                    </form>
 
 
-              <div className="mt-8 text-center">
-                  <p className="text-sm text-gray-500 mb-4">or sign up with</p>
-                  <div className="flex justify-center gap-6">
-                      <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGithub size={24}
-                                                                                                     className="text-black"/>
-                      </button>
-                      <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGoogle size={24}
-                                                                                                     className="text-black"/>
-                      </button>
-                  </div>
-              </div>
-          </div>
-      </div>
+                    <div className="mt-8 text-center">
+                        {/* or sign up with */}
+                        <div className="flex items-center mb-6">
+                            <hr className="flex-grow border-gray-300" />
+                            <span className="mx-4 text-sm text-gray-500">or sign up with</span>
+                            <hr className="flex-grow border-gray-300" />
+                        </div>
+                        <div className="flex justify-center gap-6">
+                            <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGithub size={24}
+                                className="text-black" />
+                            </button>
+                            <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGoogle size={24}
+                                className="text-black" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-          {/* Right: Illustration */}
-          <div className="w-1/2 bg-[#1849C6] flex items-center justify-center relative">
+            {/* Right: Illustration */}
+            <RightIllustration illustration={illustration} />
 
-              <img
-                  src={illustration}
-                  alt="Illustration"
-                  className="w-3/4 max-w-[400px]"
-                  onError={(e) => {
-                      console.error('Image failed to load:', e);
-                      console.log('Image src:', e.target.src);
-                  }}
-              />
-          </div>
-      </div>
+
+        </div>
     );
 }

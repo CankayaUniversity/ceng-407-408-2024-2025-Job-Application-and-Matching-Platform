@@ -123,6 +123,7 @@ export default function InterviewPage() {
             {/* Takvim */}
             <div style={{ marginBottom: "20px" }}>
                 <Calendar
+                    locale="en-US" // burada İngilizce olarak ayarlanıyor
                     onChange={setSelectedDate}
                     value={selectedDate}
                     tileClassName={({ date, view }) => {

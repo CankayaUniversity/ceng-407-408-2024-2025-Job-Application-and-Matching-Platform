@@ -3,6 +3,7 @@
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from "react";
+import RightIllustration from "./components/RightIllustration";
 import illustration from './assets/Saly-10.png';
 import axios from "axios";
 
@@ -36,8 +37,8 @@ export default function SignUp() {
     setErrorMessage("");
 
     const endpoint = formData.userType === "CANDIDATE"
-        ? "http://localhost:9090/login/canRegister"
-        : "http://localhost:9090/login/empRegister";
+      ? "http://localhost:9090/login/canRegister"
+      : "http://localhost:9090/login/empRegister";
 
     try {
       const response = await axios.post(endpoint, formData, {
@@ -82,49 +83,62 @@ export default function SignUp() {
 
   if (verificationStep) {
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-          <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md mx-auto flex flex-col items-center">
-            <h2 className="text-2xl font-semibold mb-4 text-center">Verify Your Email</h2>
-            <p className="text-sm text-gray-600 mb-4 text-center">
-              A verification code has been sent to <strong>{emailToVerify}</strong>.
-            </p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+        <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md mx-auto flex flex-col items-center">
+          <h2 className="text-2xl font-semibold mb-4 text-center">Verify Your Email</h2>
+          <p className="text-sm text-gray-600 mb-4 text-center">
+            A verification code has been sent to <strong>{emailToVerify}</strong>.
+          </p>
 
-            <input
-                type="text"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
-                placeholder="Enter verification code"
-                className="w-1/4 border border-gray-300 p-2 rounded mb-4 bg-white text-black"
-            />
+          <input
+            type="text"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            placeholder="Enter verification code"
+            className="w-1/4 border border-gray-300 p-2 rounded mb-4 bg-white text-black"
+          />
 
-            <button
-                onClick={handleVerifyCode}
-                className="w-64 bg-[#0C21C1] text-white py-2 rounded hover:bg-[#0a1ba6] mb-2"
-            >
-              Verify
-            </button>
+          <button
+            onClick={handleVerifyCode}
+            className="w-64 bg-[#0C21C1] text-white py-2 rounded hover:bg-[#0a1ba6] mb-2"
+          >
+            Verify
+          </button>
 
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-            {resendMessage && <p className="text-green-600 mt-2">{resendMessage}</p>}
+          {error && <p className="text-red-500 mt-2">{error}</p>}
+          {resendMessage && <p className="text-green-600 mt-2">{resendMessage}</p>}
 
-            <button
-                onClick={handleResendCode}
-                className="text-sm text-blue-600 mt-4 hover:underline"
-            >
-              Resend code
-            </button>
-          </div>
+          <button
+            onClick={handleResendCode}
+            className="text-sm text-blue-600 mt-4 hover:underline"
+          >
+            Resend code
+          </button>
         </div>
+      </div>
     );
   }
 
 
 
   return (
-      <div className="flex min-h-screen">
-        {/* Left */}
-        <div className="w-1/2 bg-white p-12 flex items-center justify-center">
-          <div className="w-full max-w-[400px]">
+    <div className="flex min-h-screen">
+      {/* Left */}
+      <div className="w-1/2 bg-white flex items-center justify-center p-10">
+
+        <div
+          className="w-full max-w-[400px]"
+          style={{
+            maxHeight: 'calc(100vh - 80px)',
+            overflowY: 'auto',
+            paddingRight: '8px',
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'rgba(226, 219, 219, 0.42) transparent',
+          }}
+        >
+
+          <div style={{ padding: '0 0.25rem' }}>
+
             <h2 className="text-3xl font-bold mb-4">Sign up</h2>
             <p className="text-sm text-gray-600 mb-6">
               If you already have an account register<br />
@@ -132,83 +146,194 @@ export default function SignUp() {
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="flex flex-col">
-                <label htmlFor="firstName" className="mb-1 font-medium text-sm">Name</label>
-                <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Enter your Name" className="bg-white text-black  border border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500" />
+              {/* Name */}
+              <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
+                <label htmlFor="firstName" style={{ marginBottom: '6px', fontWeight: '500', fontSize: '16px', color: '#333' }}>
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="Enter your Name"
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    borderBottom: '2px solid #ccc',
+                    padding: '8px 0',
+                    outline: 'none',
+                    fontSize: '16px',
+                    backgroundColor: 'transparent',
+                    color: '#000'
+                  }}
+                  onFocus={(e) => e.target.style.borderBottom = '2px solid #0C21C1'}
+                  onBlur={(e) => e.target.style.borderBottom = '2px solid #ccc'}
+                />
               </div>
 
-              <div className="flex flex-col">
-                <label htmlFor="lastName" className="mb-1 font-medium text-sm">Surname</label>
-                <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Enter your Surname" className="bg-white text-black  border border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500" />
+              {/* Surname */}
+              <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
+                <label htmlFor="lastName" style={{ marginBottom: '6px', fontWeight: '500', fontSize: '16px', color: '#333' }}>
+                  Surname
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="Enter your Surname"
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    borderBottom: '2px solid #ccc',
+                    padding: '8px 0',
+                    outline: 'none',
+                    fontSize: '16px',
+                    backgroundColor: 'transparent',
+                    color: '#000'
+                  }}
+                  onFocus={(e) => e.target.style.borderBottom = '2px solid #0C21C1'}
+                  onBlur={(e) => e.target.style.borderBottom = '2px solid #ccc'}
+                />
               </div>
 
-              <div className="flex flex-col">
-                <label htmlFor="email" className="mb-1 font-medium text-sm">Email</label>
-                <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your Email" className="bg-white text-black  border border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500" />
+              {/* Email */}
+              <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
+                <label htmlFor="email" style={{ marginBottom: '6px', fontWeight: '500', fontSize: '16px', color: '#333' }}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your Email"
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    borderBottom: '2px solid #ccc',
+                    padding: '8px 0',
+                    outline: 'none',
+                    fontSize: '16px',
+                    backgroundColor: 'transparent',
+                    color: '#000'
+                  }}
+                  onFocus={(e) => e.target.style.borderBottom = '2px solid #0C21C1'}
+                  onBlur={(e) => e.target.style.borderBottom = '2px solid #ccc'}
+                />
               </div>
 
-              <div className="flex flex-col">
-                <label htmlFor="password" className="mb-1 font-medium text-sm">Password</label>
-                <div className="relative">
+              {/* Password */}
+              <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '10px' }}>
+                <label htmlFor="password" style={{ marginBottom: '6px', fontWeight: '500', fontSize: '16px', color: '#333' }}>
+                  Password
+                </label>
+
+                <div style={{ position: 'relative' }}>
                   <input
-                      type={showPassword ? "text" : "password"}
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Enter your Password"
-                      className="bg-white text-black border border-gray-400 focus:border-[#0C21C1] focus:outline-none py-1 placeholder-gray-500 pr-10 w-full"
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your Password"
+                    style={{
+                      width: '100%',
+                      border: 'none',
+                      borderBottom: '2px solid #ccc',
+                      padding: '8px 36px 8px 0',
+                      outline: 'none',
+                      fontSize: '16px',
+                      backgroundColor: 'transparent',
+                      color: '#000'
+                    }}
+                    onFocus={(e) => e.target.style.borderBottom = '2px solid #0C21C1'}
+                    onBlur={(e) => e.target.style.borderBottom = '2px solid #ccc'}
                   />
+
                   <span
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-[#0C21C1]"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '8px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      cursor: 'pointer',
+                      fontSize: '16px',
+                      color: '#666'
+                    }}
                   >
-                  {showPassword ? "🙈" : "👁️"}
-                </span>
+                    {showPassword ? "🙈" : "👁️"}
+                  </span>
                 </div>
+
+                {/* Açıklama metni */}
+                <p style={{
+                  fontSize: '12px',
+                  color: '#888',
+                  margin: '4px 0 8px 0', // üst boşluğu azalttık
+                  lineHeight: '1.4'
+                }}>
+                  Your password must be at least 8 characters and include a number and a special character.
+                </p>
+
               </div>
 
+
+              {/* backgroundColor: "#F8F8F8" */}
               <div
-                  style={{ backgroundColor: "#F8F8F8", borderRadius: "10px", padding: "10px" }}
-                  className="flex flex-col">
+                style={{ backgroundColor: "#F8F8F8", borderRadius: "10px", marginBottom: '16px', padding: '5px' }}
+              >
                 <label
-                    style={{ color: "#0C21C1" }}
-                    className="mb-1 font-medium text-sm">I want to</label>
+                  style={{ color: "#0C21C1" }}
+                  className="mb-1 font-medium text-sm">I want to</label>
                 <div className="flex gap-6 mt-1">
-                  <label className="flex items-center text-sm">
-                    <input type="radio" name="userType" value="CANDIDATE" checked={formData.userType === "CANDIDATE"} onChange={handleChange} className="mr-2" />Find a job
+                  <label
+                    style={{ marginRight: "20px" }}
+                    className="flex items-center text-sm">
+                    <input
+                      style={{ marginRight: "4px" }}
+                      type="radio" name="userType" value="CANDIDATE" checked={formData.userType === "CANDIDATE"} onChange={handleChange} className="mr-2" />Find a job
                   </label>
                   <label className="flex items-center text-sm">
-                    <input type="radio" name="userType" value="EMPLOYER" checked={formData.userType === "EMPLOYER"} onChange={handleChange} className="mr-2" />Hire talent
+                    <input
+                      style={{ marginRight: "4px" }}
+                      type="radio" name="userType" value="EMPLOYER" checked={formData.userType === "EMPLOYER"} onChange={handleChange} className="mr-2" />Hire talent
                   </label>
                 </div>
               </div>
 
-              <p className="text-xs text-gray-500">
-                Your password must be at least 8 characters and include a number and a special character.
-              </p>
-
-              <button type="submit" className="w-full bg-[#0C21C1] text-white py-3 rounded-full hover:bg-[#0a1ba6] transition">Sign Up</button>
+              <button style={{ marginTop: '10px', marginBottom: '20px' }} type="submit" className="w-full bg-[#0C21C1] text-white py-3 rounded-full hover:bg-[#0a1ba6] transition">Sign Up</button>
             </form>
 
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
             <div className="mt-8 text-center">
-              <p className="text-sm text-gray-500 mb-4">or sign up with</p>
+              {/* or sign up with */}
+              <div className="flex items-center mb-6">
+                <hr className="flex-grow border-gray-300" />
+                <span className="mx-4 text-sm text-gray-500">or sign up with</span>
+                <hr className="flex-grow border-gray-300" />
+              </div>
               <div className="flex justify-center gap-6">
-                <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGithub size={24} className="text-black" /></button>
-                <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGoogle size={24} className="text-black" /></button>
+                <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGithub size={24}
+                  className="text-black" />
+                </button>
+                <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGoogle size={24}
+                  className="text-black" />
+                </button>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Right */}
-        <div
-            style={{ background: "linear-gradient(180deg, #1849C6 0%, #000842 100%)", clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", borderRadius: "15px", padding: "20px", top: "0", right: "0", height: "100vh" }}
-            className="w-[46%] bg-[#000842] rounded-l-3xl flex items-center justify-center relative">
-          <img src={illustration} alt="Illustration" className="w-3/4 max-w-[400px]" />
-        </div>
       </div>
+
+      {/* Right: Illustration */}
+      <RightIllustration illustration={illustration} />
+    </div>
   );
 }
