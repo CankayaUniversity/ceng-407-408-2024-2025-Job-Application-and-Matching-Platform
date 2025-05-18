@@ -46,7 +46,7 @@ function CandidateList() {
             workHours: selectedJob.maxWorkHours ,
             startDate: selectedJob.lastDate,
             location:selectedJob.workType,
-            benefits:selectedJob.benefitTypes.join(", "),
+            benefits: selectedJob.benefitTypes.map(b => b.benefitType).join(", ")
         };
         console.log(offerDetails);
         try {

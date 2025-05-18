@@ -53,6 +53,7 @@ public class JobAdvCreateDto {
 
     public Integer getCompanyId() { return companyId; }
     public void setCompanyId(Integer companyId) { this.companyId = companyId; }
+
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 

@@ -1,5 +1,6 @@
 package Backend.controller.jobAdv;
 
+import Backend.entities.dto.JobAdvDto;
 import Backend.entities.offer.JobOffer;
 import Backend.entities.user.candidate.JobApplication;
 import Backend.services.JobOfferService;
@@ -20,12 +21,12 @@ public class JobOfferController {
     JobOfferService jobOfferService;
 
     @GetMapping("/my-offers")
-    public ResponseEntity<List<Map<String, Object>>> getMyOffers(HttpServletRequest request) {
+    public ResponseEntity<List<Map<String, Object>> > getMyOffers(HttpServletRequest request) {
         String email = (request.getUserPrincipal() != null)
                 ? request.getUserPrincipal().getName()
                 : "mock@candidate.com";
 
-        List<Map<String, Object>> myOffers = jobOfferService.getMyOffers(email);
+        List<Map<String, Object>>  myOffers = jobOfferService.getMyOffers(email);
         return ResponseEntity.ok(myOffers);
     }
     @GetMapping("/empOffers")

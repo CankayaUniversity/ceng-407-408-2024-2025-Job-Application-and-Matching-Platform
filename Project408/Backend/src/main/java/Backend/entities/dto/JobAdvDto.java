@@ -1,19 +1,21 @@
 package Backend.entities.dto;
 
 import Backend.core.enums.EmploymentType;
+import Backend.core.enums.LanguageLevel;
 import Backend.core.enums.WorkType;
 import Backend.core.location.Country;
 import Backend.entities.common.JobPositions;
+import Backend.entities.common.LanguageProficiency;
+import Backend.entities.jobAdv.Benefit;
+import Backend.entities.jobAdv.SocialSkill;
+import Backend.entities.jobAdv.TechnicalSkill;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
-@Data
 
-@NoArgsConstructor
-@AllArgsConstructor
 
 public class JobAdvDto {
     private int id;
@@ -23,23 +25,21 @@ public class JobAdvDto {
     private LocalDate lastDate;
     private boolean travelRest;
     private boolean license;
-    private List<String> jobPositions;
+    private List<JobPositions> jobPositions;
     private WorkType workType;
     private EmploymentType employmentType;
     private String country;
+    private String city;
     private Integer minWorkHours;
     private Integer maxWorkHours;
     private String degreeType;
     private String jobExperience;
     private Integer experienceYears;
     private String militaryStatus;
-    private List<String> technicalSkills;
-    private List<String> socialSkills;
-    private List<String> languageProficiencies;
-    private List<String> benefitTypes;
-    private List<String> benefitDescriptions;
-    private List<String> positionTypes;
-    private List<String> customJobPositions;
+    private List<TechnicalSkill> technicalSkills;
+    private List<SocialSkill> socialSkills;
+    private List<LanguageProficiency> languageProficiencies;
+    private List<Benefit> benefitTypes;
     private String companyName;
 
     // Getters and Setters
@@ -99,13 +99,6 @@ public class JobAdvDto {
         this.license = license;
     }
 
-    public List<String> getJobPositions() {
-        return jobPositions;
-    }
-
-    public void setJobPositions(List<String> jobPositions) {
-        this.jobPositions = jobPositions;
-    }
 
     public WorkType getWorkType() {
         return workType;
@@ -129,6 +122,14 @@ public class JobAdvDto {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public Integer getMinWorkHours() {
@@ -179,61 +180,17 @@ public class JobAdvDto {
         this.militaryStatus = militaryStatus;
     }
 
-    public List<String> getTechnicalSkills() {
-        return technicalSkills;
-    }
 
-    public void setTechnicalSkills(List<String> technicalSkills) {
-        this.technicalSkills = technicalSkills;
-    }
 
-    public List<String> getSocialSkills() {
-        return socialSkills;
-    }
-
-    public void setSocialSkills(List<String> socialSkills) {
-        this.socialSkills = socialSkills;
-    }
-
-    public List<String> getLanguageProficiencies() {
+    public List<LanguageProficiency> getLanguageProficiencies() {
         return languageProficiencies;
     }
 
-    public void setLanguageProficiencies(List<String> languageProficiencies) {
+    public void setLanguageProficiencies(List<LanguageProficiency> languageProficiencies) {
         this.languageProficiencies = languageProficiencies;
     }
 
-    public List<String> getBenefitTypes() {
-        return benefitTypes;
-    }
 
-    public void setBenefitTypes(List<String> benefitTypes) {
-        this.benefitTypes = benefitTypes;
-    }
-
-    public List<String> getBenefitDescriptions() {
-        return benefitDescriptions;
-    }
-
-    public void setBenefitDescriptions(List<String> benefitDescriptions) {
-        this.benefitDescriptions = benefitDescriptions;
-    }
-
-    public List<String> getPositionTypes() {
-        return positionTypes;
-    }
-
-    public void setPositionTypes(List<String> positionTypes) {
-        this.positionTypes = positionTypes;
-    }
-
-    public List<String> getCustomJobPositions() {
-        return customJobPositions;
-    }
-
-    public void setCustomJobPositions(List<String> customJobPositions) {
-        this.customJobPositions = customJobPositions;
-    }
     public String getCompanyName() {
         return companyName;
     }
@@ -242,4 +199,36 @@ public class JobAdvDto {
         this.companyName = companyName;
     }
 
+
+    public List<TechnicalSkill> getTechnicalSkills() {
+        return technicalSkills;
+    }
+
+    public void setTechnicalSkills(List<TechnicalSkill> technicalSkills) {
+        this.technicalSkills = technicalSkills;
+    }
+
+    public List<SocialSkill> getSocialSkills() {
+        return socialSkills;
+    }
+
+    public void setSocialSkills(List<SocialSkill> socialSkills) {
+        this.socialSkills = socialSkills;
+    }
+
+    public List<Benefit> getBenefitTypes() {
+        return benefitTypes;
+    }
+
+    public void setBenefitTypes(List<Benefit> benefitTypes) {
+        this.benefitTypes = benefitTypes;
+    }
+
+    public List<JobPositions> getJobPositions() {
+        return jobPositions;
+    }
+
+    public void setJobPositions(List<JobPositions> jobPositions) {
+        this.jobPositions = jobPositions;
+    }
 }

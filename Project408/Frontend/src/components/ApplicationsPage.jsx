@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {BriefcaseIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline/index.js";
 
 const ApplicationsPage = () => {
     const [jobAdvs, setJobAdvs] = useState([]);
@@ -139,19 +140,277 @@ const ApplicationsPage = () => {
             }}>
                 {selectedJob ? (
                     <div>
-                        <h2 className="text-2xl font-bold mb-4">{selectedJob.companyName}</h2>
-                        <p><strong>Description:</strong> {selectedJob.description}</p>
-                        <p><strong>Salary Range:</strong> {selectedJob.minSalary} - {selectedJob.maxSalary}</p>
-                        <p><strong>Last Date:</strong> {new Date(selectedJob.lastDate).toLocaleDateString()}</p>
-                        <p><strong>WorkType:</strong> {selectedJob.workType}</p>
-                        <p><strong>Employment Type:</strong> {selectedJob.employmentType}</p>
-                        <p><strong>Country:</strong> {selectedJob.country}</p>
+                        <div
+                            style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+                            className="w-2/3 bg-gray-100 p-4 rounded-lg">
+                            {/* İç Beyaz Kutu */}
+                            <div style={{borderRadius: "15px", padding: "10px"}}
+                                 className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"><BriefcaseIcon
+                                        className="text-blue-600" style={{width: '20px', height: '20px'}}/> Job
+                                        Advertisement
+                                    </h3>
+                                    <div className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                        <p className="text-sm">
+                                <span
+                                    className="font-medium text-gray-700"> <strong> Job Description: </strong> </span>{' '}<span
+                                            className="text-gray-600">{selectedJob?.description || '-'}</span>
+                                        </p>
+
+                                        <p className="text-sm">
+                                            <span className="font-medium text-gray-700"> <strong>Job Position: </strong> </span>{' '}<span
+                                            className="text-gray-600">{
+                                            selectedJob.positionType === 'OTHER'
+                                                ? selectedJob.customJobPosition?.positionName || '-'
+                                                : selectedJob.positionType
+                                                ?.replaceAll("_", " ")
+                                                ?.toLowerCase()
+                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'
+                                        }
+                              </span>
+                                        </p>
+
+
+                                        <p className="text-sm">
+                                <span
+                                    className="font-medium text-gray-700"> <strong> Salary Range: </strong> </span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob?.minSalary} - {selectedJob?.maxSalary}</span>
+                                        </p>
+                                        <p className="text-sm">
+                                            <span className="font-medium text-gray-700"> <strong> Last Date: </strong> </span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob?.lastDate || '-'}</span>
+                                        </p>
+
+                                        <p className="text-sm">
+                                            <span className="font-medium text-gray-700"><strong> Travel Rest: </strong> </span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob.travelRest ? 'Yes' : 'No'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                                            <span
+                                                className="font-medium text-gray-700"><strong>License: </strong></span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob.license ? 'Yes' : 'No'}</span>
+                                        </p>
+
+                                    </div>
+                                </div>
+
+
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                        <ClipboardDocumentCheckIcon className="text-blue-600"
+                                                                    style={{width: '20px', height: '20px'}}/>Job
+                                        Conditions</h3>
+                                    <div
+                                        className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                        <p className="text-sm">
+                           <span
+                               className="font-medium text-gray-700"><strong>Work Type: </strong></span>{' '}
+                                            <span
+                                                className="text-gray-600">{
+                                                selectedJob.workType
+                                                    ?.replaceAll("_", " ")
+                                                    ?.toLowerCase()
+                                                    ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                           <span
+                               className="font-medium text-gray-700"><strong>Employment Type: </strong></span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob.employmentType?.replaceAll("_", " ")
+                                                ?.toLowerCase()
+                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                        </p>
+
+                                        <p className="text-sm">
+                                            <span
+                                                className="font-medium text-gray-700"><strong>Country: </strong></span>{' '}
+                                            <span className="text-gray-600">{selectedJob?.country || '-'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                                            <span
+                                                className="font-medium text-gray-700"><strong>City: </strong></span>{' '}
+                                            <span className="text-gray-600">{selectedJob?.city|| '-'}</span>
+                                        </p>
+
+
+                                        <p className="text-sm">
+                          <span
+                              className="font-medium text-gray-700"><strong>Work Hours: </strong></span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob.minWorkHours} - {selectedJob.maxWorkHours}</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                        <ClipboardDocumentCheckIcon className="text-blue-600"
+                                                                    style={{width: '20px', height: '20px'}}/>Job
+                                        Qualification
+                                    </h3>
+                                    <div
+                                        className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                        <p className="text-sm">
+                           <span
+                               className="font-medium text-gray-700"><strong>Degree Type: </strong></span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob.degreeType?.replaceAll("_", " ")
+                                                ?.toLowerCase()
+                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                           <span
+                               className="font-medium text-gray-700"><strong>Job Experience: </strong></span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob.jobExperience?.replaceAll("_", " ")
+                                                ?.toLowerCase()
+                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                          <span
+                              className="font-medium text-gray-700"><strong>Experience Years: </strong></span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob.experienceYears || '-'}</span>
+                                        </p>
+                                        <p className="text-sm">
+                          <span
+                              className="font-medium text-gray-700"><strong>Military Status: </strong></span>{' '}
+                                            <span
+                                                className="text-gray-600">{selectedJob.militaryStatus?.replaceAll("_", " ")
+                                                ?.toLowerCase()
+                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                        </p>
+
+                                    </div>
+                                </div>
+
+
+                                <div>
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                            <BriefcaseIcon className="text-purple-600"
+                                                           style={{width: '20px', height: '20px'}}
+                                            />
+                                            Benefits
+                                        </h3>
+
+                                        {selectedJob.benefitTypes && selectedJob.benefitTypes?.length > 0 ? (
+                                            selectedJob.benefitTypes?.map((benefit, idx) => (
+                                                <div key={idx}
+                                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                    <p><strong>Benefit Type: </strong> {benefit.benefitType || '-'}
+                                                    </p>
+                                                    <p><strong>Description: </strong> {benefit.description || '-'}</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-gray-500">No Benefits added.</p>
+                                        )}
+                                    </div>
+
+
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                            <BriefcaseIcon className="text-purple-600"
+                                                           style={{width: '20px', height: '20px'}}
+                                            />
+                                            Technical Skills
+                                        </h3>
+
+                                        {selectedJob.technicalSkills && selectedJob.technicalSkills.length > 0 ? (
+                                            selectedJob.technicalSkills.map((technicalSkills, idx) => (
+                                                <div key={idx}
+                                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                    <p><strong>Position
+                                                        Name: </strong> {technicalSkills.positionName || '-'}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Skill
+                                                            Level: </strong> {technicalSkills.skillLevel || '-'}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Description: </strong> {technicalSkills.description || '-'}
+                                                    </p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-gray-500">No Technical Skills added.</p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                            <BriefcaseIcon className="text-purple-600"
+                                                           style={{width: '20px', height: '20px'}}
+                                            />
+                                            Social Skills
+                                        </h3>
+
+                                        {selectedJob.socialSkills && selectedJob.socialSkills.length > 0 ? (
+                                            selectedJob.socialSkills.map((socialSkills, idx) => (
+                                                <div key={idx}
+                                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                    <p><strong>Position
+                                                        Name: </strong> {socialSkills.positionName || '-'}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Skill Level: </strong> {socialSkills.skillLevel || '-'}
+                                                    </p>
+                                                    <p><strong>Description: </strong> {socialSkills.description || '-'}
+                                                    </p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-gray-500">No Social Skills added.</p>
+                                        )}
+                                    </div>
+
+                                    {/* Languages */}
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                            <BriefcaseIcon className="text-purple-600"
+                                                           style={{width: '20px', height: '20px'}}
+                                            />
+                                            Language Proficiency
+                                        </h3>
+
+                                        {selectedJob.languageProficiencies && selectedJob.languageProficiencies.length > 0 ? (
+                                            selectedJob.languageProficiencies.map((languageProficiency, idx) => (
+                                                <div key={idx}
+                                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                    <p><strong>Reading
+                                                        Level: </strong> {languageProficiency.readingLevel || '-'}</p>
+                                                    <p><strong>Writing
+                                                        Level: </strong> {languageProficiency.writingLevel || '-'}</p>
+                                                    <p><strong>Speaking
+                                                        Level: </strong> {languageProficiency.speakingLevel || '-'}</p>
+                                                    <p><strong>Listening
+                                                        Level: </strong> {languageProficiency.listeningLevel || '-'}</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-gray-500">No Language added.</p>
+                                        )}
+                                    </div>
+
+
+                                </div>
+
+
+
+                            </div>
+                        </div>
 
                         {/* Başvuruları Görüntüle butonu */}
                         <div className="mt-4">
                             <button
                                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                                onClick={() => navigate("/candidates", { state: { selectedJob } })}
+                                onClick={() => navigate("/candidates", {state: {selectedJob}})}
 
                             >
                                 View Applications
@@ -159,7 +418,7 @@ const ApplicationsPage = () => {
                         </div>
                     </div>
                 ) : (
-                    <p style={{ color: '#7f8c8d' }}>Select an advertisement, details will be displayed here.</p>
+                    <p style={{color: '#7f8c8d'}}>Select an advertisement, details will be displayed here.</p>
                 )}
             </div>
         </div>
