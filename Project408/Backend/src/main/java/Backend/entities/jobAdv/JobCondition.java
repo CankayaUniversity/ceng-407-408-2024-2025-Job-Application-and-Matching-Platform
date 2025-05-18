@@ -2,6 +2,7 @@ package Backend.entities.jobAdv;
 
 import Backend.core.enums.EmploymentType;
 import Backend.core.enums.WorkType;
+import Backend.core.location.City;
 import Backend.entities.BaseEntity;
 import Backend.core.location.Country;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -26,6 +27,10 @@ public class JobCondition extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "country_id")
     private Country country;
+
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private City city;
 
     @Column(name = "min_work_hours")
     private int minWorkHours;
@@ -84,5 +89,13 @@ public class JobCondition extends BaseEntity {
 
     public void setJobAdv(JobAdv jobAdv) {
         this.jobAdv = jobAdv;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 }

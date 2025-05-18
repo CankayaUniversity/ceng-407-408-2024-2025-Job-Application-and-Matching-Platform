@@ -518,7 +518,7 @@ const EmployerProfile = () => {
                                                         <div className="flex-1 mb-0">
                                                             <div
                                                                 className="w-full border border-gray-300 p-3 rounded-md bg-white text-black">
-                                                                <label htmlFor="establishedDate"
+                                                                <label htmlFor="email"
                                                                        className="text-sm font-semibold text-gray-500">
                                                                     Email
                                                                 </label>

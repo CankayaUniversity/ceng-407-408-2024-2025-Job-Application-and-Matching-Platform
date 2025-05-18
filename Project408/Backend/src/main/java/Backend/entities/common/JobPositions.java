@@ -30,6 +30,9 @@ public class JobPositions extends BaseEntity {
     public JobPositions(int i, JobPosition jobPosition, Object o, Object o1) {
         super();
     }
+    public JobPositions() {
+
+    }
 
 
     public JobPosition getPositionType() {

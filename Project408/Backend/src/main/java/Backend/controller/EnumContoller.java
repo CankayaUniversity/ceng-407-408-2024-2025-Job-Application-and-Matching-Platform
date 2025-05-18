@@ -11,12 +11,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RestController
 @RequestMapping("/enum")
 public class EnumContoller {
 
     @Autowired
     EnumService enumService;
+
+    @GetMapping("/jobPosition")
+    public List<JobPosition> getJobPosition() {
+        return Arrays.asList(JobPosition.values());
+    }
+
+
 
     @GetMapping("/applicationStatus")
     public ResponseEntity<ApplicationStatus> getApplicationStatus() {
@@ -59,11 +69,6 @@ public class EnumContoller {
     @GetMapping("/jobExperience")
     public ResponseEntity<JobExperience> getJobExperience() {
         return ResponseEntity.ok(enumService.getJobExperience());
-    }
-
-    @GetMapping("/jobPosition")
-    public ResponseEntity<JobPosition> getJobPosition() {
-        return ResponseEntity.ok(enumService.getJobPosition());
     }
 
     @GetMapping("/languageLevel")

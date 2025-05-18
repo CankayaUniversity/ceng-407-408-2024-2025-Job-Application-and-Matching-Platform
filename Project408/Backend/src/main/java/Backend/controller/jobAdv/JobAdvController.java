@@ -2,6 +2,7 @@ package Backend.controller.jobAdv;
 
 import Backend.core.location.Country;
 import Backend.entities.dto.CandidateApplicationDto;
+import Backend.entities.dto.JobAdvCreateDto;
 import Backend.entities.dto.JobAdvDto;
 import Backend.entities.dto.JobApplicationDto;
 import Backend.entities.jobAdv.Benefit;
@@ -144,7 +145,7 @@ public class JobAdvController {
     // 🔹 1. İlan Oluşturma
     @PostMapping("/create")
     public ResponseEntity<String> createJobAdv(
-            @RequestBody JobAdvCreateRequest request,
+            @RequestBody JobAdvCreateDto request,
             HttpServletRequest httpRequest) {
 
         String email = (httpRequest.getUserPrincipal() != null)

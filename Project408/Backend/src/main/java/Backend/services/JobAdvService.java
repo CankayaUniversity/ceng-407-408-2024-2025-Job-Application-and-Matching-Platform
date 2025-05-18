@@ -1,11 +1,10 @@
 package Backend.services;
 
-import Backend.core.enums.ApplicationStatus;
-import Backend.core.enums.EmploymentType;
-import Backend.core.enums.JobPosition;
-import Backend.core.enums.LanguageLevel;
-import Backend.core.enums.OfferStatus;
+import Backend.core.enums.*;
+import Backend.core.location.City;
 import Backend.core.location.Country;
+import Backend.entities.common.CustomJobPosition;
+import Backend.entities.dto.JobAdvCreateDto;
 import Backend.entities.jobAdv.*;
 import Backend.entities.offer.JobOffer;
 import Backend.entities.company.Company;
@@ -16,14 +15,7 @@ import Backend.entities.user.candidate.Candidate;
 import Backend.entities.user.candidate.ProfileDetails;
 import Backend.entities.user.candidate.WorkExperience;
 import Backend.entities.user.employer.Employer;
-import Backend.repository.CandidateRepository;
-import Backend.repository.EmployerRepository;
-import Backend.repository.JobAdvRepository;
-import Backend.repository.JobApplicationRepository;
-import Backend.repository.JobOfferRepository;
-import Backend.repository.CountryRepository;
-import Backend.repository.JobPositionsRepository;
-import Backend.repository.LanguageProficiencyRepository;
+import Backend.repository.*;
 import Backend.request.jobAdv.JobAdvCreateRequest;
 import Backend.request.jobAdv.JobAdvUpdateRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,73 +54,148 @@ public class JobAdvService {
     @Autowired
 
     JobOfferRepository jobOfferRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
+    @Autowired
+    private CityRepository cityRepository;
+    @Autowired
+    private JobConditionRepository jobConditionRepository;
 
 
-
-public void createJobAdv(JobAdvCreateRequest request, String employerEmail) {
+    public void createJobAdv(JobAdvCreateDto request, String employerEmail) {
     Employer employer = employerRepository.findByEmail(employerEmail)
             .orElseThrow(() -> new RuntimeException("İşveren bulunamadı: " + employerEmail));
 
-    Company company = employer.getCompany();
-    if (company == null) {
-        throw new RuntimeException("İşverene ait şirket bulunamadı.");
-    }
-
-    Country country = countryRepository.findById(request.getCountryId())
-            .orElseThrow(() -> new RuntimeException("Ülke bulunamadı: ID=" + request.getCountryId()));
-
-    JobCondition condition = new JobCondition();
-    condition.setWorkType(request.getWorkType());
-    condition.setEmploymentType(request.getEmploymentType());
-    condition.setCountry(country);
-    condition.setMinWorkHours(request.getMinWorkHours());
-    condition.setMaxWorkHours(request.getMaxWorkHours());
-
-    JobQualification qualification = new JobQualification();
-    qualification.setDegreeType(request.getDegreeType());
-    qualification.setJobExperience(request.getJobExperience());
-    qualification.setExperienceYears(request.getExperienceYears());
-    qualification.setMilitaryStatus(request.getMilitaryStatus());
-
-    List<TechnicalSkill> technicalSkills = request.getTechnicalSkills().stream().map(skill -> {
-        TechnicalSkill ts = new TechnicalSkill();
-        ts.setPositionName(skill);
-        ts.setJobQualification(qualification);
-        return ts;
-    }).toList();
-
-    List<SocialSkill> socialSkills = request.getSocialSkills().stream().map(skill -> {
-        SocialSkill ss = new SocialSkill();
-        ss.setPositionName(skill);
-        ss.setJobQualification(qualification);
-        return ss;
-    }).toList();
-
-    qualification.setTechnicalSkills(technicalSkills);
-    qualification.setSocialSkills(socialSkills);
-
-    List<LanguageProficiency> languageProficiencies = languageProficiencyRepository.findAllById(request.getLanguageProficiencyIds());
-    qualification.setLanguageProficiencies(languageProficiencies);
-
-    List<JobPositions> jobPositions = jobPositionsRepository.findAllById(request.getJobPositionIds());
+    Company company = companyRepository.findById(request.getCompanyId()).orElseThrow(()-> new RuntimeException("Şirket bulunamadı."));
 
     JobAdv jobAdv = new JobAdv();
     jobAdv.setCompany(company);
-    jobAdv.setCreatedEmployer(employer);
     jobAdv.setDescription(request.getDescription());
-    jobAdv.setMinSalary(request.getMinSalary());
-    jobAdv.setMaxSalary(request.getMaxSalary());
-    jobAdv.setLastDate(request.getDeadline());
-    jobAdv.setTravelRest(request.isTravelRest());
-    jobAdv.setLicense(request.isLicense());
-    jobAdv.setJobCondition(condition);
-    jobAdv.setJobQualification(qualification);
-    jobAdv.setJobPositions(jobPositions);
-    jobAdv.setBenefits(new ArrayList<>());
+    jobAdv.setMaxSalary(request.getMinSalary());
+    jobAdv.setMinSalary(request.getMaxSalary());
+    jobAdv.setLastDate(request.getLastDate());
+    jobAdv.setTravelRest(request.getTravelRest());
+    jobAdv.setLicense(request.getLicense());
+    jobAdv.setCreatedEmployer(employer);
 
-    jobAdvRepository.save(jobAdv);
+    JobCondition jobCondition = new JobCondition();
+    jobCondition.setWorkType(request.getJobConditionWorkType());
+    jobCondition.setEmploymentType(request.getJobConditionEmploymentType());
+    Country country = countryRepository.findById(request.getJobConditionCountry()).orElseThrow(()->new RuntimeException("Country bulunamadı."));
+    jobCondition.setCountry(country);
+    City city = cityRepository.findById(request.getJobConditionCity()).orElseThrow(()->new RuntimeException("City bulunamadi"));
+    jobCondition.setCity(city);
+    jobCondition.setMaxWorkHours(request.getJobConditionMaxWorkHours());
+    jobCondition.setMinWorkHours(request.getJobConditionMinWorkHours());
 
-    System.out.println("✅ İlan başarıyla oluşturuldu: " + jobAdv.getDescription());
+
+        JobQualification jobQualification = new JobQualification();
+        jobQualification.setDegreeType(request.getJobQualificationDegreeType());
+        jobQualification.setJobExperience(request.getJobQualificationJobExperience());
+        jobQualification.setExperienceYears(request.getJobQualificationExperienceYears());
+        jobQualification.setMilitaryStatus(request.getJobQualificationMilitaryStatus());
+
+        List<TechnicalSkill> technicalSkills = new ArrayList<>();
+        List<String> tsPositionNames = request.getTechnicalSkillPositionNames();
+        List<SkillLevel> tsLevels = request.getTechnicalSkillLevels();
+        List<String> tsDescriptions = request.getTechnicalSkillDescriptions();
+
+        if (tsPositionNames != null) {
+            for (int i = 0; i < tsPositionNames.size(); i++) {
+                TechnicalSkill ts = new TechnicalSkill();
+                ts.setPositionName(tsPositionNames.get(i));
+                if (tsLevels != null && tsLevels.size() > i)
+                    ts.setSkillLevel(tsLevels.get(i));
+                if (tsDescriptions != null && tsDescriptions.size() > i)
+                    ts.setDescription(tsDescriptions.get(i));
+                ts.setJobQualification(jobQualification);
+                technicalSkills.add(ts);
+            }
+        }
+        jobQualification.setTechnicalSkills(technicalSkills);
+
+        List<SocialSkill> socialSkills = new ArrayList<>();
+        List<String> ssPositionNames = request.getSocialSkillPositionNames();
+        List<SkillLevel> ssLevels = request.getSocialSkillLevels();
+        List<String> ssDescriptions = request.getSocialSkillDescriptions();
+
+        if (ssPositionNames != null) {
+            for (int i = 0; i < ssPositionNames.size(); i++) {
+                SocialSkill ss = new SocialSkill();
+                ss.setPositionName(ssPositionNames.get(i));
+                if (ssLevels != null && ssLevels.size() > i)
+                    ss.setSkillLevel(ssLevels.get(i));
+                if (ssDescriptions != null && ssDescriptions.size() > i)
+                    ss.setDescription(ssDescriptions.get(i));
+                ss.setJobQualification(jobQualification);
+                socialSkills.add(ss);
+            }
+        }
+        jobQualification.setSocialSkills(socialSkills);
+
+        List<LanguageProficiency> languageProficiencies = new ArrayList<>();
+        List<String> lpLanguages = request.getLanguageProficiencyLanguages();
+        List<LanguageLevel> lpReading = request.getLanguageProficiencyReadingLevels();
+        List<LanguageLevel> lpWriting = request.getLanguageProficiencyWritingLevels();
+        List<LanguageLevel> lpSpeaking = request.getLanguageProficiencySpeakingLevels();
+        List<LanguageLevel> lpListening = request.getLanguageProficiencyListeningLevels();
+
+        if (lpLanguages != null) {
+            for (int i = 0; i < lpLanguages.size(); i++) {
+                LanguageProficiency lp = new LanguageProficiency();
+                lp.setLanguage(lpLanguages.get(i));
+                if (lpReading != null && lpReading.size() > i)
+                    lp.setReadingLevel(lpReading.get(i));
+                if (lpWriting != null && lpWriting.size() > i)
+                    lp.setWritingLevel(lpWriting.get(i));
+                if (lpSpeaking != null && lpSpeaking.size() > i)
+                    lp.setSpeakingLevel(lpSpeaking.get(i));
+                if (lpListening != null && lpListening.size() > i)
+                    lp.setListeningLevel(lpListening.get(i));
+                languageProficiencies.add(lp);
+            }
+        }
+        jobQualification.setLanguageProficiencies(languageProficiencies);
+
+        List<Benefit> benefits = new ArrayList<>();
+        List<BenefitType> benefitTypes = request.getBenefitTypes();
+        List<String> benefitDescriptions = request.getBenefitDescriptions();
+
+        if (benefitTypes != null) {
+            for (int i = 0; i < benefitTypes.size(); i++) {
+                Benefit benefit = new Benefit();
+                benefit.setBenefitType(benefitTypes.get(i));
+                if (benefitDescriptions != null && benefitDescriptions.size() > i)
+                    benefit.setDescription(benefitDescriptions.get(i));
+                benefits.add(benefit);
+            }
+        }
+
+        List<JobPositions> jobPositions = new ArrayList<>();
+        List<JobPosition> jobPositionTypes = request.getJobPositionTypes();
+        List<String> customJobPositionNames = request.getCustomJobPositionNames();
+
+        if (jobPositionTypes != null) {
+            for (int i = 0; i < jobPositionTypes.size(); i++) {
+                JobPositions jp = new JobPositions();
+                jp.setPositionType(jobPositionTypes.get(i));
+                if (customJobPositionNames != null && customJobPositionNames.size() > i) {
+                    CustomJobPosition cjp = new CustomJobPosition();
+                    cjp.setPositionName(customJobPositionNames.get(i));
+                    jp.setCustomJobPosition(cjp);
+                }
+                jobPositions.add(jp);
+            }
+        }
+
+        jobAdv.setJobCondition(jobCondition);
+        jobAdv.setJobQualification(jobQualification);
+        jobAdv.setBenefits(benefits);
+        jobAdv.setJobPositions(jobPositions);
+
+        jobAdvRepository.save(jobAdv);
+
+        System.out.println("✅ İlan başarıyla oluşturuldu: " + jobAdv.getDescription());
 }
 
 // Yeni: JWT email ile update

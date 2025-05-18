@@ -1082,7 +1082,7 @@ export default function JobSeekerDashboard() {
                                 onChange={(e) => handleProfileFieldChange(['profileDetails', 'currentEmploymentStatus'], e.target.checked)}
                                 className="border-gray-300"
                             />
-                            <span className="text-sm">  Currently Employed</span>
+                            <span className="text-sm"> &nbsp; Currently Employed</span>
                           </div>
 
                           {/* Has Driving License Checkbox */}
@@ -1093,7 +1093,7 @@ export default function JobSeekerDashboard() {
                                 onChange={(e) => handleProfileFieldChange(['profileDetails', 'drivingLicense'], e.target.checked)}
                                 className="border-gray-300"
                             />
-                            <span className="text-sm "> Has Driving License</span>
+                            <span className="text-sm "> &nbsp;Has Driving License</span>
                           </div>
 
                           {/* Private Profile Checkbox */}
@@ -1104,7 +1104,7 @@ export default function JobSeekerDashboard() {
                                 onChange={(e) => handleProfileFieldChange(['profileDetails', 'isPrivateProfile'], e.target.checked)}
                                 className="border-gray-300"
                             />
-                            <span className="text-sm "> Private Profile</span>
+                            <span className="text-sm ">&nbsp; Private Profile</span>
                           </div>
                         </div>
                       </div>

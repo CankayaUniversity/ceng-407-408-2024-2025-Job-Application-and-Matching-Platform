@@ -43,10 +43,6 @@ public class EnumService {
         return JobExperience.values()[JobExperience.values().length - 1];
     }
 
-    public JobPosition getJobPosition() {
-        return JobPosition.values()[JobPosition.values().length - 1];
-    }
-
     public LanguageLevel getLanguageLevel() {
         return LanguageLevel.values()[LanguageLevel.values().length - 1];
     }
