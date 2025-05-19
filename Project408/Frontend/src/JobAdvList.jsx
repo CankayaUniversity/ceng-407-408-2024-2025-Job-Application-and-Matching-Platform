@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {BriefcaseIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline/index.js";
+import Toast from "./components/Toast.jsx";
+
 
 const JobAdvList = () => {
     const [jobs, setJobs] = useState([]);
@@ -17,6 +19,12 @@ const JobAdvList = () => {
     });
 
     const navigate = useNavigate();
+
+    const [showToast, setShowToast] = useState(false);
+
+    const handleCloseToast = () => {
+        setShowToast(false);
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -135,13 +143,17 @@ const JobAdvList = () => {
                     setApplications(statusData);
 
                     setMessage("Application successful!");
+                    setShowToast(true);
+
                 } else {
                     const errorText = await res.text();
                     setMessage("Application failed! " + errorText);
+                    setShowToast(true);
                 }
             } catch (error) {
                 setMessage("An error occurred.");
             }
+
         };
 
         return (
@@ -186,9 +198,9 @@ const JobAdvList = () => {
                                     <span
                                         className="font-medium text-gray-700"> <strong>Job Position: </strong> </span>{' '}<span
                                     className="text-gray-600">{
-                                    job.positionType === 'OTHER'
-                                        ? job.customJobPosition?.positionName || '-'
-                                        : job.positionType
+                                    job.jobPositions?.[0]?.positionType === 'OTHER'
+                                        ? job.jobPositions?.[0]?.customJobPosition?.positionName || '-'
+                                        : job.jobPositions?.[0]?.positionType
                                         ?.replaceAll("_", " ")
                                         ?.toLowerCase()
                                         ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'
@@ -467,14 +479,15 @@ const JobAdvList = () => {
                                 ) : (
                                     <button
                                         onClick={() => handleApply(job.id)}
-                                        style={{...buttonStyle, marginTop: '8px'}}
+                                        style={{...buttonStyle, marginTop: '12px'}}
                                     >
                                         🚀 Apply
                                     </button>
+
                                 )}
                             </div>
                         )}
-                    </div>
+            </div>
                     );
                     };
 
@@ -500,8 +513,10 @@ const JobAdvList = () => {
                             marginTop: '20px'
                         }}>
                             <h2 style={{textAlign: 'center', fontSize: '30px'}}>Job Listings</h2>
-                            {message &&
-                                <p style={{color: '#cc304b', textAlign: 'center', fontSize: '14px'}}>{message}</p>}
+                            {/*{message &&*/}
+                            {/*    <p style={{color: '#cc304b', textAlign: 'center', fontSize: '14px'}}>{message}</p>}*/}
+                            <Toast message={message} show={showToast} onClose={handleCloseToast} />
+
                             <div style={{
                                 display: 'flex',
                                 gap: '12px',

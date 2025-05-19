@@ -187,6 +187,15 @@ public class JobAdvService {
                 jobPositions.add(jp);
             }
         }
+        jobCondition.setJobAdv(jobAdv);
+        jobQualification.setJobAdv(jobAdv);
+
+        for(Benefit  b: benefits ){
+            b.setJobAdv(jobAdv);
+        }
+        for(JobPositions j : jobPositions ){
+            j.setJobAdv(jobAdv);
+        }
 
         jobAdv.setJobCondition(jobCondition);
         jobAdv.setJobQualification(jobQualification);
@@ -195,8 +204,7 @@ public class JobAdvService {
 
         jobAdvRepository.save(jobAdv);
 
-        System.out.println("✅ İlan başarıyla oluşturuldu: " + jobAdv.getDescription());
-}
+    }
 
 // Yeni: JWT email ile update
 public void updateJobAdv(int jobAdvId, String userEmail, JobAdvUpdateRequest request) {

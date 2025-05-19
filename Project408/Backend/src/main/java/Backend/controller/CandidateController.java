@@ -126,7 +126,7 @@ public class CandidateController {
 
     @GetMapping("/getAllJobAdv")
     public List<JobAdvDto> getAllJobAdv() {
-        List<JobAdv> jobAdvs = jobAdvService.getAllJobAdv();
+        List<JobAdv> jobAdvs =  jobAdvRepository.findAll();
         // Gereksiz filtreleme veya düzenleme yapılmadığından emin olun
         List<JobAdvDto> jobAdvDtos = jobAdvs.stream()
                 .map(jobAdv -> {

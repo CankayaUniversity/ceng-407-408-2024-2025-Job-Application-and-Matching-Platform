@@ -4,5 +4,6 @@ public enum MilitaryStatus {
     DONE,
     NOT_DONE,
     DEFERRED,
-    EXEMPTED
+    EXEMPTED,
+    NOT_REQUIRED
 }

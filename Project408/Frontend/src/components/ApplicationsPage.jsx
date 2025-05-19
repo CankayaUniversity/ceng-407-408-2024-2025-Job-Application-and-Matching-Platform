@@ -161,9 +161,9 @@ const ApplicationsPage = () => {
                                         <p className="text-sm">
                                             <span className="font-medium text-gray-700"> <strong>Job Position: </strong> </span>{' '}<span
                                             className="text-gray-600">{
-                                            selectedJob.positionType === 'OTHER'
-                                                ? selectedJob.customJobPosition?.positionName || '-'
-                                                : selectedJob.positionType
+                                            selectedJob.jobPositions?.[0]?.positionType === 'OTHER'
+                                                ? selectedJob.jobPositions?.[0]?.customJobPosition?.positionName || '-'
+                                                : selectedJob.jobPositions?.[0]?.positionType
                                                 ?.replaceAll("_", " ")
                                                 ?.toLowerCase()
                                                 ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'

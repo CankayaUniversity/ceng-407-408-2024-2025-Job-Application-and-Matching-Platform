@@ -117,9 +117,9 @@ const JobSeekerMyJobs = () => {
                                     <span
                                         className="font-medium text-gray-700"> <strong>Job Position: </strong> </span>{' '}<span
                                     className="text-gray-600">{
-                                    job.positionType === 'OTHER'
-                                        ? job.customJobPosition?.positionName || '-'
-                                        : job.positionType
+                                    job.jobPositions?.[0]?.positionType === 'OTHER'
+                                        ? job.jobPositions?.[0]?.customJobPosition?.positionName || '-'
+                                        : job.jobPositions?.[0]?.positionType
                                         ?.replaceAll("_", " ")
                                         ?.toLowerCase()
                                         ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'

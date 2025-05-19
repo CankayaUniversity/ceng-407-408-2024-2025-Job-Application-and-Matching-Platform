@@ -181,7 +181,7 @@ public class JobAdvController {
                 : "mock@employer.com"; // geçici
 
         jobAdvService.createJobAdv(request, email);
-        return ResponseEntity.ok("İlan başarıyla oluşturuldu.");
+        return ResponseEntity.ok("Job Advertisement Created Successfully!");
     }
 
     // 🔹 2. İlan Güncelleme

@@ -9,6 +9,7 @@ import {
   ClipboardDocumentCheckIcon, IdentificationIcon
 } from '@heroicons/react/24/outline';
 import axios from "axios";
+import Toast from './Toast';
 
 export default function CreateJobForm() {
   const [step, setStep] = useState(1);
@@ -161,10 +162,23 @@ export default function CreateJobForm() {
 
     fetchPositionTypes();
   }, []);
+  const [message, setMessage] = useState(null);
+  const [showToast, setShowToast] = useState(false);
 
   const jobPositions = Array.isArray(formData.jobPosition?.jobPositions)
       ? formData.jobPosition.jobPositions
-      : formData.jobPosition.jobPositions ? [formData.jobPosition.jobPositions] : [];
+      : formData.jobPosition.jobPositions
+          ? [formData.jobPosition.jobPositions]
+          : [];
+
+  const jobPositionTypes = jobPositions.map(jp => jp.positionType);
+  const customJobPositionNames = jobPositions.map(
+      jp => jp.customJobPosition?.positionName || ''
+  );
+  const handleCloseToast = () => {
+    setShowToast(false);
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -208,8 +222,8 @@ export default function CreateJobForm() {
       benefitTypes: formData.benefits.map(b => b.benefitType),
       benefitDescriptions: formData.benefits.map(b => b.description),
 
-      jobPositionTypes: jobPositions.map(jp => jp.positionType),
-      customJobPositionNames: jobPositions.map(jp => jp.customJobPosition?.positionName || ''),
+      jobPositionTypes: jobPositionTypes,
+      customJobPositionNames: customJobPositionNames,
     };
 
     try {
@@ -228,14 +242,21 @@ export default function CreateJobForm() {
         body: JSON.stringify(dto)  // burada dto gönderiyoruz
 
       });
+      console.log('Giden veri:', JSON.stringify(formData));
+
       console.log('Giden veri:', JSON.stringify(dto));
 
       if (!response.ok) {
+        setMessage('Job Advertisement could not be created. Please check the form.');
+        setShowToast(true);
         throw new Error('Job Advertisement oluşturulamadı');
+
       }
 
-      const data = await response.json();
+      const data = await response.text();
       console.log('Job Advertisement başarıyla oluşturuldu:', data);
+      setMessage(data);
+      setShowToast(true);
 
     } catch (error) {
       console.error('Hata:', error);
@@ -254,22 +275,32 @@ export default function CreateJobForm() {
   };
 
 
-
   const handleChange = (path, value) => {
-
     setFormData(prev => {
-      const updated = { ...prev };
+      // Kopya
+      const updated = JSON.parse(JSON.stringify(prev));
+
+      // target gösterici
       let target = updated;
 
+      // Dizinin sonundan 1 öncekine kadar ilerle
       for (let i = 0; i < path.length - 1; i++) {
         const key = path[i];
-        if (target[key] === null || typeof target[key] !== 'object') {
-          target[key] = {};
+        // Eğer path'teki key yoksa obje veya array oluştur
+        if (target[key] === undefined) {
+          // Eğer sonraki key number ise array oluştur, değilse object
+          if (typeof path[i + 1] === 'number') {
+            target[key] = [];
+          } else {
+            target[key] = {};
+          }
         }
         target = target[key];
       }
 
+      // Son anahtara değer ata
       target[path[path.length - 1]] = value;
+
       return updated;
     });
   };
@@ -451,6 +482,7 @@ export default function CreateJobForm() {
                           >
                           Create Job Advertisement
                         </button>
+                          <Toast message={message} show={showToast} onClose={handleCloseToast} />
                         </div>
                       </div>
 
@@ -474,9 +506,9 @@ export default function CreateJobForm() {
 
                               <p className="text-sm">
                               <span className="font-medium text-gray-700"> <strong>Job Position: </strong> </span>{' '}<span className="text-gray-600">{
-                               formData.jobPosition?.jobPositions?.positionType === 'OTHER'
-                                   ? formData.jobPosition?.jobPositions?.customJobPosition?.positionName || '-'
-                                   : formData.jobPosition?.jobPositions?.positionType
+                               formData.jobPosition?.jobPositions?.[0]?.positionType === 'OTHER'
+                                   ? formData.jobPosition?.jobPositions?.[0]?.customJobPosition?.positionName || '-'
+                                   : formData.jobPosition?.jobPositions?.[0]?.positionType
                                     ?.replaceAll("_", " ")
                                      ?.toLowerCase()
                                    ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'
@@ -756,8 +788,8 @@ export default function CreateJobForm() {
                               <div className="flex-1 mb-0">
                                 <select
                                     name="jobPositions"
-                                    value={formData.jobPosition?.jobPositions?.positionType || ''}
-                                    onChange={(e) => handleChange(['jobPosition','jobPositions','positionType'], e.target.value)}
+                                    value={formData.jobPosition?.jobPositions?.[0]?.positionType || ''}
+                                    onChange={(e) => handleChange(['jobPosition','jobPositions',0,'positionType'], e.target.value)}
                                     className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                                 >
                                   <option value="" disabled>Select</option>
@@ -773,7 +805,7 @@ export default function CreateJobForm() {
                                 </select>
                               </div>
                             </div>
-                            {formData.jobPosition?.jobPositions?.positionType === 'OTHER' &&(
+                            {formData.jobPosition?.jobPositions?.[0]?.positionType === 'OTHER' &&(
                                 <div className="relative w-full flex items-center space-x-4">
                               <div className="flex-1 mb-0">
                                 <div
@@ -788,8 +820,8 @@ export default function CreateJobForm() {
                                 <input
                                     type="text"
                                     name="positionName"
-                                    value={formData?.jobPosition?.jobPositions?.customJobPosition?.positionName || ''}
-                                    onChange={(e) => handleChange(['jobPosition','jobPositions','customJobPosition','positionName'], e.target.value)}
+                                    value={formData?.jobPosition?.jobPositions?.[0]?.customJobPosition?.positionName || ''}
+                                    onChange={(e) => handleChange(['jobPosition','jobPositions',0,'customJobPosition','positionName'], e.target.value)}
                                     className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                                 />
                               </div>
@@ -1154,14 +1186,16 @@ export default function CreateJobForm() {
                                     </div>
                                     <div className="flex-1 mb-0">
 
-                                      <select name="militaryStatus" value={formData.jobQualification?.militaryStatus  || ''}
-                                              onChange={(e) => handleChange(['jobQualification','militaryStatus'], e.target.value)}
+                                      <select name="militaryStatus"
+                                              value={formData.jobQualification?.militaryStatus || ''}
+                                              onChange={(e) => handleChange(['jobQualification', 'militaryStatus'], e.target.value)}
                                               className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none">
                                         <option value="" disabled>Select</option>
                                         <option value="DONE">Done</option>
                                         <option value="NOT_DONE">Not Done</option>
                                         <option value="DEFERRED">Deferred</option>
                                         <option value="EXEMPTED">Exempted</option>
+                                        <option value="NOT_REQUIRED">Not Required</option>
                                       </select>
                                     </div>
 

@@ -9,7 +9,6 @@ import lombok.*;
 
 @Entity
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "job_positions")
 public class JobPositions extends BaseEntity {
@@ -23,8 +22,8 @@ public class JobPositions extends BaseEntity {
     private CustomJobPosition customJobPosition;
 
     @ManyToOne
-    @JsonBackReference ("jobadv_3")// Prevents circular references during serialization
     @JoinColumn(name = "job_adv_id") // Veritabanındaki yabancı anahtar
+    @JsonBackReference ("jobadv_3")// Prevents circular references during serialization
     private JobAdv jobAdv;
 
     public JobPositions(int i, JobPosition jobPosition, Object o, Object o1) {
