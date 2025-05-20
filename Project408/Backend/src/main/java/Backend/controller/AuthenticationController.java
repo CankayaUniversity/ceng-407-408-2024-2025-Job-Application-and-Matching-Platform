@@ -1,16 +1,16 @@
 package Backend.controller;
 
-import Backend.entities.dto.UserDto;
-import Backend.entities.dto.UserRegisterDto;
-import Backend.entities.dto.UserResponseDto;
-import Backend.entities.dto.VerifiedUserDto;
+import Backend.entities.dto.*;
 import Backend.entities.user.candidate.Candidate;
 import Backend.entities.user.employer.Employer;
 import Backend.services.AuthenticationService;
+import jakarta.mail.MessagingException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/login")
@@ -59,6 +59,19 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
+    }
+
+    @PostMapping("/send-reset-code")
+    public ResponseEntity<?> sendResetCode(@RequestBody Map<String, String> request) throws MessagingException {
+        String email = request.get("email");
+        authenticationService.sendResetPasswordCode(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        authenticationService.resetPassword(request.getEmail(), request.getCode(), request.getNewPassword());
+        return ResponseEntity.ok().build();
     }
 
 

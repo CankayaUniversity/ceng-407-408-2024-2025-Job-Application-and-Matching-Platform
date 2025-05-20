@@ -28,6 +28,7 @@ import ApplicationsPage from "./components/ApplicationsPage.jsx";
 import CandidateList from "./components/CandidateList.jsx";
 import JobSeekerMyJobs from "./components/JobSeekerMyJobs.jsx";
 import EmailVerification from './EmailVerification.jsx';
+import ForgotPassword from "./ForgotPassword.jsx";
 
 
 
@@ -52,6 +53,7 @@ function App() {
         <Route path="/" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/verification" element={<EmailVerification />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Protected routes with navbar */}
         {/* <Route element={<PrivateRoute />}> */}
@@ -76,6 +78,7 @@ function App() {
             <Route path="/post/:id" element={<PostDetail />} />
             <Route path="/interviews" element={<InterviewPage />} />
             <Route path="/notifications" element={<NotificationsPage notifications={notifications} markAsRead={markAsRead} />} />
+
 
           </Route>
         </Route>

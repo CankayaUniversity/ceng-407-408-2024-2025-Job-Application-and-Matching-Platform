@@ -47,6 +47,7 @@ public class User extends BaseEntity implements UserDetails {
     private LocalDateTime verificationCodeExpireAt;
 
 
+
     //return user roles
     @Override
     @JsonIgnore
@@ -135,5 +136,7 @@ public class User extends BaseEntity implements UserDetails {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+
 }
 

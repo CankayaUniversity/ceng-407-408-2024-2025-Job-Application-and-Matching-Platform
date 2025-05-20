@@ -51,13 +51,13 @@ export default function Login() {
                 console.error('Sunucu hatası:', errorText);
                 setError('Invalid email or password');
 
-                navigate('/employerDashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+                // navigate('/employerDashboard');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
             }
         } catch (err) {
             console.error('Bağlantı hatası:', err);
             setError('Sunucuya ulaşılamadı');
 
-            navigate('candidate/jobs');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
+            // navigate('candidate/jobs');  //şimdilik diğer sayfaya ulaşmak için eklendi, burası sonra silinecek!!!
         }
     };
 
@@ -152,11 +152,11 @@ export default function Login() {
 
                         {/* Remember me & Forgot password */}
                         <div className="flex justify-between items-center text-sm text-gray-500 mb-6">
-                            <label className="flex items-center gap-2">
-                                <input type="checkbox" />
-                                Remember me
-                            </label>
-                            <a href="#" className="hover:underline">Forgot Password?</a>
+                            {/*<label className="flex items-center gap-2">*/}
+                            {/*    <input type="checkbox" />*/}
+                            {/*    Remember me*/}
+                            {/*</label>*/}
+                            <a href="/forgot-password" className="hover:underline">Forgot Password?</a>
                         </div>
 
 

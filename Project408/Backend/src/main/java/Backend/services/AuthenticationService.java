@@ -160,4 +160,44 @@ public class AuthenticationService {
         return String.valueOf(code);
     }
 
+    public void sendResetPasswordCode(String email) throws MessagingException {
+        Optional<User> optional = userRepository.findByEmail(email);
+        if (optional.isEmpty())
+            throw new RuntimeException("User not found");
+
+        if(!optional.get().isEnabled()){
+            throw new AuthenticationServiceException("Account is not verified. Please verify your account");
+        }
+
+        User user = optional.get();
+        String resetCode = generateVerificationCode();
+        user.setVerificationCode(resetCode);
+        user.setVerificationCodeExpireAt(LocalDateTime.now().plusMinutes(10));
+        userRepository.save(user);
+
+        String subject = "Password Reset Code";
+        String html = "<p>Your password reset code is: <strong>" + resetCode + "</strong></p>";
+        emailService.sendVerificationEmail(user.getUsername(), subject, html);
+    }
+
+    public void resetPassword(String email, String code, String newPassword) {
+        Optional<User> optional = userRepository.findByEmail(email);
+        if (optional.isEmpty())
+            throw new RuntimeException("User not found");
+
+        User user = optional.get();
+
+        if (!user.getVerificationCode().equals(code))
+            throw new RuntimeException("Invalid code");
+
+        if (user.getVerificationCodeExpireAt().isBefore(LocalDateTime.now()))
+            throw new RuntimeException("Code expired");
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setVerificationCode(null);
+        user.setVerificationCodeExpireAt(null);
+        userRepository.save(user);
+    }
+
+
 }
