@@ -1,7 +1,15 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {useLocation, useParams} from 'react-router-dom';
 import axios from 'axios';
-import { Collapse } from 'react-collapse'; // react-collapse ile açılıp kapanabilen alanlar
+import { Collapse } from 'react-collapse';
+import Toast from "./Toast.jsx";
+import {
+    BriefcaseIcon,
+    ClipboardDocumentCheckIcon,
+    EnvelopeIcon,
+    GlobeAltIcon,
+    HeartIcon
+} from "@heroicons/react/24/outline/index.js"; // react-collapse ile açılıp kapanabilen alanlar
 
 function CandidateList() {
     const [applications, setApplications] = useState([]);
@@ -38,7 +46,11 @@ function CandidateList() {
     const toggleExpand = (index) => {
         setExpandedIndex(expandedIndex === index ? null : index); // Aynı başlık tekrar tıklanırsa kapanır
     };
-
+    const [message, setMessage] = useState(null);
+    const [showToast, setShowToast] = useState(false);
+    const handleCloseToast = () => {
+        setShowToast(false);
+    };
     const handleOffer = async (applicationId) => {
         const token = localStorage.getItem('token');
         const offerDetails = {
@@ -60,10 +72,21 @@ function CandidateList() {
                     }
                 }
             );
-            console.log(response.data); // Teklif başarıyla gönderildi mesajını kontrol edebilirsin
+
+            console.log(response.data); // Should print: "Offer successfully sent."
+            setMessage(response.data); // Success message from backend
+            setShowToast(true);
+
         } catch (error) {
-            console.error("Teklif gönderme hatası:", error);
+            if (error.response && error.response.data) {
+                // Message from backend for errors (e.g., 400 Bad Request)
+                setMessage(error.response.data);
+            } else {
+                setMessage("An unexpected error occurred.");
+            }
+            setShowToast(true);
         }
+
     };
 
     const handleDecline = async (applicationId) => {
@@ -71,18 +94,27 @@ function CandidateList() {
 
         try {
             const response = await axios.put(
-                `http://localhost:9090/api/job-adv/decline/${applicationId}`,{},
+                `http://localhost:9090/api/job-adv/decline/${applicationId}`,
+                {},
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
                     }
                 }
             );
-            console.log(response.data);
+
+            setMessage(response.data); // "Offer status updated successfully."
+            setShowToast(true);
+
         } catch (error) {
-            console.error("Teklif gönderme hatası:", error);
+            if (error.response && error.response.data) {
+                setMessage(error.response.data); // "Cannot decline. No offer has been sent..."
+            } else {
+                setMessage("An unexpected error occurred.");
+            }
+            setShowToast(true);
         }
+
     };
 
     return (
@@ -93,99 +125,734 @@ function CandidateList() {
                     <div key={index} className="border p-4 mb-4 rounded shadow bg-gray-100">
                         <h4
                             onClick={() => toggleExpand(index)}
-                            className="cursor-pointer text-2xl font-semibold text-black"
+                            className="cursor-pointer text-xl font-semibold text-black"
                         >
                             {app.candidate?.firstName} {app.candidate?.lastName} Application's
                         </h4>
 
 
-                        <Collapse isOpened={expandedIndex === index}>
-                            <div className="mt-4">
+                                    <Collapse isOpened={expandedIndex === index}>
+                                        <div className="min-h-screen bg-gray-100 p-8">
+                                            <div className="w-full px-4 py-10">
+                                                <div className="max-w-[1900px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
 
-                                {/* İş Deneyimleri */}
-                                <div className="mb-4">
-                                    <h5 className="font-semibold">Work Experiences</h5>
-                                    {app.candidate?.workExperiences && app.candidate?.workExperiences.length > 0 ? (
-                                        app.candidate?.workExperiences.map((experience, expIndex) => (
-                                            <div key={expIndex} className="mb-2">
-                                                {experience.companyName &&
-                                                    <p><strong>Company Name:</strong> {experience.companyName}</p>}
-                                                {experience.industry &&
-                                                    <p><strong>Industry:</strong> {experience.industry}</p>}
-                                                {experience.jobTitle &&
-                                                    <p><strong>Job Title:</strong> {experience.jobTitle}</p>}
-                                                {experience.jobDescription &&
-                                                    <p><strong>Job Description:</strong> {experience.jobDescription}
-                                                    </p>}
-                                                {experience.employmentType &&
-                                                    <p><strong>Employment Type:</strong> {experience.employmentType}
-                                                    </p>}
-                                                {experience.startDate &&
-                                                    <p><strong>Start Date:</strong> {experience.startDate}</p>}
-                                                {experience.endDate &&
-                                                    <p><strong>End Date:</strong> {experience.endDate}</p>}
-                                                <p><strong>Is going?:</strong> {experience.isGoing ? 'Yes' : 'No'}</p>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p>Bilgi yok</p>
-                                    )}
-                                </div>
-                                {/* Sertifikalar */}
-                                <div className="mb-4">
-                                    <h5 className="font-semibold">Certifications</h5>
-                                    {app.candidate?.certifications && app.candidate?.certifications.length > 0 ? (
-                                        app.candidate?.certifications.map((certification, certIndex) => (
-                                            <div key={certIndex} className="mb-2">
-                                                {certification.certificationName && <p><strong> Certification
-                                                    Name:</strong> {certification.certificationName}</p>}
-                                                {certification.certificationUrl &&
-                                                    <p><strong>Certification Link:</strong> <a
-                                                        href={certification.certificationUrl} target="_blank"
-                                                        rel="noopener noreferrer">Connection</a></p>}
-                                                {certification.certificateValidityDate &&
-                                                    <p><strong>Certificate Validity
-                                                        Date:</strong> {certification.certificateValidityDate}</p>}
-                                                {certification.issuedBy &&
-                                                    <p><strong>Issued By:</strong> {certification.issuedBy}</p>}
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p>No information.</p>
-                                    )}
-                                </div>
-                                <div className="flex justify-between mt-6">
-                                    <button
-                                        onClick={() => handleOffer(app.applicationId)}
-                                        className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                                    >
-                                        Make Offer / Accept
-                                    </button>
-                                    <br/>
-                                    <button
-                                        onClick={() => handleDecline(app.applicationId)}
-                                        className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                                    >
-                                        Decline
-                                    </button>
-                                </div>
+                                        <div
+                                            style={{borderRadius: "15px", padding: "10px"}}
+                                            className="flex max-w-6xl mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
+                                            {/* Sol Lacivert Sidebar */}
+                                            <div
+                                                style={{
+                                                    backgroundColor: "#f8f9f9",
+                                                    borderRadius: "15px",
+                                                    padding: "10px"
+                                                }}
+                                                className="w-1/4 bg-gray-100 p-4 rounded-lg">
+                                                {/* Lacivert içerik kutusu */}
+                                                <div
+                                                    style={{
+                                                        backgroundColor: "#000842",
+                                                        borderRadius: "15px",
+                                                        padding: "10px"
+                                                    }}
+                                                    className="bg-blue-900 text-white p-6 rounded-lg space-y-4 flex flex-col items-center shadow-md">
+                                                    {/* Profil Foto */}
+                                                    <img
+                                                        src={`http://localhost:9090${app.candidate?.profileDetails?.profilePicture}`}
+                                                        alt="Profile"
+                                                        style={{width: '150px', height: '150px'}}
+                                                        className="rounded-full border-4 border-white"
+                                                    />
 
+                                                    {/* Bilgi listesi */}
+                                                    <div className="space-y-4 text-md w-full h-1/4">
+                                                        <p><strong>About
+                                                            Me:</strong> {app.candidate?.profileDetails?.aboutMe || '-'}
+                                                        </p>
+                                                        <p>
+                                                            <strong>Nationality:</strong> {app.candidate?.profileDetails?.nationality
+                                                            ?.replaceAll("_", " ")
+                                                            ?.toLowerCase()
+                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                        <p><strong>Birth
+                                                            Date:</strong> {app.candidate?.profileDetails?.birthDate || '-'}
+                                                        </p>
+                                                        <p>
+                                                            <strong>Gender:</strong> {app.candidate?.profileDetails?.gender
+                                                            ?.replaceAll("_", " ")
+                                                            ?.toLowerCase()
+                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+
+                                                        {app.candidate?.profileDetails?.gender === "MALE" && (
+                                                            <p><strong>Military
+                                                                Status:</strong> {app.candidate?.profileDetails?.militaryStatus?.replaceAll("_", " ")
+                                                                ?.toLowerCase()
+                                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                        )}
+
+                                                        {app.candidate?.profileDetails?.militaryStatus === "DEFERRED" && (
+                                                            <p><strong>Military Deferment
+                                                                Date:</strong> {app.candidate?.profileDetails?.militaryDefermentDate || '-'}
+                                                            </p>
+                                                        )}
+
+                                                        <p><strong>Disability
+                                                            Status:</strong> {app.candidate?.profileDetails?.disabilityStatus?.replaceAll("_", " ")
+                                                            ?.toLowerCase()
+                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                        <p><strong>Marital
+                                                            Status:</strong> {app.candidate?.profileDetails?.maritalStatus
+                                                            ?.replaceAll("_", " ")
+                                                            ?.toLowerCase()
+                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+
+                                                        <p><strong>Currently
+                                                            Working:</strong> {app.candidate?.profileDetails?.currentEmploymentStatus ? 'Yes' : 'No'}
+                                                        </p>
+                                                        <p><strong>Driving
+                                                            License:</strong> {app.candidate?.profileDetails?.drivingLicense ? 'Yes' : 'No'}
+                                                        </p>
+                                                        <p><strong>Profile
+                                                            Privacy:</strong> {app.candidate?.profileDetails?.isPrivateProfile ? 'Private' : 'Public'}
+                                                        </p>
+
+                                                        <p><strong>Phone
+                                                            Number:</strong> {app.candidate?.contactInformation?.phoneNumber || '-'}
+                                                        </p>
+                                                        <p>
+                                                            <strong>Country:</strong> {app.candidate?.contactInformation?.country?.name || '-'}
+                                                        </p>
+                                                        <p>
+                                                            <strong>City:</strong> {app.candidate?.contactInformation?.city?.name || '-'}
+                                                        </p>
+
+                                                        <p>
+                                                            <strong>Github:</strong> {app.candidate?.socialLinks?.githubUrl || '-'}
+                                                        </p>
+                                                        <p>
+                                                            <strong>LinkedIn:</strong> {app.candidate?.socialLinks?.linkedinUrl || '-'}
+                                                        </p>
+                                                        <p>
+                                                            <strong>Website:</strong> {app.candidate?.socialLinks?.websiteUrl || '-'}
+                                                        </p>
+                                                        <p>
+                                                            <strong>Blog:</strong> {app.candidate?.socialLinks?.blogUrl || '-'}
+                                                        </p>
+                                                        <p><strong>Other
+                                                            Links:</strong> {app.candidate?.socialLinks?.otherLinksUrl || '-'}
+                                                        </p>
+                                                        <p><strong>Other Links
+                                                            Description:</strong> {app.candidate?.socialLinks?.otherLinksDescription || '-'}
+                                                        </p>
+                                                    </div>
+                                                    <div style={{textAlign: 'right'}}>
+
+                                                        <button
+                                                            style={{backgroundColor: '#0C21C1', borderColor: '#0C21C2'}}
+                                                            onClick={() => handleOffer(app.applicationId)}
+                                                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                                        >
+                                                            Make Offer
+                                                        </button>
+                                                        <Toast message={message} show={showToast}
+                                                               onClose={handleCloseToast}/>
+                                                        &nbsp; &nbsp; &nbsp;
+                                                        <button
+                                                            style={{backgroundColor: '#0C21C1', borderColor: '#0C21C2'}}
+                                                            onClick={() => handleDecline(app.applicationId)}
+                                                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                                        >
+                                                            Decline
+                                                        </button>
+                                                        <Toast message={message} show={showToast}
+                                                               onClose={handleCloseToast}/>
+
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+
+
+                                            {/* Sağ Taraftaki Bilgi Alanları */}
+                                            <div
+                                                style={{
+                                                    backgroundColor: "#f8f9f9",
+                                                    borderRadius: "15px",
+                                                    padding: "10px"
+                                                }}
+                                                className="w-2/3 bg-gray-100 p-4 rounded-lg">
+                                                {/* İç Beyaz Kutu */}
+                                                <div style={{borderRadius: "15px", padding: "10px"}}
+                                                     className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <ClipboardDocumentCheckIcon className="text-blue-600"
+                                                                                        style={{
+                                                                                            width: '20px',
+                                                                                            height: '20px'
+                                                                                        }}/>
+                                                            Job Preferences
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.jobPreferences?.preferredPositions && app.candidate?.jobPreferences?.preferredPositions.length > 0 ? (
+                                                                <>
+                                                                    <p>
+                                                                        <strong>Preferred Positions:</strong>{' '}
+                                                                        {app.candidate?.jobPreferences.preferredPositions
+                                                                            .map(pos =>
+                                                                                pos.positionType
+                                                                                    ? pos.positionType.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
+                                                                                    : pos.customJobPosition?.positionName || '-'
+                                                                            )
+                                                                            .join(', ')}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>Preferred Work Type:</strong>{' '}
+                                                                        {app.candidate?.jobPreferences?.preferredWorkType
+                                                                            ? app.candidate?.jobPreferences.preferredWorkType.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
+                                                                            : '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>Work Hours:</strong>{' '}
+                                                                        {app.candidate?.jobPreferences?.minWorkHour !== undefined && app.candidate?.jobPreferences?.maxWorkHour !== undefined
+                                                                            ? `${app.candidate?.jobPreferences.minWorkHour} - ${app.candidate?.jobPreferences.maxWorkHour}`
+                                                                            : '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>Can Travel:</strong>{' '}
+                                                                        {app.candidate?.jobPreferences?.canTravel ? 'Yes' : 'No'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>Expected Salary:</strong>{' '}
+                                                                        {app.candidate?.jobPreferences?.expectedSalary || '-'}
+                                                                    </p>
+                                                                </>
+                                                            ) : (
+                                                                <p className="text-gray-500">No job preferences
+                                                                    added.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* References Section */}
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <EnvelopeIcon className="text-blue-600"
+                                                                          style={{width: '20px', height: '20px'}}/>
+                                                            References
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.references && app.candidate?.references.length > 0 && app.candidate?.references[0].referenceName ? (
+                                                                app.candidate?.references.map((ref, idx) => (
+                                                                    <div key={idx} className="border-b pb-2 mb-2">
+                                                                        <p>
+                                                                            <strong>Name:</strong> {ref.referenceName || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Company:</strong> {ref.referenceCompany || '-'}
+                                                                        </p>
+                                                                        <p><strong>Job
+                                                                            Title:</strong> {ref.referenceJobTitle || '-'}
+                                                                        </p>
+                                                                        <p><strong>Contact
+                                                                            Info:</strong> {ref.referenceContactInfo || '-'}
+                                                                        </p>
+                                                                        <p><strong>Years
+                                                                            Worked:</strong> {ref.referenceYearsWorked || '-'}
+                                                                        </p>
+                                                                    </div>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-gray-500">No references added.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Language Proficiency Section */}
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <GlobeAltIcon className="text-blue-600"
+                                                                          style={{width: '20px', height: '20px'}}/>
+                                                            Language Proficiency
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.languageProficiency && app.candidate?.languageProficiency.length > 0 && app.candidate?.languageProficiency[0].language ? (
+                                                                app.candidate?.languageProficiency.map((lang, idx) => (
+                                                                    <div key={idx} className="border-b pb-2 mb-2">
+                                                                        <p>
+                                                                            <strong>Language:</strong> {lang.language || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Reading:</strong> {lang.readingLevel ? lang.readingLevel.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Writing:</strong> {lang.writingLevel ? lang.writingLevel.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Speaking:</strong> {lang.speakingLevel ? lang.speakingLevel.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Listening:</strong> {lang.listeningLevel ? lang.listeningLevel.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : '-'}
+                                                                        </p>
+                                                                    </div>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-gray-500">No language proficiency
+                                                                    added.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    {/* Hobbies Section */}
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <HeartIcon className="text-blue-600"
+                                                                       style={{width: '20px', height: '20px'}}/>
+                                                            Hobbies
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.hobbies && app.candidate?.hobbies.length > 0 && app.candidate?.hobbies[0].hobbyName ? (
+                                                                app.candidate?.hobbies.map((hobby, idx) => (
+                                                                    <div key={idx} className="border-b pb-2 mb-2">
+                                                                        <p>
+                                                                            <strong>Hobby:</strong> {hobby.hobbyName || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Description:</strong> {hobby.description || '-'}
+                                                                        </p>
+                                                                    </div>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-gray-500">No hobbies added.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+
+                                                    {/* Education will be added */}
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <ClipboardDocumentCheckIcon className="text-blue-600"
+                                                                                        style={{
+                                                                                            width: '20px',
+                                                                                            height: '20px'
+                                                                                        }}/>
+                                                            Education
+                                                        </h3>
+
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm space-y-4">
+
+                                                            {/* Associate */}
+                                                            {app.candidate?.education?.associateDepartment?.name && (
+                                                                <div>
+                                                                    <h4 className="font-semibold mb-1">Associate
+                                                                        Degree</h4>
+                                                                    <p>
+                                                                        <strong>Department:</strong> {app.candidate?.education.associateDepartment?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>University:</strong> {app.candidate?.education.associateDepartment?.university?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>City:</strong> {app.candidate?.education.associateDepartment?.university?.city?.name || '-'}
+                                                                    </p>
+                                                                    <p><strong>Start
+                                                                        Date:</strong> {app.candidate?.education.associateStartDate || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>End
+                                                                            Date:</strong> {app.candidate?.education.associateIsOngoing ? 'Ongoing' : (app.candidate?.education.associateEndDate || '-')}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+
+
+                                                            {/* Bachelor */}
+                                                            {app.candidate?.education?.bachelorDepartment?.name && (
+                                                                <div>
+                                                                    <h4 className="font-semibold mb-1">Bachelor
+                                                                        Degree</h4>
+                                                                    <p>
+                                                                        <strong>Department:</strong> {app.candidate?.education.bachelorDepartment?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>University:</strong> {app.candidate?.education.bachelorDepartment?.university?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>City:</strong> {app.candidate?.education.bachelorDepartment?.university?.city?.name || '-'}
+                                                                    </p>
+                                                                    <p><strong>Start
+                                                                        Date:</strong> {app.candidate?.education.bachelorStartDate || '-'}
+                                                                    </p>
+                                                                    <p><strong>End
+                                                                        Date:</strong> {app.candidate?.education.bachelorIsOngoing ? 'Ongoing' : (app.candidate?.education.bachelorEndDate || '-')}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Master */}
+                                                            {app.candidate?.education?.masterDepartment?.name && (
+                                                                <div>
+                                                                    <h4 className="font-semibold mb-1">Master
+                                                                        Degree</h4>
+                                                                    <p>
+                                                                        <strong>Department:</strong> {app.candidate?.education.masterDepartment?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>University:</strong> {app.candidate?.education.masterDepartment?.university?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>City:</strong> {app.candidate?.education.masterDepartment?.university?.city?.name || '-'}
+                                                                    </p>
+                                                                    <p><strong>Start
+                                                                        Date:</strong> {app.candidate?.education.masterStartDate || '-'}
+                                                                    </p>
+                                                                    <p><strong>End
+                                                                        Date:</strong> {app.candidate?.education.masterIsOngoing ? 'Ongoing' : (app.candidate?.education.masterEndDate || '-')}
+                                                                    </p>
+                                                                    <p><strong>Thesis
+                                                                        Title:</strong> {app.candidate?.education.masterThesisTitle || '-'}
+                                                                    </p>
+                                                                    <p><strong>Thesis
+                                                                        Description:</strong> {app.candidate?.education.masterThesisDescription || '-'}
+                                                                    </p>
+                                                                    <p><strong>Thesis
+                                                                        URL:</strong> {app.candidate?.education.masterThesisUrl || '-'}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Doctorate */}
+                                                            {app.candidate?.education?.doctorateDepartment?.name && (
+                                                                <div>
+                                                                    <h4 className="font-semibold mb-1">Doctorate
+                                                                        Degree</h4>
+                                                                    <p>
+                                                                        <strong>Department:</strong> {app.candidate?.education.doctorateDepartment?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>University:</strong> {app.candidate?.education.doctorateDepartment?.university?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>City:</strong> {app.candidate?.education.doctorateDepartment?.university?.city?.name || '-'}
+                                                                    </p>
+                                                                    <p><strong>Start
+                                                                        Date:</strong> {app.candidate?.education.doctorateStartDate || '-'}
+                                                                    </p>
+                                                                    <p><strong>End
+                                                                        Date:</strong> {app.candidate?.education.doctorateIsOngoing ? 'Ongoing' : (app.candidate?.education.doctorateEndDate || '-')}
+                                                                    </p>
+                                                                    <p><strong>Thesis
+                                                                        Title:</strong> {app.candidate?.education.doctorateThesisTitle || '-'}
+                                                                    </p>
+                                                                    <p><strong>Thesis
+                                                                        Description:</strong> {app.candidate?.education.doctorateThesisDescription || '-'}
+                                                                    </p>
+                                                                    <p><strong>Thesis
+                                                                        URL:</strong> {app.candidate?.education.doctorateThesisUrl || '-'}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Double Major */}
+                                                            {app.candidate?.education?.doubleMajorDepartment?.name && (
+                                                                <div>
+                                                                    <h4 className="font-semibold mb-1">Double Major</h4>
+                                                                    <p>
+                                                                        <strong>Department:</strong> {app.candidate?.education.doubleMajorDepartment?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>University:</strong> {app.candidate?.education.doubleMajorDepartment?.university?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>City:</strong> {app.candidate?.education.doubleMajorDepartment?.university?.city?.name || '-'}
+                                                                    </p>
+                                                                    <p><strong>Start
+                                                                        Date:</strong> {app.candidate?.education.doubleMajorStartDate || '-'}
+                                                                    </p>
+                                                                    <p><strong>End
+                                                                        Date:</strong> {app.candidate?.education.doubleMajorIsOngoing ? 'Ongoing' : (app.candidate?.education.doubleMajorEndDate || '-')}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Minor */}
+                                                            {app.candidate?.education?.minorDepartment?.name && (
+                                                                <div>
+                                                                    <h4 className="font-semibold mb-1">Minor</h4>
+                                                                    <p>
+                                                                        <strong>Department:</strong> {app.candidate?.education.minorDepartment?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>University:</strong> {app.candidate?.education.minorDepartment?.university?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>City:</strong> {app.candidate?.education.minorDepartment?.university?.city?.name || '-'}
+                                                                    </p>
+                                                                    <p><strong>Start
+                                                                        Date:</strong> {app.candidate?.education.minorStartDate || '-'}
+                                                                    </p>
+                                                                    <p><strong>End
+                                                                        Date:</strong> {app.candidate?.education.minorIsOngoing ? 'Ongoing' : (app.candidate?.education.minorEndDate || '-')}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <ClipboardDocumentCheckIcon className="text-blue-600"
+                                                                                        style={{
+                                                                                            width: '20px',
+                                                                                            height: '20px'
+                                                                                        }}/>
+                                                            Certifications
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.certifications?.length > 0 && app.candidate?.certifications[0].certificationName ? (
+                                                                app.candidate?.certifications.map((cert, idx) => (
+                                                                    <div key={idx} className="border-b pb-2 mb-2">
+                                                                        <p><strong>Certification
+                                                                            Name:</strong> {cert.certificationName}</p>
+                                                                        <p><strong>Issued
+                                                                            By:</strong> {cert.issuedBy || '-'}</p>
+                                                                        <p><strong>Validity
+                                                                            Date:</strong> {cert.certificateValidityDate || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Certificate Link: </strong>
+                                                                            {cert.certificationUrl ? (
+                                                                                <a href={cert.certificationUrl}
+                                                                                   target="_blank"
+                                                                                   rel="noopener noreferrer"
+                                                                                   className="text-blue-600 underline">
+                                                                                    View Certificate
+                                                                                </a>
+                                                                            ) : (
+                                                                                '-'
+                                                                            )}
+                                                                        </p>
+                                                                    </div>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-gray-500">No certifications
+                                                                    added.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Work Experiences */}
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <BriefcaseIcon className="text-blue-600"
+                                                                           style={{width: '20px', height: '20px'}}/>
+                                                            Work Experiences
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.workExperiences?.length > 0 && app.candidate?.workExperiences[0].companyName ? (
+                                                                app.candidate?.workExperiences.map((exp, idx) => (
+                                                                    <div key={idx} className="border-b pb-2 mb-2">
+                                                                        <p><strong>Company
+                                                                            Name:</strong> {exp.companyName || '-'}
+                                                                        </p>
+                                                                        <p><strong>Job
+                                                                            Title:</strong> {exp.jobTitle || '-'}</p>
+                                                                        <p>
+                                                                            <strong>Industry:</strong> {exp.industry || '-'}
+                                                                        </p>
+                                                                        <p><strong>Job
+                                                                            Description:</strong> {exp.jobDescription || '-'}
+                                                                        </p>
+                                                                        <p><strong>Employment
+                                                                            Type:</strong> {exp.employmentType ? exp.employmentType.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Period:</strong> {exp.startDate || '-'} - {exp.isGoing ? 'Present' : (exp.endDate || '-')}
+                                                                        </p>
+                                                                    </div>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-gray-500">No work experiences
+                                                                    added.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <ClipboardDocumentCheckIcon className="text-blue-600"
+                                                                                        style={{
+                                                                                            width: '20px',
+                                                                                            height: '20px'
+                                                                                        }}/>
+                                                            Exams and Achievements
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.examsAndAchievements?.length > 0 && app.candidate?.examsAndAchievements[0].examName ? (
+                                                                app.candidate?.examsAndAchievements.map((exam, idx) => (
+                                                                    <div key={idx} className="border-b pb-2 mb-2">
+                                                                        <p><strong>Exam
+                                                                            Name:</strong> {exam.examName || '-'} </p>
+                                                                        <p><strong>Year:</strong> {exam.examYear || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Score:</strong> {exam.examScore || '-'}
+                                                                        </p>
+                                                                        <p><strong>Rank:</strong> {exam.examRank || '-'}
+                                                                        </p>
+                                                                    </div>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-gray-500">No exams or achievements
+                                                                    added.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <ClipboardDocumentCheckIcon className="text-blue-600"
+                                                                                        style={{
+                                                                                            width: '20px',
+                                                                                            height: '20px'
+                                                                                        }}/>
+                                                            Uploaded Documents
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.uploadedDocuments?.length > 0 && app.candidate?.uploadedDocuments[0].documentName ? (
+                                                                app.candidate?.uploadedDocuments.map((doc, idx) => (
+                                                                    <div key={idx} className="border-b pb-2 mb-2">
+                                                                        <p><strong>Document
+                                                                            Name:</strong> {doc.documentName}</p>
+                                                                        <p>
+                                                                            <strong>Type:</strong> {doc.documentType || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Category:</strong> {doc.documentCategory || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Document Link:</strong>{' '}
+                                                                            {doc.documentUrl ? (
+                                                                                <a href={doc.documentUrl}
+                                                                                   target="_blank"
+                                                                                   rel="noopener noreferrer"
+                                                                                   className="text-blue-600 underline">
+                                                                                    View Document
+                                                                                </a>
+                                                                            ) : (
+                                                                                '-'
+                                                                            )}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Privacy:</strong> {doc.isPrivate ? 'Private' : 'Public'}
+                                                                        </p>
+                                                                    </div>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-gray-500">No documents uploaded.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <ClipboardDocumentCheckIcon className="text-blue-600"
+                                                                                        style={{
+                                                                                            width: '20px',
+                                                                                            height: '20px'
+                                                                                        }}/>
+                                                            Skills
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.skills?.length > 0 && app.candidate?.skills[0].skillName ? (
+                                                                app.candidate?.skills.map((skill, idx) => (
+                                                                    <div key={idx} className="border-b pb-2 mb-2">
+                                                                        <p>
+                                                                            <strong>Name:</strong> {skill.skillName || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Level:</strong> {skill.skillLevel || '-'}
+                                                                        </p>
+                                                                    </div>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-gray-500">No skills added.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                            <ClipboardDocumentCheckIcon className="text-blue-600"
+                                                                                        style={{
+                                                                                            width: '20px',
+                                                                                            height: '20px'
+                                                                                        }}/>
+                                                            Projects
+                                                        </h3>
+                                                        <div
+                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                            {app.candidate?.projects?.length > 0 && app.candidate?.projects[0].projectName ? (
+                                                                app.candidate?.projects.map((project, idx) => (
+                                                                    <div key={idx} className="border-b pb-2 mb-2">
+                                                                        <p><strong>Project
+                                                                            Name:</strong> {project.projectName}</p>
+                                                                        <p>
+                                                                            <strong>Description:</strong> {project.projectDescription || '-'}
+                                                                        </p>
+                                                                        <p><strong>Start
+                                                                            Date:</strong> {project.projectStartDate || '-'}
+                                                                        </p>
+                                                                        <p><strong>End
+                                                                            Date:</strong> {project.projectStatus === 'ONGOING' ? 'Ongoing' : (project.projectEndDate || '-')}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Status:</strong> {project.projectStatus || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Company:</strong> {project.company || '-'}
+                                                                        </p>
+                                                                        <p>
+                                                                            <strong>Privacy:</strong> {project.isPrivate ? 'Private' : 'Public'}
+                                                                        </p>
+                                                                    </div>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-gray-500">No projects added.</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
                             </div>
-                        </Collapse>
-                    </div>
-                ))
-            ) : (
-                <p>No application found.</p>
-            )}
-        </div>
-    );
-}
+                        </div>
+                                    </Collapse>
 
-export default CandidateList;
+                                </div>
+                                ))
+                                ) : (
+                                <p>No application found.</p>
+                                )}
+                            </div>
+                            );
+                            }
+
+                            export default CandidateList;
 
 
-// 5. <h2 className="text-2xl font-bold mb-4">Başvurular (İlan ID: {selectedJobAdvId})</h2>
-// {applications.length > 0 ? (
+                            // 5. <h2 className="text-2xl font-bold mb-4">Başvurular (İlan ID: {selectedJobAdvId})</h2>
+                            // {applications.length > 0 ? (
 
 //     applications.map((app, index) => (
 //

@@ -399,39 +399,47 @@ public List<String> filterApplications(int jobAdvId, String userEmail, int minEx
     return results;
 }
 
-public void sendJobOffer1(int applicationId, String employerEmail, JobOffer requestOffer) {
-    // 1. İşvereni email ile bul
-    Employer employer = employerRepository.findByEmail(employerEmail)
-            .orElseThrow(() -> new RuntimeException("İşveren bulunamadı."));
+    public boolean sendJobOffer1(int applicationId, String employerEmail, JobOffer requestOffer) {
+        // 1. Find the employer by email
+        Employer employer = employerRepository.findByEmail(employerEmail)
+                .orElseThrow(() -> new RuntimeException("Employer not found."));
 
-    // 2. İlgili başvuruyu al
-    JobApplication application = jobApplicationRepository.findById(applicationId)
-            .orElseThrow(() -> new RuntimeException("Başvuru bulunamadı."));
-    if(application.getStatus() == ApplicationStatus.PENDING){
-        // 3. Teklif nesnesini oluştur
-        JobOffer offer = new JobOffer();
-        offer.setApplication(application);
-        offer.setEmployer(employer);
-        offer.setSalaryOffer(requestOffer.getSalaryOffer());
-        offer.setWorkHours(requestOffer.getWorkHours());
-        offer.setStartDate(requestOffer.getStartDate());
-        offer.setLocation(requestOffer.getLocation());
-        offer.setBenefits(requestOffer.getBenefits());
-        offer.setStatus(OfferStatus.PENDING);
+        // 2. Get the job application
+        JobApplication application = jobApplicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found."));
 
-        // Maintain bidirectional relationship
-        if (application.getOffers() == null) {
-            application.setOffers(new ArrayList<>());
+        // 3. Check if an offer has already been sent
+        if (application.getOffers() != null && !application.getOffers().isEmpty()) {
+            return false; // An offer already exists
         }
-        application.getOffers().add(offer);
-        application.setStatus(ApplicationStatus.ACCEPTED);
-        // 4. Veritabanına kaydet
-        jobApplicationRepository.save(application); // Will cascade save the offer
+
+        // 4. Proceed only if the application status is PENDING
+        if(application.getStatus() == ApplicationStatus.PENDING){
+            JobOffer offer = new JobOffer();
+            offer.setApplication(application);
+            offer.setEmployer(employer);
+            offer.setSalaryOffer(requestOffer.getSalaryOffer());
+            offer.setWorkHours(requestOffer.getWorkHours());
+            offer.setStartDate(requestOffer.getStartDate());
+            offer.setLocation(requestOffer.getLocation());
+            offer.setBenefits(requestOffer.getBenefits());
+            offer.setStatus(OfferStatus.PENDING);
+
+            if (application.getOffers() == null) {
+                application.setOffers(new ArrayList<>());
+            }
+
+            application.getOffers().add(offer);
+            application.setStatus(ApplicationStatus.ACCEPTED);
+
+            jobApplicationRepository.save(application); // Cascade will save the offer as well
+            return true;
+        }
+
+        return false;
     }
 
 
-    System.out.println("✅ Teklif başarıyla gönderildi: Aday ID = " + application.getCandidate().getId());
-}
     public void sendJobOffer2(int id, String employerEmail, JobOffer requestOffer) {
         // 1. İşvereni email ile bul
         Employer employer = employerRepository.findByEmail(employerEmail)
@@ -571,10 +579,23 @@ public List<JobApplication> getApplicationObjectsForJobAdv(int jobAdvId, String 
 }
 
     public void respondToApplication(int applicationId) {
-    JobApplication jobApplication = jobApplicationRepository.findById(applicationId).orElseThrow();
+        JobApplication jobApplication = jobApplicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found."));
+
+        // Check if an offer exists
+        if (jobApplication.getOffers() == null || jobApplication.getOffers().isEmpty()) {
+            throw new RuntimeException("Cannot decline. No offer has been sent for this application.");
+        }
+
+        // Check if already rejected
+        if (jobApplication.getStatus() == ApplicationStatus.REJECTED) {
+            throw new RuntimeException("The application has already been declined.");
+        }
+
         jobApplication.setStatus(ApplicationStatus.REJECTED);
         jobApplicationRepository.save(jobApplication);
     }
+
 
     public List<JobOffer> getJobOffers(int id) {
     Employer emp = employerRepository.findById(id).orElseThrow();

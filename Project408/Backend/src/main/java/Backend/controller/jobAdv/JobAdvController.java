@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -256,9 +257,17 @@ public class JobAdvController {
                 ? request.getUserPrincipal().getName()
                 : "mock@employer.com";
 
-        jobAdvService.sendJobOffer1(applicationId, email, offerDetails);
-        return ResponseEntity.ok("Teklif başarıyla gönderildi.");
+        boolean success = jobAdvService.sendJobOffer1(applicationId, email, offerDetails);
+
+        if (success) {
+            return ResponseEntity.ok("Offer successfully sent.");
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("An offer has already been sent for this application.");
+        }
     }
+
 
     @PostMapping("/offer/{candidateId}")
     public ResponseEntity<String> sendJobOffer(
@@ -282,24 +291,27 @@ public class JobAdvController {
     }
 
     @PutMapping("/decline/{applicationId}")
-    public ResponseEntity<String> respondToApplication(
-            @PathVariable int applicationId) {
-        jobAdvService.respondToApplication(applicationId);
-        return ResponseEntity.ok("Teklif durumu güncellendi.");
+    public ResponseEntity<String> respondToApplication(@PathVariable int applicationId) {
+        try {
+            jobAdvService.respondToApplication(applicationId);
+            return ResponseEntity.ok("Offer status updated successfully.");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 
+
     @PutMapping("/declineOffer/{offerId}")
-    public ResponseEntity<String> declineTheOffer(
-            @PathVariable int offerId) {
-        jobAdvService.respondToOffer(offerId,false);
-        return ResponseEntity.ok("Teklif durumu güncellendi.");
+    public ResponseEntity<String> declineTheOffer(@PathVariable int offerId) {
+        jobAdvService.respondToOffer(offerId, false);
+        return ResponseEntity.ok("Offer declined successfully.");
     }
 
     @PutMapping("/offer/{offerId}")
-    public ResponseEntity<String> respondToOffer(
-            @PathVariable int offerId) {
-        jobAdvService.respondToOffer(offerId,true);
-        return ResponseEntity.ok("Teklif durumu güncellendi.");
+    public ResponseEntity<String> respondToOffer(@PathVariable int offerId) {
+        jobAdvService.respondToOffer(offerId, true);
+        return ResponseEntity.ok("Offer accepted successfully.");
     }
+
 
 }

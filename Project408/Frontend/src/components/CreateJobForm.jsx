@@ -424,7 +424,7 @@ export default function CreateJobForm() {
   return (
       <div className="min-h-screen bg-gray-100 p-8">
         <div className="w-full px-4 py-10">
-          <div className="max-w-[900px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
+          <div className="max-w-[1500px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
             <div className="bg-white shadow rounded-md overflow-hidden">
               <div className="p-6">
                 {!showForm && (
@@ -434,7 +434,7 @@ export default function CreateJobForm() {
                         className="flex max-w-6xl mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
                       <div
                           style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
-                          className="w-1/3 bg-gray-100 p-4 rounded-lg">
+                          className="w-1/4 bg-gray-100 p-4 rounded-lg">
                         {/* Lacivert içerik kutusu */}
                         <div
                             style={{backgroundColor: "#000842", borderRadius: "15px", padding: "10px"}}
@@ -443,9 +443,9 @@ export default function CreateJobForm() {
                           {/*<img src="/profile-placeholder.png" alt="Profile"*/}
                           {/*     className="w-24 h-24 rounded-full border-4 border-white"/>*/}
 
-                          <h2 className="text-xl font-bold"> {formData.company?.companyName || ''}</h2>
+                          <h2 className="text-2xl font-bold"> {formData.company?.companyName || ''}</h2>
                           {/* Bilgi listesi */}
-                          <div className="space-y-2 text-sm w-full">
+                          <div className="space-y-2 text-xl w-full ">
                             <p><strong>Email:</strong> {formData.company?.email || '-'}</p>
                             <p><strong>Phone Number:</strong> {formData.company?.phoneNumber || '-'}</p>
                             <p><strong>Website Url:</strong> {formData.company?.websiteUrl || '-'}</p>

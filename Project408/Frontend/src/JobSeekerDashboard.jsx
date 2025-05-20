@@ -955,7 +955,7 @@ export default function JobSeekerDashboard() {
   return (
       <div className="min-h-screen bg-gray-100 p-8">
         <div className="w-full px-4 py-10">
-          <div className="max-w-[900px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
+          <div className="max-w-[1000px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
 
             {!showForm && (
                 //   <div className={`relative min-h-screen bg-gray-100 flex flex-col items-center justify-center transition-all duration-300 ${showForm ? 'opacity-20 pointer-events-none' : 'opacity-100'}`}>
@@ -1484,8 +1484,6 @@ export default function JobSeekerDashboard() {
 
                     </div>
                   </div>
-
-
                 </div>
 
 

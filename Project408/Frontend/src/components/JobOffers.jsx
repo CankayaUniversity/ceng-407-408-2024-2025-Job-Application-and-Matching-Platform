@@ -136,6 +136,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import {BriefcaseIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline/index.js";
+import Toast from "./Toast.jsx";
 
 const JobOffers = () => {
   const [selectedStatus, setSelectedStatus] = useState('PENDING'); // Default selected
@@ -173,53 +174,67 @@ const JobOffers = () => {
     }
   };
 
-  const handleOffer = async (offerId) => {
-    const token = localStorage.getItem('token');
+    const handleOffer = async (offerId) => {
+        const token = localStorage.getItem('token');
 
-    try {
-      const response = await axios.put(
-          `http://localhost:9090/api/job-adv/offer/${offerId}`,{},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
-            }
-          }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error("Teklif gönderme hatası:", error);
-    }
-  };const handleDecline = async (offerId) => {
-    const token = localStorage.getItem('token');
+        try {
+            const response = await axios.put(
+                `http://localhost:9090/api/job-adv/offer/${offerId}`, {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+            console.log(response.data);
+            setMessage(response.data);
+            setShowToast(true);
+        } catch (error) {
+            console.error("Offer sending error:", error);
+            setMessage(error.response?.data || "An error occurred while accepting the offer.");
+            setShowToast(true);
+        }
+    };
 
-    try {
-      const response = await axios.put(
-          `http://localhost:9090/api/job-adv/declineOffer/${offerId}`,{},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
-            }
-          }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error("Teklif gönderme hatası:", error);
-    }
-  };
+    const handleDecline = async (offerId) => {
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await axios.put(
+                `http://localhost:9090/api/job-adv/declineOffer/${offerId}`, {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+            console.log(response.data);
+            setMessage(response.data);
+            setShowToast(true);
+        } catch (error) {
+            console.error("Offer decline error:", error);
+            setMessage(error.response?.data || "An error occurred while declining the offer.");
+            setShowToast(true);
+        }
+    };
+
   const buttonStyle = {
     padding: '8px 12px',
     backgroundColor: '#151717',
     color: 'white',
     border: 'none',
     borderRadius: '8px',
-    fontSize: '12px',
+    fontSize: '16px',
     cursor: 'pointer',
     transition: 'background-color 0.3s',
     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
   };
-
+    const [showToast, setShowToast] = useState(false);
+    const handleCloseToast = () => {
+        setShowToast(false);
+    };
   const JobCard = ({ job }) => {
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
     const status = job?.jobOffer?.status;
@@ -236,7 +251,7 @@ const JobOffers = () => {
               cursor: 'pointer',
               textAlign: 'center',
               transform: 'scale(1)',
-              width: 'calc(33.33% - 16px)',
+              width: 'calc(50% - 16px)',
               marginBottom: '16px',
               height: isAccordionOpen ? '700px' : '500px',
               overflowY: 'auto',
@@ -547,45 +562,52 @@ const JobOffers = () => {
                                 >
                                     Accept Offer
                                 </button>
+                                <Toast message={message} show={showToast}
+                                       onClose={handleCloseToast}/>
                                 <button
                                     onClick={() => handleDecline(job?.jobOffer?.id)}
                                     className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                                 >
                                     Decline
                                 </button>
+
                             </div>
-                        )}
+                            )}
                     </div>
+
                 </div>
 
 
+
             )}
-        </div>
-    );
-  };
+</div>
 
-    const filteredApplications = offers.filter(job => job?.jobOffer?.status === selectedStatus);
+)
+    ;
+};
+
+const filteredApplications = offers.filter(job => job?.jobOffer?.status === selectedStatus);
 
 
-    return (
+return (
+    <div style={{
+        backgroundColor: '#ffffff',
+        padding: '20px',
+        minHeight: '100vh',
+        color: '#000000',
+        display: 'flex',
+        flexDirection: 'row',
+        maxWidth: '100vw',
+        margin: '0 auto',
+
+    }}>
+        {/* Left Menu */}
         <div style={{
-            backgroundColor: '#ffffff',
-            padding: '20px',
-            minHeight: '100vh',
-            color: '#000000',
+            width: '300px',  // Expanded sidebar
+            marginRight: '20px',
+            borderRight: '1px solid #ccc',
+            paddingRight: '20px',
             display: 'flex',
-            flexDirection: 'row',
-            maxWidth: '100vw',
-            margin: '0 auto',
-
-        }}>
-            {/* Left Menu */}
-            <div style={{
-                width: '300px',  // Expanded sidebar
-                marginRight: '20px',
-                borderRight: '1px solid #ccc',
-                paddingRight: '20px',
-                display: 'flex',
                 flexDirection: 'column',
                 gap: '10px',
 
