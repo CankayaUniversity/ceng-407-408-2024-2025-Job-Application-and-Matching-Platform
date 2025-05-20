@@ -1,7 +1,10 @@
 package Backend.core.config;
 
 import Backend.core.enums.*;
+import Backend.core.location.City;
 import Backend.core.location.Country;
+import Backend.core.location.Department;
+import Backend.core.location.University;
 import Backend.entities.common.JobPositions;
 import Backend.entities.common.LanguageProficiency;
 import Backend.entities.company.Company;
@@ -21,6 +24,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -48,17 +53,23 @@ public class DataInitializer implements CommandLineRunner {
     private BenefitRepository benefitRepository;
     @Autowired
     private JobQualificationRepository jobQualificationRepository;
-
+    @Autowired
+    private CityRepository cityRepository;
+    @Autowired
+    private UniversityRepository universityRepository;
+    @Autowired
+    private DepartmentRepository departmentRepository;
     @Override
     public void run(String... args) {
-        // Temporarily comment out all initialization to isolate issues
         System.out.println("🔍 Data initialization skipped for troubleshooting");
         if(employerRepository.count() == 0) {
             initializeCountries();
             initializeEmployer();
             initializeCandidate();
+            initializeCities();
+            initializeUniversities();
+            initializeDepartments();
         }
-
 
     }
 
@@ -79,6 +90,131 @@ public class DataInitializer implements CommandLineRunner {
         countryRepository.save(germany);
 
         System.out.println("✅ Countries initialized");
+    }
+    private void initializeCities() {
+        Optional<Country> optionalTurkey = countryRepository.findByName("Turkey");
+        if (optionalTurkey.isEmpty()) {
+            System.out.println("❌ Turkey not found while initializing cities");
+            return;
+        }
+
+        Country turkey = optionalTurkey.get();
+
+        List<String> cityNames = List.of(
+                 "Ankara","İstanbul", "İzmir", "Bursa", "Adana",
+                "Antalya", "Konya", "Gaziantep", "Kayseri", "Eskişehir",
+                "Trabzon", "Diyarbakır", "Mersin", "Samsun", "Malatya",
+                "Erzurum", "Sakarya", "Denizli", "Manisa", "Balıkesir"
+        );
+
+        List<City> cities = new ArrayList<>();
+        for (String cityName : cityNames) {
+            City city = new City();
+            city.setName(cityName);
+            city.setCountry(turkey);
+            cities.add(city);
+        }
+
+        cityRepository.saveAll(cities);
+        System.out.println("✅ 20 cities for Turkey initialized");
+    }
+    private void initializeUniversities() {
+        Optional<Country> optionalTurkey = countryRepository.findByName("Turkey");
+        if (optionalTurkey.isEmpty()) {
+            System.out.println("❌ Turkey not found while initializing universities");
+            return;
+        }
+        Country turkey = optionalTurkey.get();
+
+        List<City> cities = cityRepository.findByCountry(turkey);
+
+        List<University> universitiesToSave = new ArrayList<>();
+
+        for (City city : cities) {
+            String cityName = city.getName();
+
+            if (cityName.equalsIgnoreCase("Ankara")) {
+                List<String> ankaraUniversities = List.of(
+                        "Ankara University",
+                        "Middle East Technical University",
+                        "Hacettepe University",
+                        "Gazi University",
+                        "Çankaya University",
+                        "Bilkent University",
+                        "TOBB University of Economics and Technology",
+                        "Yıldırım Beyazıt University",
+                        "Anadolu University",
+                        "Başkent University"
+                        // Dilersen daha ekleyebilirim
+                );
+                for (String uniName : ankaraUniversities) {
+                    University uni = new University();
+                    uni.setName(uniName);
+                    uni.setCity(city);
+                    universitiesToSave.add(uni);
+                }
+            } else if (cityName.equalsIgnoreCase("Istanbul")) {
+                List<String> istanbulUniversities = List.of(
+                        "Istanbul University",
+                        "Bogazici University",
+                        "Istanbul Technical University",
+                        "Marmara University",
+                        "Yildiz Technical University",
+                        "Koc University",
+                        "Sabanci University",
+                        "Istanbul Bilgi University",
+                        "Istanbul Sehir University",
+                        "Istanbul Aydin University"
+                        // Dilersen daha ekleyebilirim
+                );
+                for (String uniName : istanbulUniversities) {
+                    University uni = new University();
+                    uni.setName(uniName);
+                    uni.setCity(city);
+                    universitiesToSave.add(uni);
+                }
+            }
+            // Diğer şehirler için istersen ekleyebilirim
+        }
+
+        universityRepository.saveAll(universitiesToSave);
+        System.out.println("✅ Realistic universities initialized for Ankara and Istanbul");
+    }
+
+    private void initializeDepartments() {
+        // Ankara ve İstanbul şehirlerini bul
+        City ankara = cityRepository.findByName("Ankara");
+        City istanbul = cityRepository.findByName("İstanbul");
+
+        if (ankara == null || istanbul == null) {
+            System.out.println("❌ Ankara veya İstanbul bulunamadı!");
+            return;
+        }
+
+        // Bu şehirlerdeki üniversiteleri getir
+        List<University> universities = universityRepository.findByCityIn(List.of(ankara, istanbul));
+
+        List<String> departmentNames = List.of(
+                "Computer Engineering",
+                "Software Engineering",
+                "Electrical Engineering",
+                "Information Systems",
+                "Mechatronics Engineering"
+        );
+
+        List<Department> departmentsToSave = new ArrayList<>();
+
+        for (University uni : universities) {
+            for (String deptName : departmentNames) {
+                Department dept = new Department();
+                dept.setName(deptName);
+                dept.setUniversity(uni);
+                departmentsToSave.add(dept);
+            }
+        }
+
+        departmentRepository.saveAll(departmentsToSave);
+        System.out.println("✅ Departments created for Ankara and İstanbul universities.");
     }
 
     private void initializeEmployer() {

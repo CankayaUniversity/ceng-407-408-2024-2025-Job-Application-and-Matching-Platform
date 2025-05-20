@@ -1,7 +1,12 @@
 package Backend.services;
 
-import Backend.core.enums.ApplicationStatus;
-import Backend.core.enums.JobAdvStatus;
+import Backend.core.enums.*;
+import Backend.core.location.City;
+import Backend.core.location.Country;
+import Backend.core.location.Department;
+import Backend.core.location.University;
+import Backend.entities.common.CustomJobPosition;
+import Backend.entities.common.JobPositions;
 import Backend.entities.common.LanguageProficiency;
 import Backend.entities.common.Project;
 import Backend.entities.dto.CandidateProfileDto;
@@ -12,16 +17,17 @@ import Backend.entities.user.candidate.*;
 import Backend.repository.*;
 import jakarta.transaction.Transactional;
 import org.apache.coyote.Response;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.Document;
+import java.security.cert.Certificate;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 @Service
 
@@ -64,228 +70,506 @@ public class CandidateService {
     private JobApplicationRepository jobApplicationRepository;
     @Autowired
     CountryRepository countryRepository;
+    @Autowired
     CityRepository cityRepository;
+    @Autowired
+    private UniversityRepository universityRepository;
+
 
     @Transactional
-    public Candidate createProfile(String email, Candidate candidate) {
+    public Candidate updateProfile(String email, CandidateProfileDto dto) {
         // E-posta adresine göre kullanıcıyı bul
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!(user instanceof Candidate)) {
             throw new RuntimeException("User is not a Candidate");
         }
+        Candidate candidate = (Candidate) user;
 
-        // Kullanıcıya ait yeni profil oluştur
-        Candidate newCandidate = (Candidate) user; // Downcasting
+        ProfileDetails profileDetails = candidate.getProfileDetails();
+        if (profileDetails == null) {
+            profileDetails = new ProfileDetails();
+        }
+        profileDetails.setAboutMe(dto.getAboutMe());
+        profileDetails.setNationality(dto.getNationality());
+        profileDetails.setGender(dto.getGender());
+        profileDetails.setMilitaryStatus(dto.getMilitaryStatus());
+        profileDetails.setMilitaryDefermentDate(dto.getMilitaryDefermentDate());
+        profileDetails.setDisabilityStatus(dto.getDisabilityStatus());
+        profileDetails.setMaritalStatus(dto.getMaritalStatus());
+        profileDetails.setCurrentEmploymentStatus(dto.getCurrentEmploymentStatus());
+        profileDetails.setDrivingLicense(dto.getDrivingLicense());
+        profileDetails.setPrivateProfile(dto.getIsPrivateProfile());
+//        profileDetails.setProfilePicture(dto.getProfilePicture());
+        profileDetails.setBirthDate(dto.getBirthDate());
+        candidate.setProfileDetails(profileDetails);
 
-        // ProfileDetails kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getProfileDetails() != null) {
-            ProfileDetails profileDetails = candidate.getProfileDetails();
-            newCandidate.setProfileDetails(profileDetails);
+
+        SocialLinks socialLinks = candidate.getSocialLinks();
+        if (socialLinks == null) {
+            socialLinks = new SocialLinks();
+        }
+        socialLinks.setGithubUrl(dto.getGithubUrl());
+        socialLinks.setLinkedinUrl(dto.getLinkedinUrl());
+        socialLinks.setWebsiteUrl(dto.getWebsiteUrl());
+        socialLinks.setBlogUrl(dto.getBlogUrl());
+        socialLinks.setOtherLinksUrl(dto.getOtherLinksUrl());
+        socialLinks.setOtherLinksDescription(dto.getOtherLinksDescription());
+        candidate.setSocialLinks(socialLinks);
+
+        ContactInformation contactInformation = candidate.getContactInformation();
+        if (contactInformation == null) {
+            contactInformation = new ContactInformation();
+        }
+        contactInformation.setPhoneNumber(dto.getPhoneNumber());
+        Country country = countryRepository.findById(dto.getCountry())
+                .orElseThrow(() -> new RuntimeException("Country bulunamadı."));
+        contactInformation.setCountry(country);
+        City city = cityRepository.findById(dto.getCity())
+                .orElseThrow(() -> new RuntimeException("City bulunamadı."));
+        contactInformation.setCity(city);
+        candidate.setContactInformation(contactInformation);
+
+        JobPreferences jobPreferences = candidate.getJobPreferences();
+        if (jobPreferences == null) {
+            jobPreferences = new JobPreferences();
+            candidate.setJobPreferences(jobPreferences);
         }
 
-        // SocialLinks kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getSocialLinks() != null) {
-            SocialLinks socialLinks = candidate.getSocialLinks();
-            newCandidate.setSocialLinks(socialLinks);
-        }
+        if (candidate.getJobPreferences().getPreferredPositions() == null) {
+            List<JobPositions> jobPositions = new ArrayList<>();
+            List<JobPosition> jobPositionTypes = dto.getJobPositionTypes();
+            List<CustomJobPosition> customJobPositionNames = dto.getCustomJobPositionNames();
 
-        // ContactInformation kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getContactInformation() != null) {
-            ContactInformation contactInformation = candidate.getContactInformation();
-            newCandidate.setContactInformation(contactInformation);
-        }
-
-        // JobPreferences kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getJobPreferences() != null) {
-            JobPreferences jobPreferences = candidate.getJobPreferences();
-            newCandidate.setJobPreferences(jobPreferences);
-        }
-
-        // References kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getReferences() != null && !candidate.getReferences().isEmpty()) {
-            List<Reference> references = candidate.getReferences();
-            newCandidate.setReferences(references);
-        }
-
-        // LanguageProficiency kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getLanguageProficiency() != null && !candidate.getLanguageProficiency().isEmpty()) {
-            List<LanguageProficiency> languageProficiency = candidate.getLanguageProficiency();
-            newCandidate.setLanguageProficiency(languageProficiency);
-        }
-
-        // Hobby kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getHobbies() != null && !candidate.getHobbies().isEmpty()) {
-            List<Hobby> hobbies = candidate.getHobbies();
-            newCandidate.setHobbies(hobbies);
-        }
-
-        // Education kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getEducation() != null) {
-            Education education = candidate.getEducation();
-            newCandidate.setEducation(education);
-        }
-
-        // Certifications kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getCertifications() != null && !candidate.getCertifications().isEmpty()) {
-            List<Certification> certifications = candidate.getCertifications();
-            newCandidate.setCertifications(certifications);
-        }
-
-        // WorkExperiences kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getWorkExperiences() != null && !candidate.getWorkExperiences().isEmpty()) {
-            List<WorkExperience> workExperiences = candidate.getWorkExperiences();
-            newCandidate.setWorkExperiences(workExperiences);
-        }
-
-        // ExamsAndAchievements kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getExamsAndAchievements() != null && !candidate.getExamsAndAchievements().isEmpty()) {
-            List<ExamAndAchievement> examsAndAchievements = candidate.getExamsAndAchievements();
-            newCandidate.setExamsAndAchievements(examsAndAchievements);
-        }
-
-        // UploadedDocuments kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getUploadedDocuments() != null && !candidate.getUploadedDocuments().isEmpty()) {
-            List<UploadedDocument> uploadedDocuments = candidate.getUploadedDocuments();
-            newCandidate.setUploadedDocuments(uploadedDocuments);
-        }
-
-        // Skills kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getSkills() != null && !candidate.getSkills().isEmpty()) {
-            List<Skill> skills = candidate.getSkills();
-            newCandidate.setSkills(skills);
-        }
-
-        // Projects kaydet ve ilişkilendir (Null kontrolü ile)
-        if (candidate.getProjects() != null && !candidate.getProjects().isEmpty()) {
-            List<Project> projects = candidate.getProjects();
-            newCandidate.setProjects(projects);
-        }
-
-        // Kullanıcı tipini set et
-        newCandidate.setUserType(user.getUserType());
-
-        // Yeni Candidate objesini kaydet
-        candidateRepository.save(newCandidate);
-
-        return newCandidate;
-    }
-
-    @Transactional
-    public Candidate updateProfile(String email, Candidate candidate) {
-        // E-posta adresine göre kullanıcıyı bul
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!(user instanceof Candidate)) {
-            throw new RuntimeException("User is not a Candidate");
-        }
-        Candidate existingCandidate = (Candidate) user;
-
-        // İlişkili verileri güncelle
-        if (candidate.getProfileDetails() != null) {
-            ProfileDetails profileDetails = candidate.getProfileDetails();
-            existingCandidate.setProfileDetails(profileDetails);
-        }
-
-        if (candidate.getSocialLinks() != null) {
-            SocialLinks socialLinks = candidate.getSocialLinks();
-            existingCandidate.setSocialLinks(socialLinks);
-        }
-
-        if (candidate.getContactInformation() != null) {
-            ContactInformation contactInformation = candidate.getContactInformation();
-
-            // City ve Country nesnelerini kontrol et ve kaydet
-            if (contactInformation.getCountry() != null && contactInformation.getCountry().getId() == null) {
-                // Country kaydetme işlemi
-                countryRepository.save(contactInformation.getCountry());
-            }
-            if (contactInformation.getCity() != null && contactInformation.getCity().getId() == null) {
-                // City kaydetme işlemi
-                cityRepository.save(contactInformation.getCity());
+            if (jobPositionTypes != null) {
+                for (int i = 0; i < jobPositionTypes.size(); i++) {
+                    JobPositions jp = new JobPositions();
+                    jp.setPositionType(jobPositionTypes.get(i));
+                    if (customJobPositionNames != null && customJobPositionNames.size() > i) {
+                        CustomJobPosition cjp = new CustomJobPosition();
+                        cjp.setPositionName(String.valueOf(customJobPositionNames.get(i)));
+                        jp.setCustomJobPosition(cjp);
+                    }
+                    jobPositions.add(jp);
+                }
             }
 
-            existingCandidate.setContactInformation(contactInformation);
-        }
-        if (candidate.getJobPreferences() != null) {
-            JobPreferences jobPreferences = candidate.getJobPreferences();
-            existingCandidate.setJobPreferences(jobPreferences);
-        }
+            jobPreferences.setPreferredPositions(jobPositions);
 
-        // Referansları güncelle
-        if (candidate.getReferences() != null) {
-            List<Reference> references = candidate.getReferences();
+        } else {
+            List<JobPositions> jobPositions = candidate.getJobPreferences().getPreferredPositions();
+            jobPositions.clear();
 
-            existingCandidate.setReferences(references);
-        }
+            List<JobPosition> jobPositionTypes = dto.getJobPositionTypes();
+            List<CustomJobPosition> customJobPositionNames = dto.getCustomJobPositionNames();
 
-        // Dil bilgilerini güncelle
-        if (candidate.getLanguageProficiency() != null) {
-            List<LanguageProficiency> languageProficiency = candidate.getLanguageProficiency();
+            if (jobPositionTypes != null) {
+                for (int i = 0; i < jobPositionTypes.size(); i++) {
+                    JobPositions jp = new JobPositions();
+                    jp.setPositionType(jobPositionTypes.get(i));
+                    if (customJobPositionNames != null && customJobPositionNames.size() > i) {
+                        CustomJobPosition cjp = new CustomJobPosition();
+                        cjp.setPositionName(String.valueOf(customJobPositionNames.get(i)));
+                        jp.setCustomJobPosition(cjp);
+                    }
+                    jobPositions.add(jp);
+                }
+            }
+            jobPreferences.setPreferredPositions(jobPositions);
 
-            existingCandidate.setLanguageProficiency(languageProficiency);
-        }
-
-        // Hobileri güncelle
-        if (candidate.getHobbies() != null) {
-            List<Hobby> hobbies = candidate.getHobbies();
-
-            existingCandidate.setHobbies(hobbies);
         }
 
-        // Eğitim bilgilerini güncelle
-        if (candidate.getEducation() != null) {
-            Education education = candidate.getEducation();
-            existingCandidate.setEducation(education);
+        jobPreferences.setPreferredWorkType(dto.getPreferredWorkType());
+        jobPreferences.setMinWorkHour(dto.getMinWorkHour());
+        jobPreferences.setMaxWorkHour(dto.getMaxWorkHour());
+        jobPreferences.setCanTravel(dto.getCanTravel());
+        jobPreferences.setExpectedSalary(dto.getExpectedSalary());
+
+        candidate.setJobPreferences(jobPreferences);
+
+
+        List<Reference> references;
+
+        if(candidate.getReferences() == null) {
+            references = new ArrayList<>();
+            candidate.setReferences(references);
+        } else {
+            references = candidate.getReferences();
+            references.clear();
+        }
+        List<String> referenceName = dto.getReferenceName();
+        List<String> referenceCompany = dto.getReferenceCompany();
+        List<String> referenceJobTitle = dto.getReferenceJobTitle();
+        List<String> referenceContactInfo = dto.getReferenceContactInfo();
+        List<Integer> referenceYearsWorked = dto.getReferenceYearsWorked();
+
+        if(referenceName != null) {
+            for(int i = 0; i < referenceName.size(); i++) {
+                Reference ref = new Reference();
+
+                ref.setReferenceName(referenceName.get(i));
+
+                if(referenceJobTitle != null && referenceJobTitle.size() > i) {
+                    ref.setReferenceJobTitle(referenceJobTitle.get(i));
+                }
+                if(referenceCompany != null && referenceCompany.size() > i) {
+                    ref.setReferenceCompany(referenceCompany.get(i));
+                }
+
+                if(referenceContactInfo != null && referenceContactInfo.size() > i) {
+                    ref.setReferenceContactInfo(referenceContactInfo.get(i));
+                }
+
+                if(referenceYearsWorked != null && referenceYearsWorked.size() > i) {
+                    ref.setReferenceYearsWorked(String.valueOf(referenceYearsWorked.get(i)));
+                }
+
+                references.add(ref);
+            }
+        }
+        candidate.setReferences(references);
+
+        List<LanguageProficiency> languageProficiencies;
+
+        if(candidate.getLanguageProficiency() == null) {
+            languageProficiencies = new ArrayList<>();
+            candidate.setLanguageProficiency(languageProficiencies);
+        } else {
+            languageProficiencies = candidate.getLanguageProficiency();
+            languageProficiencies.clear();
         }
 
-        // Sertifikaları güncelle
-        if (candidate.getCertifications() != null) {
-            List<Certification> certifications = candidate.getCertifications();
+        List<String> languages = dto.getLanguageProficiencyLanguages();
+        List<LanguageLevel> readingLevels = dto.getLanguageProficiencyReadingLevels();
+        List<LanguageLevel> writingLevels = dto.getLanguageProficiencyWritingLevels();
+        List<LanguageLevel> speakingLevels = dto.getLanguageProficiencySpeakingLevels();
+        List<LanguageLevel> listeningLevels = dto.getLanguageProficiencyListeningLevels();
 
-            existingCandidate.setCertifications(certifications);
+        if(languages != null) {
+            for(int i = 0; i < languages.size(); i++) {
+                LanguageProficiency lp = new LanguageProficiency();
+                lp.setLanguage(languages.get(i));
+                if(readingLevels != null && readingLevels.size() > i) lp.setReadingLevel(readingLevels.get(i));
+                if(writingLevels != null && writingLevels.size() > i) lp.setWritingLevel(writingLevels.get(i));
+                if(speakingLevels != null && speakingLevels.size() > i) lp.setSpeakingLevel(speakingLevels.get(i));
+                if(listeningLevels != null && listeningLevels.size() > i) lp.setListeningLevel(listeningLevels.get(i));
+                languageProficiencies.add(lp);
+            }
+        }
+        candidate.setLanguageProficiency(languageProficiencies);
+        List<Hobby> hobbies;
+
+        if(candidate.getHobbies() == null) {
+            hobbies = new ArrayList<>();
+            candidate.setHobbies(hobbies);
+        } else {
+            hobbies = candidate.getHobbies();
+            hobbies.clear();
         }
 
-        // İş deneyimlerini güncelle
-        if (candidate.getWorkExperiences() != null) {
-            List<WorkExperience> workExperiences = candidate.getWorkExperiences();
+        List<String> hobbyNames = dto.getHobbyName();
+        List<String> descriptions = dto.getDescription();
 
-            existingCandidate.setWorkExperiences(workExperiences);
+        if(hobbyNames != null) {
+            for(int i = 0; i < hobbyNames.size(); i++) {
+                Hobby hobby = new Hobby();
+                hobby.setHobbyName(hobbyNames.get(i));
+                if(descriptions != null && descriptions.size() > i) hobby.setDescription(descriptions.get(i));
+                hobbies.add(hobby);
+            }
+        }
+        candidate.setHobbies(hobbies);
+        Education education;
+        if (candidate.getEducation() == null) {
+            education = new Education();
+            candidate.setEducation(education);
+        } else {
+            education = candidate.getEducation();
         }
 
-        // Sınav ve başarı bilgilerini güncelle
-        if (candidate.getExamsAndAchievements() != null) {
-            List<ExamAndAchievement> examsAndAchievements = candidate.getExamsAndAchievements();
 
-            existingCandidate.setExamsAndAchievements(examsAndAchievements);
+        University uni = universityRepository.findByName(dto.getAssociateUniversityName());
+        if(uni!=null){
+            Department department= candidate.getEducation().getAssociateDepartment();
+            if(department == null) {
+                department = new Department();
+            }
+            department.setName(dto.getAssociateDepartmentName());
+
+            department.setUniversity(uni);
+            education.setAssociateDepartment(department);
+
+            education.setAssociateStartDate(dto.getAssociateStartDate());
+            education.setAssociateEndDate(dto.getAssociateEndDate());
+            education.setAssociateIsOngoing(dto.getAssociateIsOngoing());
         }
 
-        // Yüklenen belgeleri güncelle
-        if (candidate.getUploadedDocuments() != null) {
-            List<UploadedDocument> uploadedDocuments = candidate.getUploadedDocuments();
+        University uni1 = universityRepository.findByName(dto.getBachelorUniversityName());
 
-            existingCandidate.setUploadedDocuments(uploadedDocuments);
+        if(uni1!=null){
+            Department department1= candidate.getEducation().getBachelorDepartment();
+            if(department1 == null) {
+                department1 = new Department();
+            }
+            department1.setName(dto.getBachelorDepartmentName());
+            department1.setUniversity(uni1);
+            education.setBachelorDepartment(department1);
+
+            education.setBachelorStartDate(dto.getBachelorStartDate());
+            education.setBachelorEndDate(dto.getBachelorEndDate());
+            education.setBachelorIsOngoing(dto.getBachelorIsOngoing());
+
         }
 
-        // Yetenekleri güncelle
-        if (candidate.getSkills() != null) {
-            List<Skill> skills = candidate.getSkills();
 
-            existingCandidate.setSkills(skills);
+        University uni2 = universityRepository.findByName(dto.getMasterUniversityName());
+        if(uni2!=null){
+            Department department2= candidate.getEducation().getMasterDepartment();
+            if(department2 == null) {
+                department2 = new Department();
+            }
+            department2.setName(dto.getMasterDepartmentName());
+            department2.setUniversity(uni2);
+            education.setMasterDepartment(department2);
+
+            education.setMasterStartDate(dto.getMasterStartDate());
+            education.setMasterEndDate(dto.getMasterEndDate());
+            education.setMasterIsOngoing(dto.getMasterIsOngoing());
+            education.setMasterThesisTitle(dto.getMasterThesisTitle());
+            education.setMasterThesisDescription(dto.getMasterThesisDescription());
+            education.setMasterThesisUrl(dto.getMasterThesisUrl());
         }
 
-        // Projeleri güncelle
-        if (candidate.getProjects() != null) {
-            List<Project> projects = candidate.getProjects();
+        University uni3 = universityRepository.findByName(dto.getDoctorateUniversityName());
+        if(uni3!=null){
+            Department department3= candidate.getEducation().getDoctorateDepartment();
+            if(department3 == null) {
+                department3 = new Department();
+            }
+            department3.setName(dto.getDoctorateDepartmentName());
+            department3.setUniversity(uni3);
+            education.setDoctorateDepartment(department3);
 
-            existingCandidate.setProjects(projects);
+            education.setDoctorateStartDate(dto.getDoctorateStartDate());
+            education.setDoctorateEndDate(dto.getDoctorateEndDate());
+            education.setDoctorateIsOngoing(dto.getDoctorateIsOngoing());
+            education.setDoctorateThesisTitle(dto.getDoctorateThesisTitle());
+            education.setDoctorateThesisDescription(dto.getDoctorateThesisDescription());
+            education.setDoctorateThesisUrl(dto.getDoctorateThesisUrl());
+
         }
 
-        // Profil güncelleme işlemini kaydet
-        candidateRepository.save(existingCandidate);
+        University uni4 = universityRepository.findByName(dto.getDoubleMajorUniversityName());
+        if(uni4!=null){
+            Department department4= candidate.getEducation().getDoubleMajorDepartment();
+            if(department4 == null) {
+                department4 = new Department();
+            }
+            department4.setName(dto.getDoubleMajorDepartmentName());
+            department4.setUniversity(uni4);
+            education.setDoubleMajorDepartment(department4);
 
-        return existingCandidate;
+            education.setDoubleMajorStartDate(dto.getDoubleMajorStartDate());
+            education.setDoubleMajorEndDate(dto.getDoubleMajorEndDate());
+            education.setDoubleMajorIsOngoing(dto.getDoubleMajorIsOngoing());
+
+            education.setDoubleMajor(dto.getIsMinor());
+        }
+
+        University uni5 = universityRepository.findByName(dto.getMinorUniversityName());
+        if(uni5!=null){
+            Department department5= candidate.getEducation().getMinorDepartment();
+
+            if(department5 == null) {
+                department5 = new Department();
+            }
+            department5.setName(dto.getMinorDepartmentName());
+            department5.setUniversity(uni5);
+            education.setMinorDepartment(department5);
+
+            education.setMinorStartDate(dto.getMinorStartDate());
+            education.setMinorEndDate(dto.getMinorEndDate());
+            education.setMinorIsOngoing(dto.getMinorIsOngoing());
+            education.setMinor(dto.getIsMinor());
+
+        }
+
+        candidate.setEducation(education);
+
+        List<Certification> certifications;
+        if(candidate.getCertifications() == null) {
+            certifications = new ArrayList<>();
+            candidate.setCertifications(certifications);
+        }
+        else{
+            certifications = candidate.getCertifications();
+            certifications.clear();
+        }
+        List<String> certificationName = dto.getCertificationName();
+        List<String> certificationUrl = dto.getCertificationUrl();
+        List<LocalDate> certificateValidityDate = dto.getCertificateValidityDate();
+        List<String> issuedBy = dto.getIssuedBy();
+
+        if(certificationName != null) {
+            for(int i = 0; i < certificationName.size(); i++) {
+                Certification certification = new Certification();
+                certification.setCertificationName(certificationName.get(i));
+                certification.setCertificationUrl(certificationUrl.get(i));
+                certification.setCertificateValidityDate(certificateValidityDate.get(i));
+                certification.setIssuedBy(issuedBy.get(i));
+                certifications.add(certification);
+            }
+        }
+        candidate.setCertifications(certifications);
+
+        List<WorkExperience> workExperiences;
+        if (candidate.getWorkExperiences() == null) {
+            workExperiences = new ArrayList<>();
+            candidate.setWorkExperiences(workExperiences);
+        } else {
+            workExperiences = candidate.getWorkExperiences();
+            workExperiences.clear();
+        }
+
+        List<String> companyNames = dto.getCompanyName();
+        List<String> industries = dto.getIndustry();
+        List<String> jobTitles = dto.getJobTitle();
+        List<String> jobDescriptions = dto.getJobDescription();
+        List<EmploymentType> employmentTypes = dto.getEmploymentType();
+        List<LocalDate> startDates = dto.getStartDate();
+        List<LocalDate> endDates = dto.getEndDate();
+        List<Boolean> isGoings = dto.getIsGoing();
+
+        if (companyNames != null) {
+            for (int i = 0; i < companyNames.size(); i++) {
+                WorkExperience workExperience = new WorkExperience();
+                workExperience.setCompanyName(companyNames.get(i));
+                workExperience.setIndustry(industries != null && industries.size() > i ? industries.get(i) : null);
+                workExperience.setJobTitle(jobTitles != null && jobTitles.size() > i ? jobTitles.get(i) : null);
+                workExperience.setJobDescription(jobDescriptions != null && jobDescriptions.size() > i ? jobDescriptions.get(i) : null);
+                workExperience.setEmploymentType(employmentTypes != null && employmentTypes.size() > i ? employmentTypes.get(i) : null);
+                workExperience.setStartDate(startDates != null && startDates.size() > i ? startDates.get(i) : null);
+                workExperience.setEndDate(endDates != null && endDates.size() > i ? endDates.get(i) : null);
+                workExperience.setGoing(isGoings != null && isGoings.size() > i ? isGoings.get(i) : false);
+
+                workExperiences.add(workExperience);
+            }
+        }
+
+        candidate.setWorkExperiences(workExperiences);
+
+        List<ExamAndAchievement> exams;
+        if(candidate.getExamsAndAchievements() == null) {
+            exams = new ArrayList<>();
+            candidate.setExamsAndAchievements(exams);
+        } else {
+            exams = candidate.getExamsAndAchievements();
+            exams.clear();
+        }
+
+        List<String> examNames = dto.getExamName();
+        List<Integer> examYears = dto.getExamYear();
+        List<Double> examScores = dto.getExamScore();
+        List<String> examRanks = dto.getExamRank();
+
+        if(examNames != null) {
+            for(int i = 0; i < examNames.size(); i++) {
+                ExamAndAchievement exam = new ExamAndAchievement();
+                exam.setExamName(examNames.get(i));
+                exam.setExamYear(examYears != null && examYears.size() > i ? examYears.get(i) : null);
+                exam.setExamScore(examScores != null && examScores.size() > i ? examScores.get(i) : null);
+                exam.setExamRank(examRanks != null && examRanks.size() > i ? examRanks.get(i) : null);
+                exams.add(exam);
+            }
+        }
+        candidate.setExamsAndAchievements(exams);
+
+        List<UploadedDocument> documents;
+        if(candidate.getUploadedDocuments() == null) {
+            documents = new ArrayList<>();
+            candidate.setUploadedDocuments(documents);
+        } else {
+            documents = candidate.getUploadedDocuments();
+            documents.clear();
+        }
+
+        List<String> documentNames = dto.getDocumentName();
+        List<String> documentTypes = dto.getDocumentType();
+        List<DocumentCategory> documentCategories = dto.getDocumentCategory();
+        List<String> documentUrls = dto.getDocumentUrl();
+        List<Boolean> isPrivates = dto.getIsPrivate();
+
+        if(documentNames != null) {
+            for(int i = 0; i < documentNames.size(); i++) {
+                UploadedDocument document = new UploadedDocument();
+                document.setDocumentName(documentNames.get(i));
+                document.setDocumentType(documentTypes != null && documentTypes.size() > i ? documentTypes.get(i) : null);
+                document.setDocumentCategory(documentCategories != null && documentCategories.size() > i ? documentCategories.get(i) : null);
+                document.setDocumentUrl(documentUrls != null && documentUrls.size() > i ? documentUrls.get(i) : null);
+                document.setPrivate(isPrivates != null && isPrivates.size() > i ? isPrivates.get(i) : false);
+                documents.add(document);
+            }
+        }
+        candidate.setUploadedDocuments(documents);
+
+        List<Skill> skills;
+        if(candidate.getSkills() == null) {
+            skills = new ArrayList<>();
+            candidate.setSkills(skills);
+        } else {
+            skills = candidate.getSkills();
+            skills.clear();
+        }
+
+        List<String> skillNames = dto.getSkillName();
+        List<SkillLevel> skillLevels = dto.getSkillLevel();
+
+        if(skillNames != null) {
+            for(int i = 0; i < skillNames.size(); i++) {
+                Skill skill = new Skill();
+                skill.setSkillName(skillNames.get(i));
+                skill.setSkillLevel(skillLevels != null && skillLevels.size() > i ? skillLevels.get(i) : null);
+                skills.add(skill);
+            }
+        }
+        candidate.setSkills(skills);
+
+        List<Project> projects;
+        if(candidate.getProjects() == null) {
+            projects = new ArrayList<>();
+            candidate.setProjects(projects);
+        } else {
+            projects = candidate.getProjects();
+            projects.clear();
+        }
+
+        List<String> projectNames = dto.getProjectName();
+        List<String> projectDescriptions = dto.getProjectDescription();
+        List<LocalDate> projectStartDates = dto.getProjectStartDate();
+        List<LocalDate> projectEndDates = dto.getProjectEndDate();
+        List<ProjectStatus> projectStatuses = dto.getProjectStatus();
+        List<Boolean> isPrivateProjects = dto.getIsPrivateProject();
+        List<String> companies = dto.getCompany();
+
+        if(projectNames != null) {
+            for(int i = 0; i < projectNames.size(); i++) {
+                Project project = new Project();
+                project.setProjectName(projectNames.get(i));
+                project.setProjectDescription(projectDescriptions != null && projectDescriptions.size() > i ? projectDescriptions.get(i) : null);
+                project.setProjectStartDate(projectStartDates != null && projectStartDates.size() > i ? projectStartDates.get(i) : null);
+                project.setProjectEndDate(projectEndDates != null && projectEndDates.size() > i ? projectEndDates.get(i) : null);
+                project.setProjectStatus(projectStatuses != null && projectStatuses.size() > i ? projectStatuses.get(i) : null);
+                project.setIsPrivate(isPrivateProjects != null && isPrivateProjects.size() > i ? isPrivateProjects.get(i) : false);
+//                project.setCompany(companies != null && companies.size() > i ? companies.get(i) : null);
+                projects.add(project);
+            }
+        }
+        candidate.setProjects(projects);
+
+
+        return candidateRepository.save(candidate);
     }
+
     @Transactional
     public ResponseEntity<String> deleteProfile(String email) {
         // Kullanıcıyı bul
@@ -389,4 +673,356 @@ public class CandidateService {
     public List<Candidate> getAvailableCandidates() {
         return candidateRepository.getAvailableCandidates();
     }
+
+
+        public CandidateProfileDto getProfile(Candidate candidate) {
+            CandidateProfileDto dto = new CandidateProfileDto();
+
+            // Profile Details
+            dto.setAboutMe(candidate.getProfileDetails().getAboutMe());
+            dto.setNationality(candidate.getProfileDetails().getNationality());
+            dto.setGender(candidate.getProfileDetails().getGender());
+            dto.setMilitaryStatus(candidate.getProfileDetails().getMilitaryStatus());
+            dto.setMilitaryDefermentDate(candidate.getProfileDetails().getMilitaryDefermentDate());
+            dto.setDisabilityStatus(candidate.getProfileDetails().getDisabilityStatus());
+            dto.setMaritalStatus(candidate.getProfileDetails().getMaritalStatus());
+            dto.setCurrentEmploymentStatus(candidate.getProfileDetails().isCurrentEmploymentStatus());
+            dto.setDrivingLicense(candidate.getProfileDetails().isDrivingLicense());
+            dto.setIsPrivateProfile(candidate.getProfileDetails().isPrivateProfile());
+            dto.setProfilePicture(candidate.getProfileDetails().getProfilePicture());
+            dto.setBirthDate(candidate.getProfileDetails().getBirthDate());
+
+            // Social Links
+            if (candidate.getSocialLinks() != null) {
+                dto.setGithubUrl(candidate.getSocialLinks().getGithubUrl());
+                dto.setLinkedinUrl(candidate.getSocialLinks().getLinkedinUrl());
+                dto.setWebsiteUrl(candidate.getSocialLinks().getWebsiteUrl());
+                dto.setBlogUrl(candidate.getSocialLinks().getBlogUrl());
+                dto.setOtherLinksUrl(candidate.getSocialLinks().getOtherLinksUrl());
+                dto.setOtherLinksDescription(candidate.getSocialLinks().getOtherLinksDescription());
+            }
+
+            // Contact Information
+            if (candidate.getContactInformation() != null) {
+                dto.setPhoneNumber(candidate.getContactInformation().getPhoneNumber());
+                dto.setCountry(candidate.getContactInformation().getCountry().getId());
+                dto.setCity(candidate.getContactInformation().getCity().getId());
+            }
+
+            // Job Preferences
+            if (candidate.getJobPreferences() != null) {
+                List<JobPosition> positionTypes = new ArrayList<>();
+                List<CustomJobPosition> customJobPositions = new ArrayList<>();
+
+                for (JobPositions j : candidate.getJobPreferences().getPreferredPositions()) {
+                    positionTypes.add(j.getPositionType());
+                    customJobPositions.add(j.getCustomJobPosition());
+                }
+
+                dto.setJobPositionTypes(positionTypes);
+                dto.setCustomJobPositionNames(customJobPositions);
+
+                dto.setPreferredWorkType(candidate.getJobPreferences().getPreferredWorkType());
+                dto.setMinWorkHour(candidate.getJobPreferences().getMinWorkHour());
+                dto.setMaxWorkHour(candidate.getJobPreferences().getMaxWorkHour());
+                dto.setCanTravel(candidate.getJobPreferences().isCanTravel());
+                dto.setExpectedSalary(candidate.getJobPreferences().getExpectedSalary());
+            }
+
+            // References (paralel listeler)
+            List<Reference> references = candidate.getReferences();
+            if (references != null && !references.isEmpty()) {
+                List<String> referenceName = new ArrayList<>();
+                List<String> referenceCompany = new ArrayList<>();
+                List<String> referenceJobTitle = new ArrayList<>();
+                List<String> referenceContactInfo = new ArrayList<>();
+                List<Integer> referenceYearsWorked = new ArrayList<>();
+
+                for (Reference r : references) {
+                    referenceName.add(r.getReferenceName());
+                    referenceCompany.add(r.getReferenceCompany());
+                    referenceJobTitle.add(r.getReferenceJobTitle());
+                    referenceContactInfo.add(r.getReferenceContactInfo());
+                    referenceYearsWorked.add(Integer.valueOf(r.getReferenceYearsWorked()));
+                }
+                dto.setReferenceName(referenceName);
+                dto.setReferenceCompany(referenceCompany);
+                dto.setReferenceJobTitle(referenceJobTitle);
+                dto.setReferenceContactInfo(referenceContactInfo);
+                dto.setReferenceYearsWorked(referenceYearsWorked);
+            }
+
+            // Language Proficiency
+            List<LanguageProficiency> languages = candidate.getLanguageProficiency();
+            if (languages != null && !languages.isEmpty()) {
+                List<String> langs = new ArrayList<>();
+                List<LanguageLevel> reading = new ArrayList<>();
+                List<LanguageLevel> writing = new ArrayList<>();
+                List<LanguageLevel> speaking = new ArrayList<>();
+                List<LanguageLevel> listening = new ArrayList<>();
+
+                for (LanguageProficiency lp : languages) {
+                    langs.add(lp.getLanguage());
+                    reading.add(lp.getReadingLevel());
+                    writing.add(lp.getWritingLevel());
+                    speaking.add(lp.getSpeakingLevel());
+                    listening.add(lp.getListeningLevel());
+                }
+                dto.setLanguageProficiencyLanguages(langs);
+                dto.setLanguageProficiencyReadingLevels(reading);
+                dto.setLanguageProficiencyWritingLevels(writing);
+                dto.setLanguageProficiencySpeakingLevels(speaking);
+                dto.setLanguageProficiencyListeningLevels(listening);
+            }
+
+            // Hobbies
+            List<Hobby> hobbies = candidate.getHobbies();
+            if (hobbies != null && !hobbies.isEmpty()) {
+                List<String> hobbyNames = new ArrayList<>();
+                List<String> descriptions = new ArrayList<>();
+
+                for (Hobby h : hobbies) {
+                    hobbyNames.add(h.getHobbyName());
+                    descriptions.add(h.getDescription());
+                }
+                dto.setHobbyName(hobbyNames);
+                dto.setDescription(descriptions);
+            }
+
+            // Education (örnek basit alanlar)
+            Education education = candidate.getEducation();
+            if (education != null) {
+                dto.setEducationDegreeType(education.getDegreeType());
+                if(education.getAssociateDepartment()!=null){
+                    dto.setAssociateDepartmentName(education.getAssociateDepartment().getName());
+                    dto.setAssociateUniversityName(education.getAssociateDepartment().getUniversity().getName());
+                    dto.setAssociateUniversityCityName(education.getAssociateDepartment().getUniversity().getCity().getName());
+                    dto.setAssociateStartDate(education.getAssociateStartDate());
+                    dto.setAssociateEndDate(education.getAssociateEndDate());
+                    dto.setAssociateIsOngoing(education.isAssociateIsOngoing());
+                }
+
+                if(education.getBachelorDepartment()!=null) {
+                    dto.setBachelorDepartmentName(education.getBachelorDepartment().getName());
+                    dto.setBachelorUniversityName(education.getBachelorDepartment().getUniversity().getName());
+                    dto.setBachelorUniversityCityName(education.getBachelorDepartment().getUniversity().getCity().getName());
+                    dto.setBachelorStartDate(education.getBachelorStartDate());
+                    dto.setBachelorEndDate(education.getBachelorEndDate());
+                    dto.setBachelorIsOngoing(education.isBachelorIsOngoing());
+                }
+                if(education.getMasterDepartment()!=null) {
+                    dto.setMasterDepartmentName(education.getMasterDepartment().getName());
+                    dto.setMasterUniversityName(education.getMasterDepartment().getUniversity().getName());
+                    dto.setMasterUniversityCityName(education.getMasterDepartment().getUniversity().getCity().getName());
+                    dto.setMasterStartDate(education.getMasterStartDate());
+                    dto.setMasterEndDate(education.getMasterEndDate());
+                    dto.setMasterIsOngoing(education.isMasterIsOngoing());
+                    dto.setMasterThesisTitle(education.getMasterThesisTitle());
+                    dto.setMasterThesisDescription(education.getMasterThesisDescription());
+                    dto.setMasterThesisUrl(education.getMasterThesisUrl());
+                }
+
+
+                if(education.getDoctorateDepartment()!=null) {
+                    dto.setDoctorateDepartmentName(education.getDoctorateDepartment().getName());
+                    dto.setDoctorateUniversityName(education.getDoctorateDepartment().getUniversity().getName());
+                    dto.setDoctorateUniversityCityName(education.getDoctorateDepartment().getUniversity().getCity().getName());
+                    dto.setDoctorateStartDate(education.getDoctorateStartDate());
+                    dto.setDoctorateEndDate(education.getDoctorateEndDate());
+                    dto.setDoctorateIsOngoing(education.isDoctorateIsOngoing());
+                    dto.setDoctorateThesisTitle(education.getDoctorateThesisTitle());
+                    dto.setDoctorateThesisDescription(education.getDoctorateThesisDescription());
+                    dto.setDoctorateThesisUrl(education.getDoctorateThesisUrl());
+                }
+                if(education.getDoubleMajorDepartment()!=null) {
+
+                    dto.setIsDoubleMajor(education.isDoubleMajor());
+                    dto.setDoubleMajorDepartmentName(education.getDoubleMajorDepartment().getName());
+                    dto.setDoubleMajorUniversityName(education.getDoubleMajorDepartment().getUniversity().getName());
+                    dto.setDoubleMajorUniversityCityName(education.getDoubleMajorDepartment().getUniversity().getCity().getName());
+                    dto.setDoubleMajorStartDate(education.getDoubleMajorStartDate());
+                    dto.setDoubleMajorEndDate(education.getDoubleMajorEndDate());
+                    dto.setDoubleMajorIsOngoing(education.isDoubleMajorIsOngoing());
+                }
+                if(education.getMinorDepartment()!=null) {
+
+                    dto.setIsMinor(education.isMinor());
+                    dto.setMinorDepartmentName(education.getMinorDepartment().getName());
+                    dto.setMinorUniversityName(education.getMinorDepartment().getUniversity().getName());
+                    dto.setMinorUniversityCityName(education.getMinorDepartment().getUniversity().getCity().getName());
+                    dto.setMinorStartDate(education.getMinorStartDate());
+                    dto.setMinorEndDate(education.getMinorEndDate());
+                    dto.setMinorIsOngoing(education.isMinorIsOngoing());
+                }
+            }
+
+            List<Certification> certifications = candidate.getCertifications();
+            if (certifications != null && !certifications.isEmpty()) {
+                List<String> names = new ArrayList<>();
+                List<String> urls = new ArrayList<>();
+                List<LocalDate> validityDates = new ArrayList<>();
+                List<String> issuedBys = new ArrayList<>();
+
+                for (Certification c : certifications) {
+                    names.add(c.getCertificationName());
+                    urls.add(c.getCertificationUrl());
+                    validityDates.add(c.getCertificateValidityDate());
+                    issuedBys.add(c.getIssuedBy());
+                }
+                dto.setCertificationName(names);
+                dto.setCertificationUrl(urls);
+                dto.setCertificateValidityDate(validityDates);
+                dto.setIssuedBy(issuedBys);
+            }
+
+            // Work Experiences (paralel listeler)
+            List<WorkExperience> experiences = candidate.getWorkExperiences();
+            if (experiences != null && !experiences.isEmpty()) {
+                List<String> companyNames = new ArrayList<>();
+                List<String> industries = new ArrayList<>();
+                List<String> jobTitles = new ArrayList<>();
+                List<String> jobDescriptions = new ArrayList<>();
+                List<EmploymentType> employmentTypes = new ArrayList<>();
+                List<LocalDate> startDates = new ArrayList<>();
+                List<LocalDate> endDates = new ArrayList<>();
+                List<Boolean> isGoingList = new ArrayList<>();
+
+                for (WorkExperience w : experiences) {
+                    companyNames.add(w.getCompanyName());
+                    industries.add(w.getIndustry());
+                    jobTitles.add(w.getJobTitle());
+                    jobDescriptions.add(w.getJobDescription());
+                    employmentTypes.add(w.getEmploymentType());
+                    startDates.add(w.getStartDate());
+                    endDates.add(w.getEndDate());
+                    isGoingList.add(w.isGoing());
+                }
+                dto.setCompanyName(companyNames);
+                dto.setIndustry(industries);
+                dto.setJobTitle(jobTitles);
+                dto.setJobDescription(jobDescriptions);
+                dto.setEmploymentType(employmentTypes);
+                dto.setStartDate(startDates);
+                dto.setEndDate(endDates);
+                dto.setIsGoing(isGoingList);
+            }
+            List<ExamAndAchievement> exams = candidate.getExamsAndAchievements();
+            if (exams != null && !exams.isEmpty()) {
+                List<String> examNames = new ArrayList<>();
+                List<Integer> examYears = new ArrayList<>();
+                List<Double> examScores = new ArrayList<>();
+                List<String> examRanks = new ArrayList<>();
+
+                for (ExamAndAchievement e : exams) {
+                    examNames.add(e.getExamName());
+                    examYears.add(e.getExamYear());
+                    examScores.add(e.getExamScore());
+                    examRanks.add(e.getExamRank());
+                }
+
+                dto.setExamName(examNames);
+                dto.setExamYear(examYears);
+                dto.setExamScore(examScores);
+                dto.setExamRank(examRanks);
+            }
+
+            List<UploadedDocument> documents = candidate.getUploadedDocuments();
+            if (documents != null && !documents.isEmpty()) {
+                List<String> documentNames = new ArrayList<>();
+                List<String> documentUrls = new ArrayList<>();
+                List<String> documentTypes = new ArrayList<>();
+                List<DocumentCategory> documentCategories = new ArrayList<>();
+                List<Boolean> isPrivateList = new ArrayList<>();
+
+                for (UploadedDocument d : documents) {
+                    documentNames.add(d.getDocumentName());
+                    documentUrls.add(d.getDocumentUrl());
+                    documentTypes.add(d.getDocumentType());
+                    documentCategories.add(d.getDocumentCategory());
+                    isPrivateList.add(d.isPrivate());
+                }
+
+                dto.setDocumentName(documentNames);
+                dto.setDocumentUrl(documentUrls);
+                dto.setDocumentType(documentTypes);
+                dto.setDocumentCategory(documentCategories);
+                dto.setIsPrivate(isPrivateList);
+            }
+                List<Skill> skills = candidate.getSkills();
+                if (skills != null && !skills.isEmpty()) {
+                    List<String> skillNames = new ArrayList<>();
+                    List<SkillLevel> skillLevels = new ArrayList<>();
+
+                for (Skill s : skills) {
+                    skillNames.add(s.getSkillName());
+                    skillLevels.add(s.getSkillLevel());
+                }
+
+                dto.setSkillName(skillNames);
+                dto.setSkillLevel(skillLevels);
+            }
+
+            List<Project> projects = candidate.getProjects();
+            if (projects != null && !projects.isEmpty()) {
+                List<String> projectNames = new ArrayList<>();
+                List<String> projectDescriptions = new ArrayList<>();
+                List<LocalDate> projectStartDates = new ArrayList<>();
+                List<LocalDate> projectEndDates = new ArrayList<>();
+                List<ProjectStatus> projectStatuses = new ArrayList<>();
+                List<Boolean> isProjectPrivateList = new ArrayList<>();
+                List<String> companies = new ArrayList<>();
+
+                for (Project p : projects) {
+                    projectNames.add(p.getProjectName());
+                    projectDescriptions.add(p.getProjectDescription());
+                    projectStartDates.add(p.getProjectStartDate());
+                    projectEndDates.add(p.getProjectEndDate());
+                    projectStatuses.add(p.getProjectStatus());
+                    isProjectPrivateList.add(p.getIsPrivate());
+                    if(p.getCompany()!=null){
+                        companies.add(p.getCompany().getCompanyName());
+                    }
+                    else{
+                        companies.add("Not Specified!");
+                    }
+
+                }
+
+                dto.setProjectName(projectNames);
+                dto.setProjectDescription(projectDescriptions);
+                dto.setProjectStartDate(projectStartDates);
+                dto.setProjectEndDate(projectEndDates);
+                dto.setProjectStatus(projectStatuses);
+                dto.setIsPrivateProject(isProjectPrivateList);
+                dto.setCompany(companies);
+            }
+
+           return dto;
+        }
+
+
+    public Map<String, Object> getProfileDetails(Candidate candidate) {
+
+        Map<String, Object> flatMap = new HashMap<>();
+
+        flatMap.put("profileDetails", candidate.getProfileDetails());
+        flatMap.put("socialLinks", candidate.getSocialLinks());
+        flatMap.put("contactInformation", candidate.getContactInformation());
+        flatMap.put("jobPreferences", candidate.getJobPreferences());
+        flatMap.put("references", candidate.getReferences());
+        flatMap.put("languageProficiency", candidate.getLanguageProficiency());
+        flatMap.put("hobbies", candidate.getHobbies());
+        flatMap.put("education", candidate.getEducation());
+        flatMap.put("certifications", candidate.getCertifications());
+        flatMap.put("workExperiences", candidate.getWorkExperiences());
+        flatMap.put("examsAndAchievements", candidate.getExamsAndAchievements());
+        flatMap.put("uploadedDocuments", candidate.getUploadedDocuments());
+        flatMap.put("skills", candidate.getSkills());
+        flatMap.put("projects", candidate.getProjects());
+
+        return flatMap;
+
+    }
+
+
 }

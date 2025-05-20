@@ -17,6 +17,7 @@ import Backend.request.jobAdv.JobAdvCreateRequest;
 import Backend.request.jobAdv.JobAdvUpdateRequest;
 import Backend.services.JobAdvService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -200,7 +201,7 @@ public class JobAdvController {
     }
 
     // 🔹 3. İlan Silme
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteJobAdvertisement(
             @PathVariable int id,
             HttpServletRequest request) {

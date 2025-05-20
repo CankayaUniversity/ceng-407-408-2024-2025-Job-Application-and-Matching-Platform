@@ -26,6 +26,7 @@ public class JobPositions extends BaseEntity {
     @JsonBackReference ("jobadv_3")// Prevents circular references during serialization
     private JobAdv jobAdv;
 
+
     public JobPositions(int i, JobPosition jobPosition, Object o, Object o1) {
         super();
     }

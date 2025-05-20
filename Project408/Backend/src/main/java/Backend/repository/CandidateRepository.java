@@ -1,6 +1,5 @@
 package Backend.repository;
 
-import Backend.entities.dto.CandidateProfileDto;
 import Backend.entities.user.User;
 import Backend.entities.user.candidate.Candidate;
 import org.springframework.data.jpa.repository.JpaRepository;

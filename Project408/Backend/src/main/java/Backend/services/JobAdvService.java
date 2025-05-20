@@ -18,6 +18,7 @@ import Backend.entities.user.employer.Employer;
 import Backend.repository.*;
 import Backend.request.jobAdv.JobAdvCreateRequest;
 import Backend.request.jobAdv.JobAdvUpdateRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 public class JobAdvService {
     @Autowired
     JobAdvRepository jobAdvRepository;
@@ -60,6 +62,8 @@ public class JobAdvService {
     private CityRepository cityRepository;
     @Autowired
     private JobConditionRepository jobConditionRepository;
+    @Autowired
+    private BenefitRepository benefitRepository;
 
 
     public void createJobAdv(JobAdvCreateDto request, String employerEmail) {
@@ -232,23 +236,28 @@ public void updateJobAdv(int jobAdvId, String userEmail, JobAdvUpdateRequest req
     jobAdvRepository.save(jobAdv);
     System.out.println("✅ İlan başarıyla güncellendi. ID: " + jobAdvId);
 }
-public void deleteJobAdv(int jobAdvId, String userEmail) {
-    JobAdv jobAdv = jobAdvRepository.findById(jobAdvId)
-            .orElseThrow(() -> new RuntimeException("Silinecek ilan bulunamadı."));
+    @Transactional
+    public void deleteJobAdv(int jobAdvId, String userEmail) {
+        JobAdv jobAdv = jobAdvRepository.findById(jobAdvId)
+                .orElseThrow(() -> new RuntimeException("Silinecek ilan bulunamadı."));
 
-    Employer employer = employerRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new RuntimeException("İşveren bulunamadı."));
+        Employer employer = employerRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("İşveren bulunamadı."));
 
-    Integer jobCompanyId = jobAdv.getCompany() != null ? jobAdv.getCompany().getId() : null;
-    Integer employerCompanyId = employer.getCompany() != null ? employer.getCompany().getId() : null;
+        Integer jobCompanyId = jobAdv.getCompany() != null ? jobAdv.getCompany().getId() : null;
+        Integer employerCompanyId = employer.getCompany() != null ? employer.getCompany().getId() : null;
 
-    if (jobCompanyId == null || employerCompanyId == null || !jobCompanyId.equals(employerCompanyId)) {
-        throw new RuntimeException("Bu ilana erişim yetkiniz yok.");
+        if (jobCompanyId == null || employerCompanyId == null || !jobCompanyId.equals(employerCompanyId)) {
+            throw new RuntimeException("Bu ilana erişim yetkiniz yok.");
+        }
+
+        jobAdvRepository.delete(jobAdv);
+
+
+        System.out.println("JobAdv ve ilişkili kayıtlar silindi.");
     }
 
-    jobAdvRepository.delete(jobAdv);
-    System.out.println("🗑️ İlan başarıyla silindi. ID: " + jobAdvId);
-}
+
 
 public List<JobAdv> getMyJobAdvs(String userEmail) {
     Employer employer = employerRepository.findByEmail(userEmail)

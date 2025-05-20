@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {BriefcaseIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline/index.js";
+import Toast from "./Toast.jsx";
 
 const ApplicationsPage = () => {
     const [jobAdvs, setJobAdvs] = useState([]);
@@ -35,6 +36,32 @@ const ApplicationsPage = () => {
     const handleSelectJob = (job) => {
         console.log(job);
         setSelectedJob(job); // Seçilen ilanı set et
+    };
+
+    const [message, setMessage] = useState(null);
+    const [showToast, setShowToast] = useState(false);
+    const handleCloseToast = () => {
+        setShowToast(false);
+    };
+
+    const handleDelete = async (job) => {
+        console.log(job);
+        try {
+            const response = await axios.delete(`http://localhost:9090/api/job-adv/delete/${job.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+            });
+            setMessage('Job Advertisement Deleted!');
+            setShowToast(true);
+
+            setLoading(false);
+        } catch (error) {
+            setMessage('Job Advertisement Cannot Deleted!');
+            setShowToast(true);
+            setLoading(false);
+        }
     };
 
     const buttonStyle = {
@@ -138,11 +165,12 @@ const ApplicationsPage = () => {
                 flexDirection: 'column',
                 justifyContent: 'flex-start', // İçeriği yukarıda tutmak için
             }}>
+
                 {selectedJob ? (
                     <div>
                         <div
                             style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
-                            className="w-2/3 bg-gray-100 p-4 rounded-lg">
+                            className="w-full bg-gray-100 p-4 rounded-lg mb-3">
                             {/* İç Beyaz Kutu */}
                             <div style={{borderRadius: "15px", padding: "10px"}}
                                  className="bg-white p-8 rounded-lg space-y-6 shadow-md">
@@ -234,7 +262,7 @@ const ApplicationsPage = () => {
                                         <p className="text-sm">
                                             <span
                                                 className="font-medium text-gray-700"><strong>City: </strong></span>{' '}
-                                            <span className="text-gray-600">{selectedJob?.city|| '-'}</span>
+                                            <span className="text-gray-600">{selectedJob?.city || '-'}</span>
                                         </p>
 
 
@@ -402,20 +430,28 @@ const ApplicationsPage = () => {
                                 </div>
 
 
+                            </div>
+                        </div>
+                        <div style={{textAlign: 'right'}}>
+                            <div className="flex justify-between">
+                                <button
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                    onClick={() => navigate("/candidates", {state: {selectedJob}})}
+
+                                >
+                                    View Applications
+                                </button>
+                                <button
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                    onClick={() => handleDelete(selectedJob)}
+                                >
+                                    Delete
+                                </button>
+                                <Toast message={message} show={showToast} onClose={handleCloseToast} />
 
                             </div>
                         </div>
 
-                        {/* Başvuruları Görüntüle butonu */}
-                        <div className="mt-4">
-                            <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                                onClick={() => navigate("/candidates", {state: {selectedJob}})}
-
-                            >
-                                View Applications
-                            </button>
-                        </div>
                     </div>
                 ) : (
                     <p style={{color: '#7f8c8d'}}>Select an advertisement, details will be displayed here.</p>

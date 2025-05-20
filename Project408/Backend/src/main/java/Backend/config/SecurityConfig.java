@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) //csrf e kapat
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/login/**","/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 ) // tum http isteklerine yekilendirme gerekli
                 .sessionManagement(sessionManagement -> sessionManagement

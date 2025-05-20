@@ -55,18 +55,18 @@ public class JobAdv extends BaseEntity {
     @JoinColumn(name = "job_qualification_id")
     private JobQualification jobQualification;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "benefit_id")
+    @OneToMany(mappedBy = "jobAdv", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonManagedReference("jobadv_4")
     private List<Benefit> benefits;
 
-    @OneToMany(mappedBy = "jobAdv", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "jobAdv", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonManagedReference("jobadv_3")
     private List<JobPositions> jobPositions;
 
-    @OneToMany(mappedBy = "jobAdv", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "jobAdv", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonManagedReference("jobadv_6")
     private List<JobApplication> jobApplication;
+
 
     public Company getCompany() {
         return company;

@@ -1,7 +1,9 @@
 package Backend.controller;
 
 import Backend.core.enums.*;
+import Backend.core.location.University;
 import Backend.entities.user.candidate.Candidate;
+import Backend.repository.UniversityRepository;
 import Backend.services.EnumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/enum")
@@ -20,13 +23,21 @@ public class EnumContoller {
 
     @Autowired
     EnumService enumService;
+    @Autowired
+    private UniversityRepository universityRepository;
 
     @GetMapping("/jobPosition")
     public List<JobPosition> getJobPosition() {
         return Arrays.asList(JobPosition.values());
     }
-
-
+    @GetMapping("/nationality")
+    public List<Nationality> getNationality() {
+        return Arrays.asList(Nationality.values());
+    }
+    @GetMapping("/universities")
+    public List<University> getUniversities() {
+        return universityRepository.findAll();
+    }
 
     @GetMapping("/applicationStatus")
     public ResponseEntity<ApplicationStatus> getApplicationStatus() {
@@ -86,10 +97,6 @@ public class EnumContoller {
         return ResponseEntity.ok(enumService.getMilitaryStatus());
     }
 
-    @GetMapping("/nationality")
-    public ResponseEntity<Nationality> getNationality() {
-        return ResponseEntity.ok(enumService.getNationality());
-    }
 
     @GetMapping("/offerStatus")
     public ResponseEntity<OfferStatus> getOfferStatus() {

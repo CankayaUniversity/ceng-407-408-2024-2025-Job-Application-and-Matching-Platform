@@ -20,7 +20,7 @@ public class Education extends BaseEntity {
     private DegreeType degreeType;
 
     // Associate Degree
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "associate_department_id")
     private Department associateDepartment;
 
@@ -29,7 +29,7 @@ public class Education extends BaseEntity {
     private boolean associateIsOngoing;
 
     // Bachelor
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "bachelor_department_id")
     private Department bachelorDepartment;
 
@@ -38,7 +38,7 @@ public class Education extends BaseEntity {
     private boolean bachelorIsOngoing;
 
     // Master
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "master_department_id")
     private Department masterDepartment;
 
@@ -51,7 +51,7 @@ public class Education extends BaseEntity {
     private String masterThesisUrl;
 
     // Doctorate
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "doctorate_department_id")
     private Department doctorateDepartment;
 
@@ -66,7 +66,7 @@ public class Education extends BaseEntity {
     // Double Major
     private boolean isDoubleMajor;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "double_major_department_id")
     private Department doubleMajorDepartment;
 
@@ -77,7 +77,7 @@ public class Education extends BaseEntity {
     // Minor
     private boolean isMinor;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "minor_department_id")
     private Department minorDepartment;
 

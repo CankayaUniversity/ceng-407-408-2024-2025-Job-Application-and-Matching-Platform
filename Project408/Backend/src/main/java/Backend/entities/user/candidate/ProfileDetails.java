@@ -25,7 +25,7 @@ public class ProfileDetails extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MilitaryStatus militaryStatus;
 
-    private String militaryDefermentDate;
+    private LocalDate militaryDefermentDate;
 
     @Enumerated(EnumType.STRING)
     private DisabilityStatus disabilityStatus;
@@ -76,11 +76,11 @@ public class ProfileDetails extends BaseEntity {
         this.militaryStatus = militaryStatus;
     }
 
-    public String getMilitaryDefermentDate() {
+    public LocalDate getMilitaryDefermentDate() {
         return militaryDefermentDate;
     }
 
-    public void setMilitaryDefermentDate(String militaryDefermentDate) {
+    public void setMilitaryDefermentDate(LocalDate militaryDefermentDate) {
         this.militaryDefermentDate = militaryDefermentDate;
     }
 

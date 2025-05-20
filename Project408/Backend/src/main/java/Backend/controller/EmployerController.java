@@ -1,7 +1,6 @@
 package Backend.controller;
 
 import Backend.entities.company.Company;
-import Backend.entities.dto.CandidateProfileDto;
 import Backend.entities.user.User;
 import Backend.entities.user.candidate.Candidate;
 import Backend.entities.user.employer.Employer;

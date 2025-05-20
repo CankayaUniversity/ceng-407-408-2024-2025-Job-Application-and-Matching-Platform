@@ -19,17 +19,22 @@ import Backend.services.JobApplicationService;
 import Backend.services.JwtService;
 import Backend.repository.UserRepository;
 import jakarta.persistence.Column;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -68,11 +73,42 @@ public class CandidateController {
 
     }
     @GetMapping("/profile/{id}")
-    public ResponseEntity<Candidate> getProfile(@PathVariable("id") int id) {
+    public ResponseEntity<CandidateProfileDto> getProfile(@PathVariable("id") int id) {
         Candidate profile = candidateRepository.findById(id).orElseThrow();
-        return ResponseEntity.ok(profile);
+        return ResponseEntity.ok(candidateService.getProfile(profile));
 
     }
+    @GetMapping("/profileDetail/{id}")
+    public ResponseEntity<Map<String, Object>> getProfileDetails(@PathVariable("id") int id) {
+        Candidate profile = candidateRepository.findById(id).orElseThrow();
+        return ResponseEntity.ok(candidateService.getProfileDetails(profile));
+
+    }
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    @PostMapping("/profile-picture")
+    public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file,
+                                                       @RequestParam("userId") Integer userId) throws IOException {
+        String fileName = "user" + userId + "-profile-" + UUID.randomUUID() + "." +
+                FilenameUtils.getExtension(file.getOriginalFilename());
+
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        String fileUrl = "/uploads/" + fileName;
+
+        Candidate candidate = candidateRepository.findById(userId).orElseThrow();
+        candidate.getProfileDetails().setProfilePicture(fileUrl);
+        candidateRepository.save(candidate);
+        return ResponseEntity.ok(fileUrl);
+    }
+
     @GetMapping("/profileDetails/{id}")
     public ResponseEntity<ProfileDetails> getProfiles(@PathVariable("id") int id) {
         ProfileDetails profile = candidateService.getProfileByUserId(id);
@@ -95,18 +131,9 @@ public class CandidateController {
     }
 
 
-    @PostMapping("/createProfile")
-    public ResponseEntity<Candidate> createProfile(@RequestBody Candidate candidate) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = userDetails.getUsername();
-
-        // Profil oluşturma işlemini servis üzerinden yap
-        return ResponseEntity.ok(candidateService.createProfile(email, candidate));
-    }
-
     // Profil güncelleme
     @PutMapping("/updateProfile")
-    public ResponseEntity<Candidate> updateProfile( @RequestBody Candidate candidate) {
+    public ResponseEntity<Candidate> updateProfile( @RequestBody CandidateProfileDto candidate) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = userDetails.getUsername();
 
