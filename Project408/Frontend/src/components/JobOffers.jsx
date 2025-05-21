@@ -614,7 +614,7 @@ return (
 
             }}>
                 <h3>Offer Status</h3>
-                {['PENDING', 'ACCEPTED', 'REJECTED', 'INTERVIEW'].map(status => (
+                {['PENDING', 'ACCEPTED', 'REJECTED'].map(status => (
                     <button
                         key={status}
                         onClick={() => setSelectedStatus(status)}

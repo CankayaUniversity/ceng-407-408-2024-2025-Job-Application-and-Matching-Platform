@@ -4,8 +4,10 @@ import Backend.core.enums.*;
 import Backend.core.location.City;
 import Backend.core.location.Country;
 import Backend.entities.common.CustomJobPosition;
+import Backend.entities.dto.InterviewDto;
 import Backend.entities.dto.JobAdvCreateDto;
 import Backend.entities.jobAdv.*;
+import Backend.entities.offer.Interviews;
 import Backend.entities.offer.JobOffer;
 import Backend.entities.company.Company;
 import Backend.entities.user.candidate.JobApplication;
@@ -64,6 +66,8 @@ public class JobAdvService {
     private JobConditionRepository jobConditionRepository;
     @Autowired
     private BenefitRepository benefitRepository;
+    @Autowired
+    private InterviewRepository interviewRepository;
 
 
     public void createJobAdv(JobAdvCreateDto request, String employerEmail) {
@@ -602,5 +606,43 @@ public List<JobApplication> getApplicationObjectsForJobAdv(int jobAdvId, String 
 
     List<JobOffer> offers = jobOfferRepository.findByEmployer(emp);
     return offers;
+    }
+
+    public void scheduleInterview(InterviewDto dto ,String email) {
+
+        if(dto.getInterviewDateTime()==null){
+            throw new RuntimeException("Interview date should be selected.");
+        }
+        Employer employer = employerRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("Employer not found."));
+
+        Candidate candidate = candidateRepository.findById(dto.getCandidateId()).orElseThrow(()-> new RuntimeException("Candidate not found."));
+
+        JobApplication jobApplication= jobApplicationRepository.findById(dto.getApplicationId()).orElseThrow(()-> new RuntimeException("JobApplication not found."));
+
+        if(jobApplication.getStatus().equals(ApplicationStatus.INTERVIEW)){
+            throw new RuntimeException("Interview is already sent for this application.");
+        }
+
+        JobOffer jobOffer= jobOfferRepository.findById(dto.getOfferId()).orElseThrow(()-> new RuntimeException("JobOffer not found."));
+
+        if(jobOffer.getStatus().equals(OfferStatus.ACCEPTED)){
+            Interviews interviews = new Interviews();
+            interviews.setCandidate(candidate);
+            interviews.setEmployer(employer);
+            interviews.setJobApplication(jobApplication);
+            interviews.setJobOffer(jobOffer);
+            interviews.setInterviewDateTime(dto.getInterviewDateTime());
+            interviews.setInterviewType(dto.getInterviewType());
+            interviews.setNotes(dto.getNotes());
+            interviewRepository.save(interviews);
+
+            jobApplication.setStatus(ApplicationStatus.INTERVIEW);
+            jobApplicationRepository.save(jobApplication);
+
+        }
+        else{
+            throw new RuntimeException("Job Offer not accepted.");
+        }
+
     }
 }

@@ -5,10 +5,7 @@ import Backend.core.location.City;
 import Backend.core.location.Country;
 import Backend.entities.common.JobPositions;
 import Backend.entities.common.LanguageProficiency;
-import Backend.entities.dto.CandidateApplicationDto;
-import Backend.entities.dto.JobAdvCreateDto;
-import Backend.entities.dto.JobAdvDto;
-import Backend.entities.dto.JobApplicationDto;
+import Backend.entities.dto.*;
 import Backend.entities.jobAdv.*;
 import Backend.entities.offer.JobOffer;
 import Backend.entities.user.candidate.Candidate;
@@ -313,5 +310,17 @@ public class JobAdvController {
         return ResponseEntity.ok("Offer accepted successfully.");
     }
 
+    @PutMapping("/interview")
+    public ResponseEntity<String> interview(@RequestBody InterviewDto dto,HttpServletRequest request) {
+        String email = (request.getUserPrincipal() != null)
+                ? request.getUserPrincipal().getName()
+                : "mock@employer.com";
+        try {
+            jobAdvService.scheduleInterview(dto,email);
+            return ResponseEntity.ok("Interview scheduled successfully.");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 
 }

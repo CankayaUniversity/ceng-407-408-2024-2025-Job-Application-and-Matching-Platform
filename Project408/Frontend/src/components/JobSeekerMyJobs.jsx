@@ -29,6 +29,8 @@ const JobSeekerMyJobs = () => {
             .then(res => res.json())
             .then(data => {
                 setApplications(data);
+                console.log(JSON.stringify(data))
+
             })
             .catch(err => {
                 console.error("Failed to fetch applications", err);
@@ -59,7 +61,7 @@ const JobSeekerMyJobs = () => {
         color: 'white',
         border: 'none',
         borderRadius: '8px',
-        fontSize: '12px',
+        fontSize: '16px',
         cursor: 'pointer',
         transition: 'background-color 0.3s',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
@@ -107,6 +109,11 @@ const JobSeekerMyJobs = () => {
                                 Advertisement
                             </h3>
                             <div className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                <p className="text-sm">
+                                <span
+                                    className="font-medium text-gray-700"> <strong> Company Name: </strong> </span>{' '}<span
+                                    className="text-gray-600">{job?.companyName || '-'}</span>
+                                </p>
                                 <p className="text-sm">
                                 <span
                                     className="font-medium text-gray-700"> <strong> Job Description: </strong> </span>{' '}<span

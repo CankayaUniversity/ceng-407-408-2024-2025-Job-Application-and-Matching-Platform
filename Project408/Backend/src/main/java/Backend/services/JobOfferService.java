@@ -147,7 +147,9 @@ public class JobOfferService {
         return offers.stream()
                 .map(offer -> {
                     Map<String, Object> offerDetails = new HashMap<>();
-
+                    offerDetails.put("offerId",offer.getId());
+                    offerDetails.put("applicationId",offer.getApplication().getId());
+                    offerDetails.put("jobadv",offer.getApplication().getJobAdv().getDescription());
                     offerDetails.put("status", offer.getStatus());
 
                     JobApplication application = offer.getApplication();
