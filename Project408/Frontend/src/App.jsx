@@ -29,6 +29,7 @@ import CandidateList from "./components/CandidateList.jsx";
 import JobSeekerMyJobs from "./components/JobSeekerMyJobs.jsx";
 import EmailVerification from './EmailVerification.jsx';
 import ForgotPassword from "./ForgotPassword.jsx";
+import ProfileSettings from './ProfileSettings';
 
 
 
@@ -72,6 +73,7 @@ function App() {
             <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs/>}/>
             <Route path="/employer/applications" element={<ApplicationsPage/>}/>
             <Route path="/candidates" element={<CandidateList/>} />
+            <Route path="/profile/settings" element={<ProfileSettings />} />
 
             <Route path="/chat" element={<Chat />} />
             <Route path="/blog" element={<Blog />} />
