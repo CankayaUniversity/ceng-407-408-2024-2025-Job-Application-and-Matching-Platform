@@ -30,7 +30,7 @@ import JobSeekerMyJobs from "./components/JobSeekerMyJobs.jsx";
 import EmailVerification from './EmailVerification.jsx';
 import ForgotPassword from "./ForgotPassword.jsx";
 import ProfileSettings from './ProfileSettings';
-import ReportedOffers from './ReportedOffers.jsx';
+import ReportedOffers from './ReportedBlogs.jsx';
 import ReportedJobs from './ReportedJobs.jsx';
 import ReportedUsers from './ReportedUsers.jsx';
 
