@@ -169,7 +169,7 @@ const EmployerProfile = () => {
     return (
         <div className="min-h-screen bg-gray-100 p-8">
             <div className="w-full px-4 py-10">
-                <div className="max-w-[900px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
+                <div className="max-w-[1100px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
                     <div className="bg-white shadow rounded-md overflow-hidden">
                         {error && (
                             <div className="bg-red-50 text-red-600 p-4 mb-6">

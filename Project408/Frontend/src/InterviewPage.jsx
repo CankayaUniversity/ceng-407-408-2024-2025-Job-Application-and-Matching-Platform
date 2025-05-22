@@ -62,6 +62,7 @@ export default function InterviewPage() {
                 }
                 const data = await response.json();
                 setInterviews(data);
+                console.log(data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -96,23 +97,23 @@ export default function InterviewPage() {
         : filteredByStatus;
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h1 style={{ fontSize: "32px", fontWeight: "bold", marginBottom: "20px" }}>
+        <div style={{padding: "20px"}}>
+            <h1 style={{fontSize: "32px", fontWeight: "bold", marginBottom: "20px"}}>
                 Scheduled Interviews
             </h1>
 
             {loading && <p>Loading interviews...</p>}
-            {error && <p style={{ color: "red" }}>Error: {error}</p>}
+            {error && <p style={{color: "red"}}>Error: {error}</p>}
 
-            <div style={{ marginBottom: "20px" }}>
-                <label style={{ fontWeight: "bold", marginRight: "10px" }}>Filter:</label>
+            <div style={{marginBottom: "20px"}}>
+                <label style={{fontWeight: "bold", marginRight: "10px"}}>Filter:</label>
                 <select
                     value={filterType}
                     onChange={(e) => {
                         setFilterType(e.target.value);
                         setSelectedDate(null);
                     }}
-                    style={{ padding: "5px 10px", borderRadius: "5px" }}
+                    style={{padding: "5px 10px", borderRadius: "5px"}}
                 >
                     <option value="All">All</option>
                     <option value="Confirmed">Confirmed</option>
@@ -121,12 +122,12 @@ export default function InterviewPage() {
                 </select>
             </div>
 
-            <div style={{ marginBottom: "20px"}}>
+            <div style={{marginBottom: "20px"}}>
                 <Calendar
                     locale="en-US"
                     onChange={setSelectedDate}
                     value={selectedDate}
-                    tileClassName={({ date, view }) => {
+                    tileClassName={({date, view}) => {
                         if (view === 'month') {
                             const formatted = formatReadableDate(date);
                             const matchingInterviews = upcomingInterviews.filter(i =>
@@ -144,49 +145,53 @@ export default function InterviewPage() {
                 />
             </div>
 
-            {filteredInterviews.length === 0 ? (
-                <p>No interviews scheduled for this date.</p>
-            ) : (
-                filteredInterviews.map(interview => (
-                    <div
-                        key={interview.date + interview.interviewer}
-                        onClick={() => {
-                            setSelectedInterview(interview);
-                            setIsModalOpen(true);
-                        }}
-                        style={{
-                            border: "1px solid #ddd",
-                            borderRadius: "8px",
-                            padding: "20px",
-                            marginBottom: "20px",
-                            boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
-                            cursor: "pointer"
-                        }}
-                    >
-                        <h2 style={{ fontSize: "24px", fontWeight: "600", marginBottom: "10px" }}>
-                            Interview with: {interview.interviewer}
-                        </h2>
-                        <p>Date: {formatReadableDate(interview.date)}</p>
-                        <p>Time: {formatReadableTime(interview.date)}</p>
-                        <span
+            <div style={{display: "flex", flexWrap: "wrap", gap: "20px"}}>
+                {filteredInterviews.length === 0 ? (
+                    <p>No interviews scheduled for this date.</p>
+                ) : (
+                    filteredInterviews.map(interview => (
+                        <div
+                            key={interview.date + interview.interviewer}
+                            onClick={() => {
+                                setSelectedInterview(interview);
+                                setIsModalOpen(true);
+                            }}
                             style={{
-                                padding: "6px 12px",
-                                borderRadius: "20px",
-                                color: "white",
-                                fontSize: "14px",
-                                backgroundColor:
-                                    interview.status === "CONFIRMED"
-                                        ? "green"
-                                        : interview.status === "WAITING"
-                                            ? "orange"
-                                            : "red"
+                                width: "48%", // Yarısı ve arada boşluk kalacak şekilde
+                                border: "1px solid #ddd",
+                                borderRadius: "8px",
+                                padding: "20px",
+                                marginBottom: "20px",
+                                boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
+                                cursor: "pointer"
                             }}
                         >
-                            {interview.status}
-                        </span>
-                    </div>
-                ))
-            )}
+                            <h2 style={{fontSize: "24px", fontWeight: "600", marginBottom: "10px"}}>
+                                Interview with: {interview.interviewer}
+                            </h2>
+                            <p>Date: {formatReadableDate(interview.date)}</p>
+                            <p>Time: {formatReadableTime(interview.date)}</p>
+                            <span
+                                style={{
+                                    padding: "6px 12px",
+                                    borderRadius: "20px",
+                                    color: "white",
+                                    fontSize: "14px",
+                                    backgroundColor:
+                                        interview.status === "CONFIRMED"
+                                            ? "green"
+                                            : interview.status === "WAITING"
+                                                ? "orange"
+                                                : "red"
+                                }}
+                            >
+                    {interview.status}
+                </span>
+                        </div>
+                    ))
+                )}
+            </div>
+
 
             {isModalOpen && selectedInterview && (
                 <div style={{
@@ -209,7 +214,7 @@ export default function InterviewPage() {
                         maxWidth: "500px",
                         textAlign: "center"
                     }}>
-                        <h2 style={{ fontSize: "24px", marginBottom: "10px" }}>
+                        <h2 style={{fontSize: "24px", marginBottom: "10px"}}>
                             Interview with: {selectedInterview.interviewer}
                         </h2>
 
@@ -220,26 +225,33 @@ export default function InterviewPage() {
                         <p>Interview Type: {selectedInterview.interviewType}</p>
 
                         {selectedInterview.description && (
-                            <p style={{ marginTop: "10px", fontStyle: "italic" }}>
+                            <p style={{marginTop: "10px", fontStyle: "italic"}}>
                                 Job Description: {selectedInterview.description}
                             </p>
                         )}
 
                         {selectedInterview.notes && (
-                            <p style={{ marginTop: "10px" }}>
+                            <p style={{marginTop: "10px"}}>
                                 Notes: {selectedInterview.notes}
                             </p>
                         )}
 
                         {selectedInterview.status !== "CANCELLED" && (
                             <>
-                                <div style={{ marginTop: "20px" }}>
+                                <div style={{marginTop: "20px"}}>
                                     {selectedInterview.link && (
                                         <a
                                             href={selectedInterview.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ margin: "10px", backgroundColor: "blue", color: "white", padding: "10px 20px", borderRadius: "5px", textDecoration: "none" }}
+                                            style={{
+                                                margin: "10px",
+                                                backgroundColor: "blue",
+                                                color: "white",
+                                                padding: "10px 20px",
+                                                borderRadius: "5px",
+                                                textDecoration: "none"
+                                            }}
                                         >
                                             Join Meeting
                                         </a>
@@ -248,7 +260,14 @@ export default function InterviewPage() {
                                         href={generateGoogleCalendarLink(selectedInterview)}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        style={{ margin: "10px", backgroundColor: "green", color: "white", padding: "10px 20px", borderRadius: "5px", textDecoration: "none" }}
+                                        style={{
+                                            margin: "10px",
+                                            backgroundColor: "green",
+                                            color: "white",
+                                            padding: "10px 20px",
+                                            borderRadius: "5px",
+                                            textDecoration: "none"
+                                        }}
                                     >
                                         Add to Calendar
                                     </a>
@@ -258,7 +277,14 @@ export default function InterviewPage() {
 
                         <button
                             onClick={() => setIsModalOpen(false)}
-                            style={{ marginTop: "20px", backgroundColor: "red", color: "white", padding: "10px 20px", borderRadius: "5px", border: "none" }}
+                            style={{
+                                marginTop: "20px",
+                                backgroundColor: "red",
+                                color: "white",
+                                padding: "10px 20px",
+                                borderRadius: "5px",
+                                border: "none"
+                            }}
                         >
                             Close
                         </button>

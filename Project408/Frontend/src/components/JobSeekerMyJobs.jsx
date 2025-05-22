@@ -448,13 +448,13 @@ const JobSeekerMyJobs = () => {
                                     <div className="flex w-full justify-between">
                                         <button
                                             onClick={() => handleInterview(job?.id)}
-                                            className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                            className="bg-black text-white px-4 py-2 rounded"
                                         >
                                             Confirm Interview
                                         </button>
                                         <button
                                             onClick={() => handleDecline(job?.id)}
-                                            className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                                            className="bg-black text-white px-4 py-2 rounded"
                                         >
                                             Decline
                                         </button>

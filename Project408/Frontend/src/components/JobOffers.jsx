@@ -558,7 +558,7 @@ const JobOffers = () => {
                             <div className="flex w-full justify-between">
                                 <button
                                     onClick={() => handleOffer(job?.jobOffer?.id)}
-                                    className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                    className="bg-black text-white px-4 py-2 rounded"
                                 >
                                     Accept Offer
                                 </button>
@@ -566,7 +566,7 @@ const JobOffers = () => {
                                        onClose={handleCloseToast}/>
                                 <button
                                     onClick={() => handleDecline(job?.jobOffer?.id)}
-                                    className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                                    className="bg-black text-white px-4 py-2 rounded"
                                 >
                                     Decline
                                 </button>

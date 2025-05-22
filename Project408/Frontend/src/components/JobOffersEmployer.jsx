@@ -118,7 +118,7 @@ const JobOffersEmployer = () => {
                     transform: 'scale(1)',
                     width: 'calc(50% - 16px)',
                     marginBottom: '16px',
-                    height: isAccordionOpen ? '700px' : '550px',
+                    height: isAccordionOpen ? '750px' : '550px',
                     overflowY: 'auto',
                     margin: '1px'
                 }}
@@ -903,7 +903,7 @@ const JobOffersEmployer = () => {
                                                                     {/* Modal Kutusu */}
                                                                     <motion.div
                                                                         initial={{ scale: 0.8, opacity: 0, y: 50 }}
-                                                                        animate={{ scale: 1, opacity: 1, y: -500 }}
+                                                                        animate={{ scale: 1, opacity: 1, y: -450 }}
                                                                         exit={{ scale: 0.8, opacity: 0, y: 50 }}
                                                                         transition={{ duration: 0.3 }}
                                                                         style={{
