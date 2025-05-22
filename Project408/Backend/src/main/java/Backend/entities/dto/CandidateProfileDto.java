@@ -12,6 +12,7 @@ public class CandidateProfileDto {
     private Nationality nationality;
     private Gender gender;
     private MilitaryStatus militaryStatus;
+
     private LocalDate militaryDefermentDate;
     private DisabilityStatus disabilityStatus;
     private MaritalStatus maritalStatus;

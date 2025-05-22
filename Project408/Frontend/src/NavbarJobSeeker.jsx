@@ -54,7 +54,7 @@ function NavbarCustom() {
             <Nav.Link href="/candidate/dashboard" className="text-dark fw-medium nav-item-hover">Profile</Nav.Link>
             <Nav.Link href="/candidate/my-jobs" className="text-dark fw-medium">My Applications</Nav.Link>
             <Nav.Link href="/employer/offers" className="text-dark fw-medium">My Offers</Nav.Link>
-            <Nav.Link href="/chat" className="text-dark fw-medium">Chat</Nav.Link>
+            {/*<Nav.Link href="/chat" className="text-dark fw-medium">Chat</Nav.Link>*/}
             <Nav.Link href="/blog" className="text-dark fw-medium">Blog</Nav.Link>
             <Nav.Link href="/interviews" className="text-dark fw-medium">Interviews</Nav.Link>
           </Nav>

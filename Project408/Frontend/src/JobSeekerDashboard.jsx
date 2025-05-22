@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Toast from "./components/Toast.jsx";
 
+
 export default function JobSeekerDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [formKey, setFormKey] = useState(0);
@@ -703,6 +704,13 @@ export default function JobSeekerDashboard() {
   const selectedCountry = countries.find(c => c.id === Number(profileData?.contactInformation?.country));
   const selectedCity = cities.find(c => c.id === Number(profileData?.contactInformation?.city));
 
+  const formatDate = (date) => {
+    if (!date) return null;
+    const d = new Date(date);
+    return d.toISOString().split("T")[0]; // "2000-01-01"
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -712,14 +720,14 @@ export default function JobSeekerDashboard() {
       nationality: profileData.profileDetails?.nationality,
       gender: profileData.profileDetails?.gender,
       militaryStatus: profileData.profileDetails?.militaryStatus,
-      militaryDefermentDate: profileData.profileDetails?.militaryDefermentDate,
+      militaryDefermentDate: formatDate(profileData.profileDetails?.militaryDefermentDate),
       disabilityStatus: profileData.profileDetails?.disabilityStatus,
       maritalStatus: profileData.profileDetails?.maritalStatus,
       currentEmploymentStatus: profileData.profileDetails?.currentEmploymentStatus,
       drivingLicense: profileData.profileDetails?.drivingLicense || false,
       isPrivateProfile: profileData.profileDetails?.isPrivateProfile || false,
       profilePicture: profileData.profileDetails?.profilePicture,
-      birthDate: profileData.profileDetails?.birthDate,
+      birthDate: formatDate(profileData.profileDetails?.birthDate),
 
       //social links
       githubUrl: profileData.socialLinks?.githubUrl,
@@ -767,22 +775,22 @@ export default function JobSeekerDashboard() {
       associateDepartmentName: profileData.education?.associateDepartment?.name,
       associateUniversityName: profileData.education?.associateDepartment?.university?.name,
       associateUniversityCityName: profileData.education?.associateDepartment?.university?.city?.name,
-      associateStartDate: profileData.education?.associateStartDate,
-      associateEndDate: profileData.education?.associateEndDate,
+      associateStartDate: formatDate(profileData.education?.associateStartDate),
+      associateEndDate:formatDate( profileData.education?.associateEndDate),
       associateIsOngoing: profileData.education?.associateIsOngoing || false,
 
       bachelorDepartmentName: profileData.education?.bachelorDepartment?.name,
       bachelorUniversityName: profileData.education?.bachelorDepartment?.university?.name,
       bachelorUniversityCityName: profileData.education?.bachelorDepartment?.university?.city?.name,
-      bachelorStartDate: profileData.education?.bachelorStartDate,
-      bachelorEndDate: profileData.education?.bachelorEndDate,
+      bachelorStartDate:formatDate( profileData.education?.bachelorStartDate),
+      bachelorEndDate: formatDate(profileData.education?.bachelorEndDate),
       bachelorIsOngoing: profileData.education?.bachelorIsOngoing|| false,
 
       masterDepartmentName: profileData.education?.masterDepartment?.name,
       masterUniversityName: profileData.education?.masterDepartment?.university?.name,
       masterUniversityCityName: profileData.education?.masterDepartment?.university?.city?.name,
-      masterStartDate: profileData.education?.masterStartDate,
-      masterEndDate: profileData.education?.masterEndDate,
+      masterStartDate: formatDate(profileData.education?.masterStartDate),
+      masterEndDate:formatDate( profileData.education?.masterEndDate),
       masterIsOngoing: profileData.education?.masterIsOngoing|| false,
       masterThesisTitle: profileData.education?.masterThesisTitle,
       masterThesisDescription: profileData.education?.masterThesisDescription,
@@ -791,8 +799,8 @@ export default function JobSeekerDashboard() {
       doctorateDepartmentName: profileData.education?.doctorateDepartment?.name,
       doctorateUniversityName: profileData.education?.doctorateDepartment?.university?.name,
       doctorateUniversityCityName: profileData.education?.doctorateDepartment?.university?.city?.name,
-      doctorateStartDate: profileData.education?.doctorateStartDate,
-      doctorateEndDate: profileData.education?.doctorateEndDate,
+      doctorateStartDate: formatDate(profileData.education?.doctorateStartDate),
+      doctorateEndDate: formatDate(profileData.education?.doctorateEndDate),
       doctorateIsOngoing: profileData.education?.doctorateIsOngoing|| false,
       doctorateThesisTitle: profileData.education?.doctorateThesisTitle,
       doctorateThesisDescription: profileData.education?.doctorateThesisDescription,
@@ -802,22 +810,22 @@ export default function JobSeekerDashboard() {
       doubleMajorDepartmentName: profileData.education?.doubleMajorDepartment?.name,
       doubleMajorUniversityName: profileData.education?.doubleMajorDepartment?.university?.name,
       doubleMajorUniversityCityName: profileData.education?.doubleMajorDepartment?.university?.city?.name,
-      doubleMajorStartDate: profileData.education?.doubleMajorStartDate,
-      doubleMajorEndDate: profileData.education?.doubleMajorEndDate,
+      doubleMajorStartDate: formatDate(profileData.education?.doubleMajorStartDate),
+      doubleMajorEndDate:formatDate( profileData.education?.doubleMajorEndDate),
       doubleMajorIsOngoing: profileData.education?.doubleMajorIsOngoing,
 
       isMinor: profileData.education?.isMinor,
       minorDepartmentName: profileData.education?.minorDepartment?.name,
       minorUniversityName: profileData.education?.minorDepartment?.university?.name,
       minorUniversityCityName: profileData.education?.minorDepartment?.university?.city?.name,
-      minorStartDate: profileData.education?.minorStartDate,
-      minorEndDate: profileData.education?.minorEndDate,
+      minorStartDate: formatDate(profileData.education?.minorStartDate),
+      minorEndDate: formatDate(profileData.education?.minorEndDate),
       minorIsOngoing: profileData.education?.minorIsOngoing|| false,
 
       //certifications
       certificationName: profileData.certifications.map(s => s.certificationName),
       certificationUrl: profileData.certifications.map(s => s.certificationUrl),
-      certificateValidityDate: profileData.certifications.map(s => s.certificateValidityDate),
+      certificateValidityDate: profileData.certifications.map(s =>formatDate( s.certificateValidityDate)),
       issuedBy: profileData.certifications.map(s => s.issuedBy),
 
       //workexperinece
@@ -826,8 +834,8 @@ export default function JobSeekerDashboard() {
       jobTitle: profileData.workExperiences.map(s => s.jobTitle),
       jobDescription: profileData.workExperiences.map(s => s.jobDescription),
       employmentType: profileData.workExperiences.map(s => s.employmentType),
-      startDate: profileData.workExperiences.map(s => s.startDate),
-      endDate: profileData.workExperiences.map(s => s.endDate),
+      startDate: profileData.workExperiences.map(s => formatDate(s.startDate)),
+      endDate: profileData.workExperiences.map(s => formatDate(s.endDate)),
       isGoing: profileData.workExperiences.map(s => s.isGoing|| false),
 
       //examsAndAchievements
@@ -850,8 +858,8 @@ export default function JobSeekerDashboard() {
       //projcts
       projectName: profileData.projects.map(s => s.projectName),
       projectDescription: profileData.projects.map(s => s.projectDescription),
-      projectStartDate: profileData.projects.map(s => s.projectStartDate),
-      projectEndDate: profileData.projects.map(s => s.projectEndDate),
+      projectStartDate: profileData.projects.map(s => formatDate(s.projectStartDate)),
+      projectEndDate: profileData.projects.map(s => formatDate(s.projectEndDate)),
       projectStatus: profileData.projects.map(s => s.projectStatus),
       isPrivateProject: profileData.projects.map(s => s.isPrivate || false),
       company: profileData.projects.map(s => s.company),
@@ -955,7 +963,7 @@ export default function JobSeekerDashboard() {
   return (
       <div className="min-h-screen bg-gray-100 p-8">
         <div className="w-full px-4 py-10">
-          <div className="max-w-[1000px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
+          <div className="max-w-[1200px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
 
             {!showForm && (
                 //   <div className={`relative min-h-screen bg-gray-100 flex flex-col items-center justify-center transition-all duration-300 ${showForm ? 'opacity-20 pointer-events-none' : 'opacity-100'}`}>
@@ -1502,7 +1510,7 @@ export default function JobSeekerDashboard() {
                     <div className="bg-gray-50 p-4 rounded-md">
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Profile Details</h3>
-                        <button onClick={() => setShowForm(false)} className="text-gray-500 hover:text-gray-700">✕
+                        <button onClick={() => setShowForm(false)} className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -1713,7 +1721,7 @@ export default function JobSeekerDashboard() {
                           <div style={{textAlign: 'right'}}>
                             <button
                                 onClick={handleNextStep}
-                                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                className="bg-black text-white px-4 py-2 rounded"
                             >
                               Next Step
                             </button>
@@ -1740,7 +1748,7 @@ export default function JobSeekerDashboard() {
                         <div className="flex justify-between items-center mb-3">
                           <h3 className="text-xl font-semibold text-black mb-3">Social Links</h3>
                           <button onClick={() => setShowForm(false)}
-                                  className="text-gray-500 hover:text-gray-700">✕
+                                  className="bg-black text-white px-4 py-2 rounded">✕
                           </button>
                         </div>
 
@@ -1797,11 +1805,11 @@ export default function JobSeekerDashboard() {
                           <div style={{textAlign: 'right'}}>
                             <div className="flex justify-between">
                               <button onClick={handleBackStep}
-                                      className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                      className="bg-black text-white px-4 py-2 rounded">Back
                               </button>
                               <div className="flex justify-end">
                                 <button onClick={handleNextStep}
-                                        className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                        className="bg-black text-white px-4 py-2 rounded">Next
                                 </button>
                               </div>
                             </div>
@@ -1825,7 +1833,7 @@ export default function JobSeekerDashboard() {
                         <div className="flex justify-between items-center mb-3">
                           <h3 className="text-xl font-semibold text-black mb-3">Contact Information</h3>
                           <button onClick={() => setShowForm(false)}
-                                  className="text-gray-500 hover:text-gray-700">✕
+                                  className="bg-black text-white px-4 py-2 rounded">✕
                           </button>
                         </div>
 
@@ -1876,11 +1884,11 @@ export default function JobSeekerDashboard() {
                           <div style={{textAlign: 'right'}}>
                             <div className="flex justify-between">
                               <button onClick={handleBackStep}
-                                      className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                      className="bg-black text-white px-4 py-2 rounded">Back
                               </button>
                               <div className="flex justify-end">
                                 <button onClick={handleNextStep}
-                                        className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                        className="bg-black text-white px-4 py-2 rounded">Next
                                 </button>
                               </div>
                             </div>
@@ -1906,7 +1914,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Job Preferences</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -2021,11 +2029,11 @@ export default function JobSeekerDashboard() {
                           <div style={{textAlign: 'right'}}>
                             <div className="flex justify-between">
                               <button onClick={handleBackStep}
-                                      className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                      className="bg-black text-white px-4 py-2 rounded">Back
                               </button>
                               <div className="flex justify-end">
                                 <button onClick={handleNextStep}
-                                        className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                        className="bg-black text-white px-4 py-2 rounded">Next
                                 </button>
                               </div>
                             </div>
@@ -2048,7 +2056,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">References</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -2118,7 +2126,7 @@ export default function JobSeekerDashboard() {
                               <div className="text-right mb-3">
                                 <button
                                     onClick={() => removeReference(index)}
-                                    className="text-red-600 text-sm "
+                                    className="bg-black text-white px-4 py-2 rounded "
                                 >
                                   Remove
                                 </button>
@@ -2132,7 +2140,7 @@ export default function JobSeekerDashboard() {
                             {/* Add Reference Button */}
                             <button
                                 onClick={addReference}
-                                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                className="bg-black text-white px-4 py-2 rounded"
                             >
                               Add Reference
                             </button>
@@ -2144,11 +2152,11 @@ export default function JobSeekerDashboard() {
                         <div style={{textAlign: 'right'}}>
                           <div className="flex justify-between">
                             <button onClick={handleBackStep}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                    className="bg-black text-white px-4 py-2 rounded">Back
                             </button>
                             <div className="flex justify-end">
                               <button onClick={handleNextStep}
-                                      className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                      className="bg-black text-white px-4 py-2 rounded">Next
                               </button>
                             </div>
                           </div>
@@ -2172,7 +2180,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                       <h3 className="text-xl font-semibold text-black mb-3">Language Skills</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -2271,7 +2279,7 @@ export default function JobSeekerDashboard() {
                               <div className="text-right mb-3">
                                 <button
                                     onClick={() => removeLanguageSkill(index)}
-                                    className="text-red-600 text-sm "
+                                    className="bg-black text-white px-4 py-2 rounded "
                                 >
                                   Remove
                                 </button>
@@ -2283,7 +2291,7 @@ export default function JobSeekerDashboard() {
                           {/* Add Language Skill Button */}
                           <button
                               onClick={addLanguageSkill}
-                              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                              className="bg-black text-white px-4 py-2 rounded"
                           >
                             Add Language Skill
                           </button>
@@ -2293,11 +2301,11 @@ export default function JobSeekerDashboard() {
                         <div style={{textAlign: 'right'}}>
                           <div className="flex justify-between">
                             <button onClick={handleBackStep}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                    className="bg-black text-white px-4 py-2 rounded">Back
                             </button>
                             <div className="flex justify-end">
                               <button onClick={handleNextStep}
-                                      className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                      className="bg-black text-white px-4 py-2 rounded">Next
                               </button>
                             </div>
                           </div>
@@ -2320,7 +2328,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Hobbies</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -2353,7 +2361,7 @@ export default function JobSeekerDashboard() {
                               <div className="text-right mb-3">
                                 <button
                                     onClick={() => removeHobby(index)}
-                                    className="text-red-600 text-sm "
+                                    className="bg-black text-white px-4 py-2 rounded "
                                 >
                                   Remove
                                 </button>
@@ -2366,7 +2374,7 @@ export default function JobSeekerDashboard() {
                           {/* Add Language Skill Button */}
                           <button
                               onClick={addHobby}
-                              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                              className="bg-black text-white px-4 py-2 rounded"
                           >
                             Add Hobby
                           </button>
@@ -2377,11 +2385,11 @@ export default function JobSeekerDashboard() {
                         <div style={{textAlign: 'right'}}>
                           <div className="flex justify-between">
                             <button onClick={handleBackStep}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                    className="bg-black text-white px-4 py-2 rounded">Back
                             </button>
                             <div className="flex justify-end">
                               <button onClick={handleNextStep}
-                                      className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                      className="bg-black text-white px-4 py-2 rounded">Next
                               </button>
                             </div>
                           </div>
@@ -2406,7 +2414,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Education</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -3085,11 +3093,11 @@ export default function JobSeekerDashboard() {
                           <div style={{textAlign: 'right'}}>
                             <div className="flex justify-between mt-3">
                               <button onClick={handleBackStep}
-                                      className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                      className="bg-black text-white px-4 py-2 rounded">Back
                               </button>
                               <div className="flex justify-end">
                                 <button onClick={handleNextStep}
-                                        className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                        className="bg-black text-white px-4 py-2 rounded">Next
                                 </button>
                               </div>
                             </div>
@@ -3113,7 +3121,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Certifications</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -3188,7 +3196,7 @@ export default function JobSeekerDashboard() {
                               <div className="text-right mb-3">
                                 <button
                                     onClick={() => removeCertification(index)}
-                                    className="text-red-600 text-sm "
+                                    className="bg-black text-white px-4 py-2 rounded "
                                 >
                                   Remove
                                 </button>
@@ -3200,7 +3208,7 @@ export default function JobSeekerDashboard() {
                           {/* Yeni Sertifika Ekleme Butonu */}
                           <button
                               onClick={addCertification}
-                              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                              className="bg-black text-white px-4 py-2 rounded"
                           >
                             Add Certification
                           </button>
@@ -3211,11 +3219,11 @@ export default function JobSeekerDashboard() {
                         <div style={{textAlign: 'right'}}>
                           <div className="flex justify-between">
                             <button onClick={handleBackStep}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                    className="bg-black text-white px-4 py-2 rounded">Back
                             </button>
                             <div className="flex justify-end">
                               <button onClick={handleNextStep}
-                                      className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                      className="bg-black text-white px-4 py-2 rounded">Next
                               </button>
                             </div>
                           </div>
@@ -3238,7 +3246,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Work Experience</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -3371,7 +3379,7 @@ export default function JobSeekerDashboard() {
                               <div className="flex justify-end mb-3">
                                 <button
                                     onClick={() => removeJobExperience(index)}
-                                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                                    className="bg-black text-white px-4 py-2 rounded"
                                 >
                                   Remove
                                 </button>
@@ -3385,7 +3393,7 @@ export default function JobSeekerDashboard() {
                           {/* Add Work Experience Button */}
                           <button
                               onClick={addJobExperience}
-                              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                              className="bg-black text-white px-4 py-2 rounded"
                           >
                             Add Work Experience
                           </button>
@@ -3395,11 +3403,11 @@ export default function JobSeekerDashboard() {
                         <div style={{textAlign: 'right'}}>
                           <div className="flex justify-between">
                             <button onClick={handleBackStep}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                    className="bg-black text-white px-4 py-2 rounded">Back
                             </button>
                             <div className="flex justify-end">
                               <button onClick={handleNextStep}
-                                      className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                      className="bg-black text-white px-4 py-2 rounded">Next
                               </button>
                             </div>
                           </div>
@@ -3422,7 +3430,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Exams and Achievements</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -3494,7 +3502,7 @@ export default function JobSeekerDashboard() {
                               <div className="text-right mb-3">
                                 <button
                                     onClick={() => removeExam(index)}
-                                    className="text-red-600 text-sm "
+                                    className="bg-black text-white px-4 py-2 rounded "
                                 >
                                   Remove
                                 </button>
@@ -3508,7 +3516,7 @@ export default function JobSeekerDashboard() {
                           {/* Add Exam Button */}
                           <button
                               onClick={addExam}
-                              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                              className="bg-black text-white px-4 py-2 rounded"
                           >
                             Add Exam
                           </button>
@@ -3519,11 +3527,11 @@ export default function JobSeekerDashboard() {
                         <div style={{textAlign: 'right'}}>
                           <div className="flex justify-between">
                             <button onClick={handleBackStep}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                    className="bg-black text-white px-4 py-2 rounded">Back
                             </button>
                             <div className="flex justify-end">
                               <button onClick={handleNextStep}
-                                      className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                      className="bg-black text-white px-4 py-2 rounded">Next
                               </button>
                             </div>
                           </div>
@@ -3545,7 +3553,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Uploaded Documents</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -3621,7 +3629,7 @@ export default function JobSeekerDashboard() {
                               <div className="text-right mb-3">
                                 <button
                                     onClick={() => removeDocument(index)}
-                                    className="text-red-600 text-sm"
+                                    className="bg-black text-white px-4 py-2 rounded"
                                 >
                                   Remove
                                 </button>
@@ -3634,7 +3642,7 @@ export default function JobSeekerDashboard() {
                         <div className="flex justify-between mt-6">
                           <button
                               onClick={addDocument}
-                              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                              className="bg-black text-white px-4 py-2 rounded"
                           >
                             Add Document
                           </button>
@@ -3644,11 +3652,11 @@ export default function JobSeekerDashboard() {
                         <div style={{textAlign: 'right'}}>
                           <div className="flex justify-between">
                             <button onClick={handleBackStep}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                    className="bg-black text-white px-4 py-2 rounded">Back
                             </button>
                             <div className="flex justify-end">
                               <button onClick={handleNextStep}
-                                      className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                      className="bg-black text-white px-4 py-2 rounded">Next
                               </button>
                             </div>
                           </div>
@@ -3670,7 +3678,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Skills</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -3708,7 +3716,7 @@ export default function JobSeekerDashboard() {
                               <div className="text-right mb-3">
                                 <button
                                     onClick={() => removeSkill(index)}
-                                    className="text-red-600 text-sm"
+                                    className="bg-black text-white px-4 py-2 rounded"
                                 >
                                   Remove
                                 </button>
@@ -3721,7 +3729,7 @@ export default function JobSeekerDashboard() {
                         <div className="flex justify-between mt-6">
                           <button
                               onClick={addSkill}
-                              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                              className="bg-black text-white px-4 py-2 rounded"
                           >
                             Add Skill
                           </button>
@@ -3731,11 +3739,11 @@ export default function JobSeekerDashboard() {
                         <div style={{textAlign: 'right'}}>
                           <div className="flex justify-between">
                             <button onClick={handleBackStep}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                    className="bg-black text-white px-4 py-2 rounded">Back
                             </button>
                             <div className="flex justify-end">
                               <button onClick={handleNextStep}
-                                      className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                      className="bg-black text-white px-4 py-2 rounded">Next
                               </button>
                             </div>
                           </div>
@@ -3757,7 +3765,7 @@ export default function JobSeekerDashboard() {
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-xl font-semibold text-black mb-3">Projects</h3>
                         <button onClick={() => setShowForm(false)}
-                                className="text-gray-500 hover:text-gray-700">✕
+                                className="bg-black text-white px-4 py-2 rounded">✕
                         </button>
                       </div>
                       <div className="space-y-6">
@@ -3865,7 +3873,7 @@ export default function JobSeekerDashboard() {
                               <div className="text-right mb-3">
                                 <button
                                     onClick={() => removeProject(index)}
-                                    className="text-red-600 text-sm"
+                                    className="bg-black text-white px-4 py-2 rounded"
                                 >
                                   Remove
                                 </button>
@@ -3879,7 +3887,7 @@ export default function JobSeekerDashboard() {
                         <div className="flex justify-between mt-6">
                           <button
                               onClick={addProject}
-                              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                              className="bg-black text-white px-4 py-2 rounded"
                           >
                             Add Project
                           </button>
@@ -3889,7 +3897,7 @@ export default function JobSeekerDashboard() {
                         <div style={{textAlign: 'right'}}>
                           <div className="flex justify-between">
                             <button onClick={handleBackStep}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                    className="bg-black text-white px-4 py-2 rounded">Back
                             </button>
 
                             <button

@@ -140,7 +140,7 @@ const JobSeekerMyJobs = () => {
                     cursor: 'pointer',
                     textAlign: 'center',
                     transform: 'scale(1)',
-                    width: 'calc(33.33% - 16px)',
+                    width: 'calc(50% - 16px)',
                     marginBottom: '16px',
                     height: isAccordionOpen ? '700px' : '500px',
                     overflowY: 'auto',
@@ -156,19 +156,14 @@ const JobSeekerMyJobs = () => {
                          className="bg-white p-8 rounded-lg space-y-6 shadow-md">
                         <div>
                             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"><BriefcaseIcon
-                                className="text-blue-600" style={{width: '20px', height: '20px'}}/> Job
-                                Advertisement
+                                className="text-blue-600" style={{width: '20px', height: '20px'}}/>
+                                {job?.description || '-'}
                             </h3>
                             <div className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                 <p className="text-sm">
                                 <span
                                     className="font-medium text-gray-700"> <strong> Company Name: </strong> </span>{' '}<span
                                     className="text-gray-600">{job?.companyName || '-'}</span>
-                                </p>
-                                <p className="text-sm">
-                                <span
-                                    className="font-medium text-gray-700"> <strong> Job Description: </strong> </span>{' '}<span
-                                    className="text-gray-600">{job?.description || '-'}</span>
                                 </p>
 
                                 <p className="text-sm">

@@ -80,7 +80,7 @@ function NavbarEmployer() {
             <Nav.Link href="/employer/create-job" className="text-dark fw-medium">Post Job</Nav.Link>
             <Nav.Link href="/employer/applications" className="text-dark fw-medium">My Job Applications</Nav.Link>
             <Nav.Link href="/job-offers" className="text-dark fw-medium">Offers</Nav.Link>
-            <Nav.Link href="/chat" className="text-dark fw-medium">Chat</Nav.Link>
+            {/*<Nav.Link href="/chat" className="text-dark fw-medium">Chat</Nav.Link>*/}
             <Nav.Link href="/blog" className="text-dark fw-medium">Blog</Nav.Link>
             <Nav.Link href="/interviews" className="text-dark fw-medium">Interviews</Nav.Link>
           </Nav>

@@ -62,7 +62,7 @@ export default function InterviewPage() {
                 }
                 const data = await response.json();
                 setInterviews(data);
-                console.log(data);
+                console.log(interviews);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -98,7 +98,13 @@ export default function InterviewPage() {
 
     return (
         <div style={{padding: "20px"}}>
-            <h1 style={{fontSize: "32px", fontWeight: "bold", marginBottom: "20px"}}>
+            <h1 style={{
+                fontSize: "32px", fontWeight: "bold",
+                marginBottom: "20px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+            }}>
                 Scheduled Interviews
             </h1>
 
@@ -121,176 +127,177 @@ export default function InterviewPage() {
                     <option value="Cancelled">Cancelled</option>
                 </select>
             </div>
-
-            <div style={{marginBottom: "20px"}}>
-                <Calendar
-                    locale="en-US"
-                    onChange={setSelectedDate}
-                    value={selectedDate}
-                    tileClassName={({date, view}) => {
-                        if (view === 'month') {
-                            const formatted = formatReadableDate(date);
-                            const matchingInterviews = upcomingInterviews.filter(i =>
-                                formatReadableDate(i.date) === formatted
-                            );
-                            if (matchingInterviews.length > 1) return 'highlight-multi';
-                            if (matchingInterviews.length === 1) {
-                                const status = matchingInterviews[0].status;
-                                if (status === "CONFIRMED") return "highlight-confirmed";
-                                if (status === "WAITING") return "highlight-waiting";
-                                if (status === "CANCELLED") return "highlight-cancelled";
+            <div style={{flex: "1 1 500px", minWidth: "300px"}}>
+                <div style={{marginBottom: "20px"}}>
+                    <Calendar
+                        locale="en-US"
+                        onChange={setSelectedDate}
+                        value={selectedDate}
+                        tileClassName={({date, view}) => {
+                            if (view === 'month') {
+                                const formatted = formatReadableDate(date);
+                                const matchingInterviews = upcomingInterviews.filter(i =>
+                                    formatReadableDate(i.date) === formatted
+                                );
+                                if (matchingInterviews.length > 1) return 'highlight-multi';
+                                if (matchingInterviews.length === 1) {
+                                    const status = matchingInterviews[0].status;
+                                    if (status === "CONFIRMED") return "highlight-confirmed";
+                                    if (status === "WAITING") return "highlight-waiting";
+                                    if (status === "CANCELLED") return "highlight-cancelled";
+                                }
                             }
-                        }
-                    }}
-                />
+                        }}
+                    />
+                </div>
             </div>
-
-            <div style={{display: "flex", flexWrap: "wrap", gap: "20px"}}>
-                {filteredInterviews.length === 0 ? (
-                    <p>No interviews scheduled for this date.</p>
-                ) : (
-                    filteredInterviews.map(interview => (
-                        <div
-                            key={interview.date + interview.interviewer}
-                            onClick={() => {
-                                setSelectedInterview(interview);
-                                setIsModalOpen(true);
-                            }}
-                            style={{
-                                width: "48%", // Yarısı ve arada boşluk kalacak şekilde
-                                border: "1px solid #ddd",
-                                borderRadius: "8px",
-                                padding: "20px",
-                                marginBottom: "20px",
-                                boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
-                                cursor: "pointer"
-                            }}
-                        >
-                            <h2 style={{fontSize: "24px", fontWeight: "600", marginBottom: "10px"}}>
-                                Interview with: {interview.interviewer}
-                            </h2>
-                            <p>Date: {formatReadableDate(interview.date)}</p>
-                            <p>Time: {formatReadableTime(interview.date)}</p>
-                            <span
+            <div style={{flex: "2 1 500px", minWidth: "300px"}}>
+                <div style={{display: "flex", flexWrap: "wrap", gap: "20px",}}>
+                    {filteredInterviews.length === 0 ? (
+                        <p>No interviews scheduled for this date.</p>
+                    ) : (
+                        filteredInterviews.map(interview => (
+                            <div
+                                key={interview.date + interview.interviewer}
+                                onClick={() => {
+                                    setSelectedInterview(interview);
+                                    setIsModalOpen(true);
+                                }}
                                 style={{
-                                    padding: "6px 12px",
-                                    borderRadius: "20px",
-                                    color: "white",
-                                    fontSize: "14px",
-                                    backgroundColor:
-                                        interview.status === "CONFIRMED"
-                                            ? "green"
-                                            : interview.status === "WAITING"
-                                                ? "orange"
-                                                : "red"
+                                    width: "48%", // Yarısı ve arada boşluk kalacak şekilde
+                                    border: "1px solid #ddd",
+                                    borderRadius: "8px",
+                                    padding: "20px",
+                                    marginBottom: "20px",
+                                    boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
+                                    cursor: "pointer"
                                 }}
                             >
+                                <h2 style={{fontSize: "24px", fontWeight: "600", marginBottom: "10px"}}>
+                                    Interview with: {interview.interviewer}
+                                </h2>
+                                <p>Date: {formatReadableDate(interview.date)}</p>
+                                <p>Time: {formatReadableTime(interview.date)}</p>
+                                <span
+                                    style={{
+                                        padding: "6px 12px",
+                                        borderRadius: "20px",
+                                        color: "white",
+                                        fontSize: "14px",
+                                        backgroundColor:
+                                            interview.status === "CONFIRMED"
+                                                ? "green"
+                                                : interview.status === "WAITING"
+                                                    ? "orange"
+                                                    : "red"
+                                    }}
+                                >
                     {interview.status}
                 </span>
-                        </div>
-                    ))
-                )}
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
 
-
-            {isModalOpen && selectedInterview && (
-                <div style={{
-                    position: "fixed",
-                    top: "0",
-                    left: "0",
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "rgba(0,0,0,0.5)",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    zIndex: 9999
-                }}>
+                {isModalOpen && selectedInterview && (
                     <div style={{
-                        backgroundColor: "white",
-                        padding: "30px",
-                        borderRadius: "8px",
-                        width: "90%",
-                        maxWidth: "500px",
-                        textAlign: "center"
+                        position: "fixed",
+                        top: "0",
+                        left: "0",
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 9999
                     }}>
-                        <h2 style={{fontSize: "24px", marginBottom: "10px"}}>
-                            Interview with: {selectedInterview.interviewer}
-                        </h2>
+                        <div style={{
+                            backgroundColor: "white",
+                            padding: "30px",
+                            borderRadius: "8px",
+                            width: "90%",
+                            maxWidth: "500px",
+                            textAlign: "center"
+                        }}>
+                            <h2 style={{fontSize: "24px", marginBottom: "10px"}}>
+                                Interview with: {selectedInterview.interviewer}
+                            </h2>
 
-                        <p>Date: {formatReadableDate(selectedInterview.date)}</p>
-                        <p>Time: {formatReadableTime(selectedInterview.date)}</p>
+                            <p>Date: {formatReadableDate(selectedInterview.date)}</p>
+                            <p>Time: {formatReadableTime(selectedInterview.date)}</p>
 
-                        <p>Status: {selectedInterview.status}</p>
-                        <p>Interview Type: {selectedInterview.interviewType}</p>
+                            <p>Status: {selectedInterview.status}</p>
+                            <p>Interview Type: {selectedInterview.interviewType}</p>
 
-                        {selectedInterview.description && (
-                            <p style={{marginTop: "10px", fontStyle: "italic"}}>
-                                Job Description: {selectedInterview.description}
-                            </p>
-                        )}
+                            {selectedInterview.description && (
+                                <p style={{marginTop: "10px", fontStyle: "italic"}}>
+                                    Job Description: {selectedInterview.description}
+                                </p>
+                            )}
 
-                        {selectedInterview.notes && (
-                            <p style={{marginTop: "10px"}}>
-                                Notes: {selectedInterview.notes}
-                            </p>
-                        )}
+                            {selectedInterview.notes && (
+                                <p style={{marginTop: "10px"}}>
+                                    Notes: {selectedInterview.notes}
+                                </p>
+                            )}
 
-                        {selectedInterview.status !== "CANCELLED" && (
-                            <>
-                                <div style={{marginTop: "20px"}}>
-                                    {selectedInterview.link && (
+                            {selectedInterview.status !== "CANCELLED" && (
+                                <>
+                                    <div style={{marginTop: "20px"}}>
+                                        {selectedInterview.link && (
+                                            <a
+                                                href={selectedInterview.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                    margin: "10px",
+                                                    backgroundColor: "blue",
+                                                    color: "white",
+                                                    padding: "10px 20px",
+                                                    borderRadius: "5px",
+                                                    textDecoration: "none"
+                                                }}
+                                            >
+                                                Join Meeting
+                                            </a>
+                                        )}
                                         <a
-                                            href={selectedInterview.link}
+                                            href={generateGoogleCalendarLink(selectedInterview)}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             style={{
                                                 margin: "10px",
-                                                backgroundColor: "blue",
+                                                backgroundColor: "green",
                                                 color: "white",
                                                 padding: "10px 20px",
                                                 borderRadius: "5px",
                                                 textDecoration: "none"
                                             }}
                                         >
-                                            Join Meeting
+                                            Add to Calendar
                                         </a>
-                                    )}
-                                    <a
-                                        href={generateGoogleCalendarLink(selectedInterview)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                            margin: "10px",
-                                            backgroundColor: "green",
-                                            color: "white",
-                                            padding: "10px 20px",
-                                            borderRadius: "5px",
-                                            textDecoration: "none"
-                                        }}
-                                    >
-                                        Add to Calendar
-                                    </a>
-                                </div>
-                            </>
-                        )}
+                                    </div>
+                                </>
+                            )}
 
-                        <button
-                            onClick={() => setIsModalOpen(false)}
-                            style={{
-                                marginTop: "20px",
-                                backgroundColor: "red",
-                                color: "white",
-                                padding: "10px 20px",
-                                borderRadius: "5px",
-                                border: "none"
-                            }}
-                        >
-                            Close
-                        </button>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                style={{
+                                    marginTop: "20px",
+                                    backgroundColor: "red",
+                                    color: "white",
+                                    padding: "10px 20px",
+                                    borderRadius: "5px",
+                                    border: "none"
+                                }}
+                            >
+                                Close
+                            </button>
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
-    );
-}
+                )}
+            </div>
+            );
+            }
