@@ -43,8 +43,8 @@ public class JobAdvController {
                 : "mock@employer.com";
 
         List<JobAdv> myJobAdvs = jobAdvService.getMyJobAdvs(email);
-
         List<JobAdvDto> jobAdvDtos = myJobAdvs.stream()
+                .filter(JobAdv :: isActive )
                 .map(jobAdv -> {
                     JobAdvDto dto = new JobAdvDto();
                     dto.setId(jobAdv.getId());
@@ -164,6 +164,11 @@ public class JobAdvController {
 
         List<JobApplication> applications = jobAdvService.getApplicationObjectsForJobAdv(id, email);
         List<CandidateApplicationDto> result = applications.stream()
+                .filter(app ->
+                        app.getCandidate() != null && app.getCandidate().isActive() &&
+                                app.getJobAdv() != null && app.getJobAdv().isActive() &&
+                                app.getJobAdv().getCompany() != null && app.getJobAdv().getCompany().isActive() // employer için company üzerinden aktif kontrolü
+                )
                 .map(app -> new CandidateApplicationDto(app.getId(), app.getCandidate()))
                 .collect(Collectors.toList());
 

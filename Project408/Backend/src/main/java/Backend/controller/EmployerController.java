@@ -1,6 +1,7 @@
 package Backend.controller;
 
 import Backend.entities.company.Company;
+import Backend.entities.dto.PasswordChangeDto;
 import Backend.entities.user.User;
 import Backend.entities.user.candidate.Candidate;
 import Backend.entities.user.employer.Employer;
@@ -51,6 +52,35 @@ public class EmployerController {
     @PutMapping("/updateProfile/{id}")
     public ResponseEntity<Company> updateProfile(@PathVariable("id") int id, @RequestBody Company company) {
         return ResponseEntity.ok(employerService.updateProfile(id,company));
+    }
+
+
+    @PostMapping("/passwordChange")
+    public ResponseEntity<String> changePassword(@RequestBody PasswordChangeDto dto) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
+        try{
+            employerService.changePassword(dto,email);
+            return ResponseEntity.ok("Password changed!");
+        }
+        catch(RuntimeException ex){
+            return ResponseEntity.badRequest().body("Something went wrong!");
+        }
+
+    }
+
+    @DeleteMapping("/deleteAccount")
+    public ResponseEntity<String> changePassword() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
+        try{
+            employerService.deleteAccount(email);
+            return ResponseEntity.ok("Account deleted!");
+        }
+        catch(RuntimeException ex){
+            return ResponseEntity.badRequest().body("Account cannot be deleted!");
+        }
+
     }
 
 }

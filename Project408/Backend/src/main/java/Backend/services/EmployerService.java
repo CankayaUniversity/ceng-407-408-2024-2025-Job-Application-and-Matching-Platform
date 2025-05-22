@@ -2,6 +2,7 @@ package Backend.services;
 
 import Backend.entities.common.Project;
 import Backend.entities.company.Company;
+import Backend.entities.dto.PasswordChangeDto;
 import Backend.entities.user.User;
 import Backend.entities.user.candidate.Candidate;
 import Backend.entities.user.employer.Employer;
@@ -14,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -30,6 +32,8 @@ public class EmployerService {
     private CompanyRepository companyRepository;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public HashMap<Object,Object>  getProfileDetails(@PathVariable("id") int id) {
 
@@ -114,4 +118,28 @@ public class EmployerService {
         return cmp;
     }
 
+    public void changePassword(PasswordChangeDto dto, String email) {
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+            userRepository.save(user);
+        }
+
+        else{
+            throw new RuntimeException("Something went wrong!");
+        }
+    }
+
+    public void deleteAccount(String email) {
+        User user= userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
+        if(user.isEnabled() && user.isActive()){
+            user.setEnabled(false);
+            user.setActive(false);
+            userRepository.save(user);
+
+//            userRepository.delete(user);
+        }
+    }
 }

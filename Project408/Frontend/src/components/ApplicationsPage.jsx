@@ -59,6 +59,9 @@ const ApplicationsPage = () => {
             setShowToast(true);
 
             setLoading(false);
+
+            window.location.reload();
+
         } catch (error) {
             setMessage('Job Advertisement Cannot Deleted!');
             setShowToast(true);
@@ -438,14 +441,14 @@ const ApplicationsPage = () => {
                         <div style={{textAlign: 'right'}}>
                             <div className="flex justify-between">
                                 <button
-                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                    className="bg-black text-white px-4 py-2 rounded"
                                     onClick={() => navigate("/candidates", {state: {selectedJob}})}
 
                                 >
                                     View Applications
                                 </button>
                                 <button
-                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                    className="bg-black text-white px-4 py-2 rounded"
                                     onClick={() => handleDelete(selectedJob)}
                                 >
                                     Delete

@@ -3,6 +3,7 @@ import { Button } from './components/ui/Button';
 import { avatarStyle, buttonStyle } from './styles/inlineStyles';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import Toast from "./components/Toast.jsx";
 
 export default function ProfileSettings() {
     const [passwords, setPasswords] = useState({
@@ -16,17 +17,22 @@ export default function ProfileSettings() {
     const handlePasswordChange = (e) => {
         setPasswords({ ...passwords, [e.target.name]: e.target.value });
     };
-
+    const [showToast, setShowToast] = useState(false);
+    const handleCloseToast = () => {
+        setShowToast(false);
+    };
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
         if (passwords.newPassword !== passwords.confirmNewPassword) {
             setMessage('New passwords do not match.');
+            setShowToast(true);
+
             return;
         }
 
         try {
             await axios.post(
-                `http://localhost:9090/candidate/changePassword/${localStorage.getItem('id')}`,
+                `http://localhost:9090/employer/passwordChange`,
                 {
                     currentPassword: passwords.currentPassword,
                     newPassword: passwords.newPassword
@@ -38,40 +44,44 @@ export default function ProfileSettings() {
                 }
             );
             setMessage('Password updated successfully.');
+            setShowToast(true);
         } catch (error) {
             console.error(error);
             setMessage('Failed to update password.');
+            setShowToast(true);
+
         }
+
     };
 
-    const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('userId', localStorage.getItem('id'));
-
-        try {
-            const res = await axios.post('http://localhost:9090/candidate/profile-picture', formData, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            setMessage('Profile photo uploaded successfully.');
-        } catch (err) {
-            console.error("Upload error:", err);
-            setMessage("Failed to upload profile photo.");
-        }
-    };
+    // const handleImageUpload = async (e) => {
+    //     const file = e.target.files[0];
+    //     if (!file) return;
+    //
+    //     const formData = new FormData();
+    //     formData.append('file', file);
+    //     formData.append('userId', localStorage.getItem('id'));
+    //
+    //     try {
+    //         const res = await axios.post('http://localhost:9090/candidate/profile-picture', formData, {
+    //             headers: {
+    //                 Authorization: `Bearer ${localStorage.getItem('token')}`,
+    //                 'Content-Type': 'multipart/form-data'
+    //             }
+    //         });
+    //         setMessage('Profile photo uploaded successfully.');
+    //     } catch (err) {
+    //         console.error("Upload error:", err);
+    //         setMessage("Failed to upload profile photo.");
+    //     }
+    // };
 
     const handleDeleteAccount = async () => {
         const confirmDelete = window.confirm("Are you sure you want to delete your account?");
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`http://localhost:9090/candidate/delete/${localStorage.getItem('id')}`, {
+            await axios.delete(`http://localhost:9090/employer/deleteAccount`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             localStorage.clear();
@@ -98,7 +108,7 @@ export default function ProfileSettings() {
                             <h2 style={{ marginTop: '10px' }} className="text-2xl font-bold text-gray-800 text-center">Profile Settings</h2>
 
                             {/* Password Section */}
-                            <div style={{ marginTop: '30px' }}>
+                            <div style={{ marginTop: '30px'}}>
                                 <h3 className="text-lg font-semibold mb-4">🔐 Change Password</h3>
                                 <form onSubmit={handlePasswordSubmit} className="space-y-3">
                                     <input
@@ -106,38 +116,38 @@ export default function ProfileSettings() {
                                         name="currentPassword"
                                         placeholder="Current Password"
                                         onChange={handlePasswordChange}
-                                        className="w-full border p-2 rounded"
+                                        className="w-full border p-2 rounded bg-white text-black "
                                     />
                                     <input
                                         type="password"
                                         name="newPassword"
                                         placeholder="New Password"
                                         onChange={handlePasswordChange}
-                                        className="w-full border p-2 rounded"
+                                        className="w-full border p-2 rounded bg-white text-black"
                                     />
                                     <input
                                         type="password"
                                         name="confirmNewPassword"
                                         placeholder="New Password Again"
                                         onChange={handlePasswordChange}
-                                        className="w-full border p-2 rounded"
+                                        className="w-full border p-2 rounded bg-white text-black"
                                     />
-                                    <button style={{ ...buttonStyle, marginTop: '10px' }} type="submit" className="bg-blue-700 text-white px-4 py-2 rounded">
+                                    <button style={{ ...buttonStyle, marginTop: '10px' }} type="submit" className="bg-blue-700 text-white px-4 py-2 rounded mt-3">
                                         Update Password
                                     </button>
                                 </form>
                             </div>
 
-                            {/* Photo Upload Section */}
-                            <div style={{ marginTop: '30px' }}>
-                                <h3 className="text-lg font-semibold mb-2">📸 Upload Profile Photo</h3>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    className="block w-full p-2 border rounded"
-                                />
-                            </div>
+                            {/*/!* Photo Upload Section *!/*/}
+                            {/*<div style={{ marginTop: '30px' }}>*/}
+                            {/*    <h3 className="text-lg font-semibold mb-2">📸 Upload Profile Photo</h3>*/}
+                            {/*    <input*/}
+                            {/*        type="file"*/}
+                            {/*        accept="image/*"*/}
+                            {/*        onChange={handleImageUpload}*/}
+                            {/*        className="block w-full p-2 border rounded"*/}
+                            {/*    />*/}
+                            {/*</div>*/}
 
                             {/* Delete Account Section */}
                             <div style={{ marginTop: '30px' }}>
@@ -145,17 +155,14 @@ export default function ProfileSettings() {
                                 <button
                                     style={{ ...buttonStyle, marginTop: '5px' }}
                                     onClick={handleDeleteAccount}
-                                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 mt-3 "
                                 >
                                     Delete Account
                                 </button>
                             </div>
 
-                            {message && (
-                                <div className="mt-4 text-center text-sm text-gray-700 bg-gray-100 p-2 rounded">
-                                    {message}
-                                </div>
-                            )}
+                            <Toast message={message} show={showToast}
+                                   onClose={handleCloseToast}/>
                         </div>
                     </div>
                 </div>

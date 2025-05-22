@@ -156,6 +156,7 @@ public class CandidateController {
         List<JobAdv> jobAdvs =  jobAdvRepository.findAll();
         // Gereksiz filtreleme veya düzenleme yapılmadığından emin olun
         List<JobAdvDto> jobAdvDtos = jobAdvs.stream()
+                .filter(jobAdv -> jobAdv.isActive() && jobAdv.getCreatedEmployer() != null && jobAdv.getCreatedEmployer().isActive())
                 .map(jobAdv -> {
                     JobAdvDto dto = new JobAdvDto();
                     dto.setId(jobAdv.getId());
@@ -314,86 +315,86 @@ public class CandidateController {
 
         for (JobApplication jobApplication : myApplications) {
             JobAdv jobAdv = jobApplication.getJobAdv();
+            if (jobAdv.isActive() && jobAdv.getCreatedEmployer().isActive()) {
+                JobAdvDto dto = new JobAdvDto();
+                dto.setId(jobAdv.getId());
+                dto.setDescription(jobAdv.getDescription());
+                dto.setCompanyName(jobAdv.getCompany().getCompanyName());
+                dto.setMinSalary(jobAdv.getMinSalary());
+                dto.setMaxSalary(jobAdv.getMaxSalary());
+                dto.setLastDate(jobAdv.getLastDate());
+                dto.setTravelRest(jobAdv.isTravelRest());
+                dto.setLicense(jobAdv.isLicense());
 
-            JobAdvDto dto = new JobAdvDto();
-            dto.setId(jobAdv.getId());
-            dto.setDescription(jobAdv.getDescription());
-            dto.setCompanyName(jobAdv.getCompany().getCompanyName());
-            dto.setMinSalary(jobAdv.getMinSalary());
-            dto.setMaxSalary(jobAdv.getMaxSalary());
-            dto.setLastDate(jobAdv.getLastDate());
-            dto.setTravelRest(jobAdv.isTravelRest());
-            dto.setLicense(jobAdv.isLicense());
-
-            if (jobAdv.getJobCondition() != null) {
-                JobCondition jobCondition = jobAdv.getJobCondition();
-                dto.setWorkType(jobCondition.getWorkType());
-                dto.setEmploymentType(jobCondition.getEmploymentType());
-                if (jobCondition.getCountry() != null) {
-                    dto.setCountry(jobCondition.getCountry().getName());
+                if (jobAdv.getJobCondition() != null) {
+                    JobCondition jobCondition = jobAdv.getJobCondition();
+                    dto.setWorkType(jobCondition.getWorkType());
+                    dto.setEmploymentType(jobCondition.getEmploymentType());
+                    if (jobCondition.getCountry() != null) {
+                        dto.setCountry(jobCondition.getCountry().getName());
+                    }
+                    dto.setMinWorkHours(jobCondition.getMinWorkHours());
+                    dto.setMaxWorkHours(jobCondition.getMaxWorkHours());
                 }
-                dto.setMinWorkHours(jobCondition.getMinWorkHours());
-                dto.setMaxWorkHours(jobCondition.getMaxWorkHours());
-            }
 
-            if (jobAdv.getJobQualification() != null) {
-                JobQualification jobQualification = jobAdv.getJobQualification();
-                dto.setDegreeType(jobQualification.getDegreeType().toString());
-                dto.setJobExperience(jobQualification.getJobExperience().toString());
-                dto.setExperienceYears(jobQualification.getExperienceYears());
-                dto.setMilitaryStatus(jobQualification.getMilitaryStatus().toString());
+                if (jobAdv.getJobQualification() != null) {
+                    JobQualification jobQualification = jobAdv.getJobQualification();
+                    dto.setDegreeType(jobQualification.getDegreeType().toString());
+                    dto.setJobExperience(jobQualification.getJobExperience().toString());
+                    dto.setExperienceYears(jobQualification.getExperienceYears());
+                    dto.setMilitaryStatus(jobQualification.getMilitaryStatus().toString());
 
-                dto.setTechnicalSkills(jobQualification.getTechnicalSkills().stream()
-                        .map(skill -> {
-                            TechnicalSkill tech= new TechnicalSkill();
-                            tech.setPositionName(skill.getPositionName());
-                            tech.setSkillLevel(skill.getSkillLevel());
-                            tech.setDescription(skill.getDescription());
-                            return tech;
-                        })  // TechnicalSkill'in ismi alınır (örneğin: "Java")
-                        .collect(Collectors.toList()));
+                    dto.setTechnicalSkills(jobQualification.getTechnicalSkills().stream()
+                            .map(skill -> {
+                                TechnicalSkill tech = new TechnicalSkill();
+                                tech.setPositionName(skill.getPositionName());
+                                tech.setSkillLevel(skill.getSkillLevel());
+                                tech.setDescription(skill.getDescription());
+                                return tech;
+                            })  // TechnicalSkill'in ismi alınır (örneğin: "Java")
+                            .collect(Collectors.toList()));
 
-                dto.setSocialSkills(jobQualification.getSocialSkills().stream()
-                        .map(skill -> {
-                            SocialSkill tech= new SocialSkill();
-                            tech.setPositionName(skill.getPositionName());
-                            tech.setSkillLevel(skill.getSkillLevel());
-                            tech.setDescription(skill.getDescription());
-                            return tech;
-                        })
-                        .collect(Collectors.toList()));
+                    dto.setSocialSkills(jobQualification.getSocialSkills().stream()
+                            .map(skill -> {
+                                SocialSkill tech = new SocialSkill();
+                                tech.setPositionName(skill.getPositionName());
+                                tech.setSkillLevel(skill.getSkillLevel());
+                                tech.setDescription(skill.getDescription());
+                                return tech;
+                            })
+                            .collect(Collectors.toList()));
 
-                dto.setLanguageProficiencies(
-                        jobQualification.getLanguageProficiencies().stream()
-                                .map(lang -> {
-                                    LanguageProficiency langDto = new LanguageProficiency();
-                                    langDto.setLanguage(lang.getLanguage());
-                                    langDto.setReadingLevel(lang.getReadingLevel());
-                                    langDto.setWritingLevel(lang.getWritingLevel());
-                                    langDto.setSpeakingLevel(lang.getSpeakingLevel());
-                                    langDto.setListeningLevel(lang.getListeningLevel());
-                                    return langDto;
-                                })
-                                .collect(Collectors.toList())
-                );
-            }
+                    dto.setLanguageProficiencies(
+                            jobQualification.getLanguageProficiencies().stream()
+                                    .map(lang -> {
+                                        LanguageProficiency langDto = new LanguageProficiency();
+                                        langDto.setLanguage(lang.getLanguage());
+                                        langDto.setReadingLevel(lang.getReadingLevel());
+                                        langDto.setWritingLevel(lang.getWritingLevel());
+                                        langDto.setSpeakingLevel(lang.getSpeakingLevel());
+                                        langDto.setListeningLevel(lang.getListeningLevel());
+                                        return langDto;
+                                    })
+                                    .collect(Collectors.toList())
+                    );
+                }
 
-            if (jobAdv.getBenefits() != null) {
-                dto.setBenefitTypes(jobAdv.getBenefits().stream()
-                        .map(benefit -> {
-                            Benefit b = new Benefit();
-                            b.setBenefitType(benefit.getBenefitType());
-                            b.setDescription(benefit.getDescription());
-                            return b;
-                        }) // BenefitType enum'u string'e çeviriyoruz
-                        .collect(Collectors.toList())
-                );
+                if (jobAdv.getBenefits() != null) {
+                    dto.setBenefitTypes(jobAdv.getBenefits().stream()
+                            .map(benefit -> {
+                                Benefit b = new Benefit();
+                                b.setBenefitType(benefit.getBenefitType());
+                                b.setDescription(benefit.getDescription());
+                                return b;
+                            }) // BenefitType enum'u string'e çeviriyoruz
+                            .collect(Collectors.toList())
+                    );
 
-            }
+                }
                 if (jobAdv.getJobPositions() != null) {
-                    dto.setJobPositions( jobAdv.getJobPositions().stream()
+                    dto.setJobPositions(jobAdv.getJobPositions().stream()
                             .map(position -> {
-                                JobPositions positions= new JobPositions();
+                                JobPositions positions = new JobPositions();
                                 positions.setPositionType(position.getPositionType());
                                 positions.setCustomJobPosition(position.getCustomJobPosition());
                                 return positions;
@@ -405,6 +406,7 @@ public class CandidateController {
 
 
                 jobAdvDtos.add(dto);
+            }
         }
 
         return jobAdvDtos;

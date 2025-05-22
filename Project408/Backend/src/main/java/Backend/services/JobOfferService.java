@@ -41,6 +41,7 @@ public class JobOfferService {
 
         return applications.stream()
                 .flatMap(app -> app.getOffers().stream()
+                        .filter(offer -> offer.getApplication().getJobAdv().isActive() && offer.getEmployer().isActive() )
                         .map(offer -> {
                             JobApplication application = offer.getApplication();
                             JobAdv jobAdv = application.getJobAdv();
@@ -145,6 +146,14 @@ public class JobOfferService {
         List<JobOffer> offers = jobOfferRepository.findByEmployer(employer);
 
         return offers.stream()
+                .filter(offer -> {
+                    // Employer ve Candidate null değil ve her ikisi de active ise devam etsin
+                    return offer.getEmployer() != null && offer.getEmployer().isActive()
+                            && offer.getApplication() != null
+                            && offer.getApplication().getCandidate() != null
+                            && offer.getApplication().getCandidate().isActive()
+                            && offer.getApplication().getJobAdv().isActive();
+                })
                 .map(offer -> {
                     Map<String, Object> offerDetails = new HashMap<>();
                     offerDetails.put("offerId",offer.getId());

@@ -889,9 +889,13 @@ const JobOffersEmployer = () => {
                                             <div className="flex justify-between mt-6">
                                                 {status === 'ACCEPTED' && (
                                                     <div>
-                                                        <button onClick={() => setIsModalOpen(true)}>
+                                                        <button
+                                                            onClick={() => setIsModalOpen(true)}
+                                                            className="bg-black text-white px-4 py-2 rounded"
+                                                        >
                                                             Schedule Interview
                                                         </button>
+
 
                                                         <AnimatePresence>
                                                             {isModalOpen && (
@@ -956,7 +960,7 @@ const JobOffersEmployer = () => {
                                                                         <div className="flex justify-end gap-3">
                                                                             <button
                                                                                 onClick={() => setIsModalOpen(false)}
-                                                                                className="px-4 py-2 bg-gray-400 rounded hover:bg-gray-500 text-white"
+                                                                                className="bg-black text-white px-4 py-2 rounded"
                                                                             >
                                                                                 Cancel
                                                                             </button>
@@ -975,7 +979,7 @@ const JobOffersEmployer = () => {
 
                                                                                     setIsModalOpen(false);
                                                                                 }}
-                                                                                className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 text-white"
+                                                                                className="bg-black text-white px-4 py-2 rounded"
                                                                             >
                                                                                 Confirm
                                                                             </button>
@@ -1032,6 +1036,7 @@ const JobOffersEmployer = () => {
                 <div className="space-y-2">
                     {['PENDING', 'ACCEPTED', 'REJECTED'].map(status => (
                         <button
+                            style={{margin:'5px'}}
                             key={status}
                             onClick={() => setSelectedStatus(status)}
                             className={`w-full py-2 px-4 rounded text-left font-semibold transition ${selectedStatus === status

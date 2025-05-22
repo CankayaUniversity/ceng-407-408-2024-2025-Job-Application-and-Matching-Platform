@@ -256,9 +256,10 @@ public void updateJobAdv(int jobAdvId, String userEmail, JobAdvUpdateRequest req
         if (jobCompanyId == null || employerCompanyId == null || !jobCompanyId.equals(employerCompanyId)) {
             throw new RuntimeException("Bu ilana erişim yetkiniz yok.");
         }
+        jobAdv.setActive(false);
+        jobAdvRepository.save(jobAdv);
 
-        jobAdvRepository.delete(jobAdv);
-
+//        jobAdvRepository.delete(jobAdv);
 
         System.out.println("JobAdv ve ilişkili kayıtlar silindi.");
     }
@@ -663,6 +664,7 @@ public List<JobApplication> getApplicationObjectsForJobAdv(int jobAdvId, String 
             }
 
             for (Interviews interview : interviews) {
+                if(interview.getEmployer().isActive() && interview.getJobApplication().getJobAdv().isActive()){
                 Map<String, Object> map = new HashMap<>();
                 map.put("interviewer", interview.getEmployer().getFirstName() + " " + interview.getEmployer().getLastName());
                 map.put("date", interview.getInterviewDateTime());
@@ -671,6 +673,7 @@ public List<JobApplication> getApplicationObjectsForJobAdv(int jobAdvId, String 
                 map.put("description", interview.getJobApplication().getJobAdv().getDescription());
                 map.put("notes", interview.getNotes());
                 result.add(map);
+                }
             }
         } else if (user instanceof Employer employer) {
             List<Interviews> interviews = interviewRepository.findByEmployer(employer);
@@ -680,13 +683,15 @@ public List<JobApplication> getApplicationObjectsForJobAdv(int jobAdvId, String 
 
             for (Interviews interview : interviews) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("interviewer", interview.getCandidate().getFirstName() + " " + interview.getCandidate().getLastName());
-                map.put("date", interview.getInterviewDateTime());
-                map.put("interviewType", interview.getInterviewType());
-                map.put("status", interview.getInterviewStatus());
-                map.put("description", interview.getJobApplication().getJobAdv().getDescription());
-                map.put("notes", interview.getNotes());
-                result.add(map);
+                if(interview.getCandidate().isActive() && interview.getJobApplication().getJobAdv().isActive()) {
+                    map.put("interviewer", interview.getCandidate().getFirstName() + " " + interview.getCandidate().getLastName());
+                    map.put("date", interview.getInterviewDateTime());
+                    map.put("interviewType", interview.getInterviewType());
+                    map.put("status", interview.getInterviewStatus());
+                    map.put("description", interview.getJobApplication().getJobAdv().getDescription());
+                    map.put("notes", interview.getNotes());
+                    result.add(map);
+                }
             }
         }
 

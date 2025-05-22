@@ -212,18 +212,17 @@ function CandidateList() {
                                                             License:</strong> {app.candidate?.profileDetails?.drivingLicense ? 'Yes' : 'No'}
                                                         </p>
                                                         <p><strong>Profile
-                                                            Privacy:</strong> {app.candidate?.profileDetails?.isPrivateProfile ? 'Private' : 'Public'}
+                                                            Privacy:</strong> {app.candidate?.profileDetails?.privateProfile ? 'Private' : 'Public'}
                                                         </p>
 
-                                                        <p><strong>Phone
-                                                            Number:</strong> {app.candidate?.contactInformation?.phoneNumber || '-'}
-                                                        </p>
-                                                        <p>
-                                                            <strong>Country:</strong> {app.candidate?.contactInformation?.country?.name || '-'}
-                                                        </p>
-                                                        <p>
-                                                            <strong>City:</strong> {app.candidate?.contactInformation?.city?.name || '-'}
-                                                        </p>
+                                                        {!app.candidate?.profileDetails?.privateProfile
+                                                            && (
+                                                            <>
+                                                                <p><strong>Phone Number:</strong> {app.candidate?.contactInformation?.phoneNumber || '-'}</p>
+                                                                <p><strong>Country:</strong> {app.candidate?.contactInformation?.country?.name || '-'}</p>
+                                                                <p><strong>City:</strong> {app.candidate?.contactInformation?.city?.name || '-'}</p>
+                                                            </>
+                                                        )}
 
                                                         <p>
                                                             <strong>Github:</strong> {app.candidate?.socialLinks?.githubUrl || '-'}
@@ -337,39 +336,49 @@ function CandidateList() {
                                                     </div>
 
                                                     {/* References Section */}
-                                                    <div>
-                                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                                                            <EnvelopeIcon className="text-blue-600"
-                                                                          style={{width: '20px', height: '20px'}}/>
-                                                            References
-                                                        </h3>
-                                                        <div
-                                                            className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
-                                                            {app.candidate?.references && app.candidate?.references.length > 0 && app.candidate?.references[0].referenceName ? (
-                                                                app.candidate?.references.map((ref, idx) => (
-                                                                    <div key={idx} className="border-b pb-2 mb-2">
-                                                                        <p>
-                                                                            <strong>Name:</strong> {ref.referenceName || '-'}
-                                                                        </p>
-                                                                        <p>
-                                                                            <strong>Company:</strong> {ref.referenceCompany || '-'}
-                                                                        </p>
-                                                                        <p><strong>Job
-                                                                            Title:</strong> {ref.referenceJobTitle || '-'}
-                                                                        </p>
-                                                                        <p><strong>Contact
-                                                                            Info:</strong> {ref.referenceContactInfo || '-'}
-                                                                        </p>
-                                                                        <p><strong>Years
-                                                                            Worked:</strong> {ref.referenceYearsWorked || '-'}
-                                                                        </p>
-                                                                    </div>
-                                                                ))
-                                                            ) : (
-                                                                <p className="text-gray-500">No references added.</p>
-                                                            )}
-                                                        </div>
-                                                    </div>
+
+                                                    {!app.candidate?.profileDetails?.privateProfile
+                                                        && (
+                                                            <div>
+                                                                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                                                    <EnvelopeIcon className="text-blue-600"
+                                                                                  style={{
+                                                                                      width: '20px',
+                                                                                      height: '20px'
+                                                                                  }}/>
+                                                                    References
+                                                                </h3>
+                                                                <div
+                                                                    className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                                    {app.candidate?.references && app.candidate?.references.length > 0 && app.candidate?.references[0].referenceName ? (
+                                                                        app.candidate?.references.map((ref, idx) => (
+                                                                            <div key={idx}
+                                                                                 className="border-b pb-2 mb-2">
+                                                                                <p>
+                                                                                    <strong>Name:</strong> {ref.referenceName || '-'}
+                                                                                </p>
+                                                                                <p>
+                                                                                    <strong>Company:</strong> {ref.referenceCompany || '-'}
+                                                                                </p>
+                                                                                <p><strong>Job
+                                                                                    Title:</strong> {ref.referenceJobTitle || '-'}
+                                                                                </p>
+                                                                                <p><strong>Contact
+                                                                                    Info:</strong> {ref.referenceContactInfo || '-'}
+                                                                                </p>
+                                                                                <p><strong>Years
+                                                                                    Worked:</strong> {ref.referenceYearsWorked || '-'}
+                                                                                </p>
+                                                                            </div>
+                                                                        ))
+                                                                    ) : (
+                                                                        <p className="text-gray-500">No references
+                                                                            added.</p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
 
                                                     {/* Language Proficiency Section */}
                                                     <div>
