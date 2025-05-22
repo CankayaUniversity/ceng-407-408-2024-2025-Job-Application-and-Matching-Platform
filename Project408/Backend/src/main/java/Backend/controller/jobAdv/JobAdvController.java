@@ -177,19 +177,24 @@ public class JobAdvController {
     }
 
 
-    // 🔹 1. İlan Oluşturma
     @PostMapping("/create")
     public ResponseEntity<String> createJobAdv(
             @RequestBody JobAdvCreateDto request,
             HttpServletRequest httpRequest) {
+        try {
+            String email = (httpRequest.getUserPrincipal() != null)
+                    ? httpRequest.getUserPrincipal().getName()
+                    : "mock@employer.com"; // geçici
 
-        String email = (httpRequest.getUserPrincipal() != null)
-                ? httpRequest.getUserPrincipal().getName()
-                : "mock@employer.com"; // geçici
-
-        jobAdvService.createJobAdv(request, email);
-        return ResponseEntity.ok("Job Advertisement Created Successfully!");
+            jobAdvService.createJobAdv(request, email);
+            return ResponseEntity.ok("Job Advertisement Created Successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to create job advertisement! ");
+        }
     }
+
 
     // 🔹 2. İlan Güncelleme
     @PutMapping("/update/{id}")

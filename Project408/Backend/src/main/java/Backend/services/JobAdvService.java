@@ -74,36 +74,48 @@ public class JobAdvService {
 
     public void createJobAdv(JobAdvCreateDto request, String employerEmail) {
     Employer employer = employerRepository.findByEmail(employerEmail)
-            .orElseThrow(() -> new RuntimeException("İşveren bulunamadı: " + employerEmail));
+            .orElseThrow(() -> new RuntimeException("Employer does not found! " + employerEmail));
 
-    Company company = companyRepository.findById(request.getCompanyId()).orElseThrow(()-> new RuntimeException("Şirket bulunamadı."));
+    Company company = companyRepository.findById(request.getCompanyId()).orElseThrow(()-> new RuntimeException("Company does not exist!."));
 
     JobAdv jobAdv = new JobAdv();
     jobAdv.setCompany(company);
     jobAdv.setDescription(request.getDescription());
-    jobAdv.setMaxSalary(request.getMinSalary());
-    jobAdv.setMinSalary(request.getMaxSalary());
+    jobAdv.setMaxSalary(request.getMaxSalary());
+    jobAdv.setMinSalary(request.getMinSalary());
     jobAdv.setLastDate(request.getLastDate());
     jobAdv.setTravelRest(request.getTravelRest());
     jobAdv.setLicense(request.getLicense());
     jobAdv.setCreatedEmployer(employer);
 
-    JobCondition jobCondition = new JobCondition();
-    jobCondition.setWorkType(request.getJobConditionWorkType());
-    jobCondition.setEmploymentType(request.getJobConditionEmploymentType());
-    Country country = countryRepository.findById(request.getJobConditionCountry()).orElseThrow(()->new RuntimeException("Country bulunamadı."));
-    jobCondition.setCountry(country);
-    City city = cityRepository.findById(request.getJobConditionCity()).orElseThrow(()->new RuntimeException("City bulunamadi"));
-    jobCondition.setCity(city);
-    jobCondition.setMaxWorkHours(request.getJobConditionMaxWorkHours());
-    jobCondition.setMinWorkHours(request.getJobConditionMinWorkHours());
+    if(request.getJobConditionWorkType() != null && request.getJobConditionEmploymentType() != null) {
+        JobCondition jobCondition = new JobCondition();
+        jobCondition.setWorkType(request.getJobConditionWorkType());
+        jobCondition.setEmploymentType(request.getJobConditionEmploymentType());
 
+        if(request.getJobConditionCountry() != null) {
+            Country country = countryRepository.findById(request.getJobConditionCountry()).orElseThrow(()->new RuntimeException("Country bulunamadı."));
+            jobCondition.setCountry(country);
+        }
+        if(request.getJobConditionCity() != null) {
+            City city = cityRepository.findById(request.getJobConditionCity()).orElseThrow(()->new RuntimeException("City bulunamadi"));
+            jobCondition.setCity(city);
+        }
+        jobCondition.setMaxWorkHours(request.getJobConditionMaxWorkHours());
+        jobCondition.setMinWorkHours(request.getJobConditionMinWorkHours());
 
+        jobCondition.setJobAdv(jobAdv);
+        jobAdv.setJobCondition(jobCondition);
+
+    }
+
+    if(request.getJobQualificationJobExperience() != null && request.getJobQualificationDegreeType() != null) {
         JobQualification jobQualification = new JobQualification();
         jobQualification.setDegreeType(request.getJobQualificationDegreeType());
         jobQualification.setJobExperience(request.getJobQualificationJobExperience());
         jobQualification.setExperienceYears(request.getJobQualificationExperienceYears());
         jobQualification.setMilitaryStatus(request.getJobQualificationMilitaryStatus());
+
 
         List<TechnicalSkill> technicalSkills = new ArrayList<>();
         List<String> tsPositionNames = request.getTechnicalSkillPositionNames();
@@ -166,18 +178,27 @@ public class JobAdvService {
             }
         }
         jobQualification.setLanguageProficiencies(languageProficiencies);
+        jobQualification.setJobAdv(jobAdv);
+        jobAdv.setJobQualification(jobQualification);
 
+    }
         List<Benefit> benefits = new ArrayList<>();
         List<BenefitType> benefitTypes = request.getBenefitTypes();
         List<String> benefitDescriptions = request.getBenefitDescriptions();
 
         if (benefitTypes != null) {
             for (int i = 0; i < benefitTypes.size(); i++) {
-                Benefit benefit = new Benefit();
-                benefit.setBenefitType(benefitTypes.get(i));
-                if (benefitDescriptions != null && benefitDescriptions.size() > i)
-                    benefit.setDescription(benefitDescriptions.get(i));
-                benefits.add(benefit);
+                if(benefitTypes.get(i) !=null){
+                    Benefit benefit = new Benefit();
+                    benefit.setBenefitType(benefitTypes.get(i));
+                    if (benefitDescriptions != null && benefitDescriptions.size() > i)
+                        benefit.setDescription(benefitDescriptions.get(i));
+                    benefits.add(benefit);
+                }
+                else{
+                    System.out.println("Warning: benefitTypes listesinde null eleman bulundu, atlandı.");
+                }
+
             }
         }
 
@@ -187,30 +208,38 @@ public class JobAdvService {
 
         if (jobPositionTypes != null) {
             for (int i = 0; i < jobPositionTypes.size(); i++) {
-                JobPositions jp = new JobPositions();
-                jp.setPositionType(jobPositionTypes.get(i));
-                if (customJobPositionNames != null && customJobPositionNames.size() > i) {
-                    CustomJobPosition cjp = new CustomJobPosition();
-                    cjp.setPositionName(customJobPositionNames.get(i));
-                    jp.setCustomJobPosition(cjp);
+                if(jobPositionTypes.get(i) !=null){
+                    JobPositions jp = new JobPositions();
+                    jp.setPositionType(jobPositionTypes.get(i));
+                    if (customJobPositionNames != null && customJobPositionNames.size() > i) {
+                        CustomJobPosition cjp = new CustomJobPosition();
+                        cjp.setPositionName(customJobPositionNames.get(i));
+                        jp.setCustomJobPosition(cjp);
+                    }
+                    jobPositions.add(jp);
                 }
-                jobPositions.add(jp);
+                else{
+                    System.out.println("Warning: jobpositions listesinde null eleman bulundu, atlandı.");
+
+                }
+
             }
         }
-        jobCondition.setJobAdv(jobAdv);
-        jobQualification.setJobAdv(jobAdv);
 
-        for(Benefit  b: benefits ){
-            b.setJobAdv(jobAdv);
-        }
-        for(JobPositions j : jobPositions ){
-            j.setJobAdv(jobAdv);
+        if(!benefits.isEmpty()){
+            for(Benefit  b: benefits ){
+                b.setJobAdv(jobAdv);
+            }
+            jobAdv.setBenefits(benefits);
         }
 
-        jobAdv.setJobCondition(jobCondition);
-        jobAdv.setJobQualification(jobQualification);
-        jobAdv.setBenefits(benefits);
-        jobAdv.setJobPositions(jobPositions);
+        if(!jobPositions.isEmpty()){
+            for(JobPositions j : jobPositions ){
+                j.setJobAdv(jobAdv);
+            }
+            jobAdv.setJobPositions(jobPositions);
+
+        }
 
         jobAdvRepository.save(jobAdv);
 

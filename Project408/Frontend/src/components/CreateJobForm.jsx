@@ -242,14 +242,10 @@ export default function CreateJobForm() {
         body: JSON.stringify(dto)  // burada dto gönderiyoruz
 
       });
-      console.log('Giden veri:', JSON.stringify(formData));
-
-      console.log('Giden veri:', JSON.stringify(dto));
 
       if (!response.ok) {
         setMessage('Job Advertisement could not be created. Please check the form.');
         setShowToast(true);
-        throw new Error('Job Advertisement oluşturulamadı');
 
       }
 
