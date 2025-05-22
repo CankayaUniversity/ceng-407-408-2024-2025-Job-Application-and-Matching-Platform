@@ -109,9 +109,9 @@ function NavbarEmployer() {
             <Button size="sm" variant="success" onClick={() => addNotification("You received a new job offer from TechCorp!", "/job-offers", "offer")}>
               Add Offer Notification
             </Button>
-            <Button size="sm" variant="warning" onClick={() => addNotification("New message from HR Department!", "/chat", "chat")}>
+            {/* <Button size="sm" variant="warning" onClick={() => addNotification("New message from HR Department!", "/chat", "chat")}>
               Add Chat Notification
-            </Button>
+            </Button> */}
             {/* <Button size="sm" variant="info" onClick={() => addNotification("New blog post: How to ace your tech interview", "/blog", "blog")}>
               Add Blog Notification
             </Button> */}

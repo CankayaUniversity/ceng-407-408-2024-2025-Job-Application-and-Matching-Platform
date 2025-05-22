@@ -8,6 +8,20 @@ import { Link } from 'react-router-dom';
 // const navigate = useNavigate();
 // navigate('/dashboard');
 
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
 export default function Login() {
 
     const navigate = useNavigate();
@@ -37,8 +51,18 @@ export default function Login() {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userType', data.userType);
                 localStorage.setItem('id', data.id);
+
+                // ✅ Token'dan email’i çöz
+                const payload = parseJwt(data.token);
+                if (payload && payload.sub) {
+                    localStorage.setItem('userEmail', payload.sub);
+                }
+
                 // Yönlendirme
-                if (data.userType === 'EMPLOYER') {
+                if (data.userEmail === "jobapp408@gmail.com") {
+                    navigate('/reported-blogs');
+                }
+                else if (data.userType === 'EMPLOYER') {
                     navigate('/employerDashboard');
                 }
                 else if (data.userType === 'CANDIDATE') {
