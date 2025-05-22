@@ -2,6 +2,7 @@ package Backend.core.location;
 
 import Backend.entities.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class Department extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "university_id", nullable = false)
-    @JsonBackReference("uni")// Prevents circular references during serialization
+    @JsonIgnoreProperties({"departments"})// Prevents circular references during serialization
     private University university;
 
     public String getName() {

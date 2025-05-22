@@ -20,7 +20,6 @@ public class University extends BaseEntity {
     private City city;
 
     @OneToMany(mappedBy = "university", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JsonManagedReference("uni")
     private List<Department> departments;
 
     public String getName() {

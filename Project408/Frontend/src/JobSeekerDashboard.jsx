@@ -723,7 +723,7 @@ export default function JobSeekerDashboard() {
       militaryDefermentDate: formatDate(profileData.profileDetails?.militaryDefermentDate),
       disabilityStatus: profileData.profileDetails?.disabilityStatus,
       maritalStatus: profileData.profileDetails?.maritalStatus,
-      currentEmploymentStatus: profileData.profileDetails?.currentEmploymentStatus,
+      currentEmploymentStatus: profileData.profileDetails?.currentEmploymentStatus || false,
       drivingLicense: profileData.profileDetails?.drivingLicense || false,
       isPrivateProfile: profileData.profileDetails?.isPrivateProfile || false,
       profilePicture: profileData.profileDetails?.profilePicture,

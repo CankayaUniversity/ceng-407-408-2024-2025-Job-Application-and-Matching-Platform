@@ -122,70 +122,83 @@ public class CandidateService {
             contactInformation = new ContactInformation();
         }
         contactInformation.setPhoneNumber(dto.getPhoneNumber());
-        Country country = countryRepository.findById(dto.getCountry())
-                .orElseThrow(() -> new RuntimeException("Country bulunamadı."));
-        contactInformation.setCountry(country);
-        City city = cityRepository.findById(dto.getCity())
-                .orElseThrow(() -> new RuntimeException("City bulunamadı."));
-        contactInformation.setCity(city);
+
+        if (dto.getCountry() != null) {
+            countryRepository.findById(dto.getCountry())
+                    .ifPresent(contactInformation::setCountry);
+        }
+        if (dto.getCity() != null) {
+            cityRepository.findById(dto.getCity())
+                    .ifPresent(contactInformation::setCity);
+        }
+
         candidate.setContactInformation(contactInformation);
 
         JobPreferences jobPreferences = candidate.getJobPreferences();
-        if (jobPreferences == null) {
-            jobPreferences = new JobPreferences();
+
+        if(dto.getPreferredWorkType()!=null) {
+            if (jobPreferences == null) {
+                jobPreferences = new JobPreferences();
+                candidate.setJobPreferences(jobPreferences);
+            }
+
+            if (candidate.getJobPreferences().getPreferredPositions() == null) {
+                List<JobPositions> jobPositions = new ArrayList<>();
+                List<JobPosition> jobPositionTypes = dto.getJobPositionTypes();
+                List<CustomJobPosition> customJobPositionNames = dto.getCustomJobPositionNames();
+
+                if (jobPositionTypes != null) {
+                    for (int i = 0; i < jobPositionTypes.size(); i++) {
+                        JobPositions jp = new JobPositions();
+                        jp.setPositionType(jobPositionTypes.get(i));
+                        if (customJobPositionNames != null && customJobPositionNames.size() > i) {
+                            CustomJobPosition cjp = new CustomJobPosition();
+                            cjp.setPositionName(String.valueOf(customJobPositionNames.get(i)));
+                            jp.setCustomJobPosition(cjp);
+                        }
+                        jobPositions.add(jp);
+                    }
+                }
+
+                jobPreferences.setPreferredPositions(jobPositions);
+
+            } else {
+                List<JobPositions> jobPositions = candidate.getJobPreferences().getPreferredPositions();
+                jobPositions.clear();
+
+                List<JobPosition> jobPositionTypes = dto.getJobPositionTypes();
+                List<CustomJobPosition> customJobPositionNames = dto.getCustomJobPositionNames();
+
+                if (jobPositionTypes != null) {
+                    for (int i = 0; i < jobPositionTypes.size(); i++) {
+                        JobPositions jp = new JobPositions();
+                        jp.setPositionType(jobPositionTypes.get(i));
+                        if (customJobPositionNames != null && customJobPositionNames.size() > i) {
+                            CustomJobPosition cjp = new CustomJobPosition();
+                            cjp.setPositionName(String.valueOf(customJobPositionNames.get(i)));
+                            jp.setCustomJobPosition(cjp);
+                        }
+                        jobPositions.add(jp);
+                    }
+                }
+                jobPreferences.setPreferredPositions(jobPositions);
+
+            }
+
+            jobPreferences.setPreferredWorkType(dto.getPreferredWorkType());
+
+            if (dto.getMinWorkHour() != null) {
+                jobPreferences.setMinWorkHour(dto.getMinWorkHour());
+            }
+            if (dto.getMaxWorkHour() != null) {
+                jobPreferences.setMaxWorkHour(dto.getMaxWorkHour());
+            }
+
+            jobPreferences.setCanTravel(dto.getCanTravel());
+            jobPreferences.setExpectedSalary(dto.getExpectedSalary());
+
             candidate.setJobPreferences(jobPreferences);
         }
-
-        if (candidate.getJobPreferences().getPreferredPositions() == null) {
-            List<JobPositions> jobPositions = new ArrayList<>();
-            List<JobPosition> jobPositionTypes = dto.getJobPositionTypes();
-            List<CustomJobPosition> customJobPositionNames = dto.getCustomJobPositionNames();
-
-            if (jobPositionTypes != null) {
-                for (int i = 0; i < jobPositionTypes.size(); i++) {
-                    JobPositions jp = new JobPositions();
-                    jp.setPositionType(jobPositionTypes.get(i));
-                    if (customJobPositionNames != null && customJobPositionNames.size() > i) {
-                        CustomJobPosition cjp = new CustomJobPosition();
-                        cjp.setPositionName(String.valueOf(customJobPositionNames.get(i)));
-                        jp.setCustomJobPosition(cjp);
-                    }
-                    jobPositions.add(jp);
-                }
-            }
-
-            jobPreferences.setPreferredPositions(jobPositions);
-
-        } else {
-            List<JobPositions> jobPositions = candidate.getJobPreferences().getPreferredPositions();
-            jobPositions.clear();
-
-            List<JobPosition> jobPositionTypes = dto.getJobPositionTypes();
-            List<CustomJobPosition> customJobPositionNames = dto.getCustomJobPositionNames();
-
-            if (jobPositionTypes != null) {
-                for (int i = 0; i < jobPositionTypes.size(); i++) {
-                    JobPositions jp = new JobPositions();
-                    jp.setPositionType(jobPositionTypes.get(i));
-                    if (customJobPositionNames != null && customJobPositionNames.size() > i) {
-                        CustomJobPosition cjp = new CustomJobPosition();
-                        cjp.setPositionName(String.valueOf(customJobPositionNames.get(i)));
-                        jp.setCustomJobPosition(cjp);
-                    }
-                    jobPositions.add(jp);
-                }
-            }
-            jobPreferences.setPreferredPositions(jobPositions);
-
-        }
-
-        jobPreferences.setPreferredWorkType(dto.getPreferredWorkType());
-        jobPreferences.setMinWorkHour(dto.getMinWorkHour());
-        jobPreferences.setMaxWorkHour(dto.getMaxWorkHour());
-        jobPreferences.setCanTravel(dto.getCanTravel());
-        jobPreferences.setExpectedSalary(dto.getExpectedSalary());
-
-        candidate.setJobPreferences(jobPreferences);
 
 
         List<Reference> references;
