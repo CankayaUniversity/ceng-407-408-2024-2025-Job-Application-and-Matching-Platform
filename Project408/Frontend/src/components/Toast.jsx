@@ -1,36 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { FaCheckCircle, FaExclamationCircle, FaTimes } from 'react-icons/fa';
 
-function Toast({ message, show, onClose }) {
-    useEffect(() => {
-        if (show) {
-            const timer = setTimeout(() => {
-                onClose();
-            }, 3000); // 3 saniye sonra otomatik kapanır
-            return () => clearTimeout(timer);
-        }
-    }, [show, onClose]);
+const Toast = ({ message, type = 'success', onClose, duration = 3000 }) => {
+  useEffect(() => {
+    if (!onClose) return;
+    
+    const timer = setTimeout(() => {
+      onClose();
+    }, duration);
+    
+    return () => clearTimeout(timer);
+  }, [duration, onClose]);
 
-    return (
-        <div
-            style={{
-                position: 'fixed',
-                bottom: '20px',
-                right: '20px',
-                backgroundColor: '#0C21C1',
-                color: 'white',
-                padding: '15px 25px',
-                borderRadius: '8px',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-                opacity: show ? 1 : 0,
-                transform: show ? 'translateY(0)' : 'translateY(100px)',
-                transition: 'all 0.3s ease',
-                pointerEvents: show ? 'auto' : 'none',
-                zIndex: 9999,
-            }}
+  const getIcon = () => {
+    if (type === 'success') return <FaCheckCircle className="text-green-500" size={18} />;
+    if (type === 'error') return <FaExclamationCircle className="text-red-500" size={18} />;
+    return null;
+  };
+
+  const getColorClass = () => {
+    if (type === 'success') return 'border-l-4 border-green-500';
+    if (type === 'error') return 'border-l-4 border-red-500';
+    return '';
+  };
+
+  return (
+    <div className={`fixed top-4 right-4 z-50 flex items-center bg-white shadow-lg rounded-md px-4 py-3 ${getColorClass()}`}>
+      {getIcon()}
+      <span className="mx-3 text-gray-800">{message}</span>
+      {onClose && (
+        <button 
+          onClick={onClose}
+          className="ml-2 text-gray-400 hover:text-gray-600 focus:outline-none"
         >
-            {message}
-        </div>
-    );
-}
+          <FaTimes size={14} />
+        </button>
+      )}
+    </div>
+  );
+};
 
 export default Toast;
