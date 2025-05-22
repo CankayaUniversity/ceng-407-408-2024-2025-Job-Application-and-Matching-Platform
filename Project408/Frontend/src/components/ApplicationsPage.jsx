@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {BriefcaseIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline/index.js";
 import Toast from "./Toast.jsx";
+import { Button } from './ui/Button';
+import { avatarStyle, buttonStyle } from '../styles/inlineStyles';
 
 const ApplicationsPage = () => {
     const [jobAdvs, setJobAdvs] = useState([]);
@@ -64,17 +66,17 @@ const ApplicationsPage = () => {
         }
     };
 
-    const buttonStyle = {
-        padding: '8px 12px',
-        backgroundColor: '#151717',
-        color: 'white',
-        border: 'none',
-        borderRadius: '8px',
-        fontSize: '12px',
-        cursor: 'pointer',
-        transition: 'background-color 0.3s',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    };
+    // const buttonStyle = {
+    //     padding: '8px 12px',
+    //     backgroundColor: '#151717',
+    //     color: 'white',
+    //     border: 'none',
+    //     borderRadius: '8px',
+    //     fontSize: '12px',
+    //     cursor: 'pointer',
+    //     transition: 'background-color 0.3s',
+    //     boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    // };
 
     const JobCard = ({ job }) => {
         const isSelected = selectedJob && selectedJob.id === job.id;
@@ -148,6 +150,7 @@ const ApplicationsPage = () => {
                 )}
                 <div className="mt-4">
                     <button
+                    style={buttonStyle}
                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                         onClick={() => navigate("/employer/create-job")}
                     >

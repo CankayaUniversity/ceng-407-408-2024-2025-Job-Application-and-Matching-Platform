@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import {Collapse} from "react-collapse";
+import { Collapse } from "react-collapse";
 import Toast from "./Toast.jsx";
 import {
     BriefcaseIcon,
@@ -97,11 +97,12 @@ const JobOffersEmployer = () => {
 
         const [isAccordionOpen, setIsAccordionOpen] = useState(false);
         const { candidate } = job; // Assuming candidate is part of the job object
-        const {status} = job;
-        const {jobadv} = job;
-        const {offerId} = job;
-        const {applicationId} = job;
+        const { status } = job;
+        const { jobadv } = job;
+        const { offerId } = job;
+        const { applicationId } = job;
         const interviewStatus = 'WAITING';
+
         return (
             <div
                 style={{
@@ -119,105 +120,102 @@ const JobOffersEmployer = () => {
                     marginBottom: '16px',
                     height: isAccordionOpen ? '700px' : '550px',
                     overflowY: 'auto',
+                    margin: '1px'
                 }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.005)'}
                 onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
             >
-                    <div className="w-full px-5 py-10">
-                        <div
-                            className="max-w-[900px] mx-auto bg-gray-100 rounded-xl shadow-md">
 
-                            <div
-                                style={{borderRadius: "15px", padding: "10px"}}
-                                className="flex max-w-6xl mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
 
+
+                <div
+                    style={{ borderRadius: "15px", padding: "10px" }}
+                    className="flex max-w-6xl mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
+
+                    <div
+                        style={{
+                            backgroundColor: "#f8f9f9",
+                            borderRadius: "15px",
+                            padding: "10px"
+                        }}
+                        className="w-full bg-gray-100 p-4 rounded-lg">
+                        {/* İç Beyaz Kutu */}
+                        <div style={{ borderRadius: "15px", padding: "10px" }}
+                            className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+                            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                <BriefcaseIcon
+                                    className="text-blue-600"
+                                    style={{ width: '20px', height: '20px' }} />Job Advertisement:  <strong>{jobadv || ''}</strong>
+                            </h3>
+                            <div>
                                 <div
-                                    style={{
-                                        backgroundColor: "#f8f9f9",
-                                        borderRadius: "15px",
-                                        padding: "10px"
-                                    }}
-                                    className="w-full bg-gray-100 p-4 rounded-lg">
-                                    {/* İç Beyaz Kutu */}
-                                    <div style={{borderRadius: "15px", padding: "10px"}}
-                                         className="bg-white p-8 rounded-lg space-y-6 shadow-md">
-                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                                            <BriefcaseIcon
-                                                className="text-blue-600"
-                                                style={{width: '20px', height: '20px'}}/>Job Advertisement:  <strong>{jobadv || ''}</strong>
+                                    className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm flex items-center space-x-6">
+                                    {/* Profil Fotoğrafı */}
+                                    <img
+                                        src={`http://localhost:9090${candidate?.profileDetails?.profilePicture}`}
+                                        alt="Profile"
+                                        style={{ width: '120px', height: '120px', objectFit: 'cover' }}
+                                        className="rounded-full border-2 border-white"
+                                    />
+                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                    {/* Bilgi listesi */}
+                                    <div className="space-y-4 text-md">
+                                        <h3>
+                                            {candidate?.firstName || '-'} {candidate?.lastName || '-'}
                                         </h3>
-                                        <div>
-                                            <div
-                                                className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm flex items-center space-x-6">
-                                                {/* Profil Fotoğrafı */}
-                                                <img
-                                                    src={`http://localhost:9090${candidate?.profileDetails?.profilePicture}`}
-                                                    alt="Profile"
-                                                    style={{width: '250px', height: '250px'}}
-                                                    className="rounded-full border-4 border-white object-cover"
-                                                />
-                                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                                {/* Bilgi listesi */}
-                                                <div className="space-y-4 text-md">
-                                                    <h3>
-                                                        {candidate?.firstName || '-'} {candidate?.lastName || '-'}
-                                                    </h3>
 
-                                                    <p>
-                                                        <strong>About
-                                                            Me:</strong> {candidate?.profileDetails?.aboutMe || '-'}
-                                                    </p>
-                                                    {status === "ACCEPTED" && (
-                                                        <div>
-                                                            <p>
-                                                                <strong>Phone
-                                                                    Number:</strong> {candidate?.contactInformation?.phoneNumber || '-'}
-                                                            </p>
-                                                            <p>
-                                                                <strong>Country:</strong> {candidate?.contactInformation?.country?.name || '-'}
-                                                            </p>
-                                                            <p>
-                                                                <strong>City:</strong> {candidate?.contactInformation?.city?.name || '-'}
-                                                            </p></div>
-                                                    )}
+                                        <p>
+                                            <strong>About
+                                                Me:</strong> {candidate?.profileDetails?.aboutMe || '-'}
+                                        </p>
+                                        {status === "ACCEPTED" && (
+                                            <div>
+                                                <p>
+                                                    <strong>Phone
+                                                        Number:</strong> {candidate?.contactInformation?.phoneNumber || '-'}
+                                                </p>
+                                                <p>
+                                                    <strong>Country:</strong> {candidate?.contactInformation?.country?.name || '-'}
+                                                </p>
+                                                <p>
+                                                    <strong>City:</strong> {candidate?.contactInformation?.city?.name || '-'}
+                                                </p></div>
+                                        )}
 
 
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                    <div style={{
-                                        marginTop: '10px',
-                                        display: 'flex',
-                                        gap: '8px',
-                                        justifyContent: 'center'
-                                    }}>
-                                        <button onClick={() => setIsAccordionOpen(!isAccordionOpen)}
-                                                style={buttonStyle}>
-                                            {isAccordionOpen ? '🔽 Hide' : '🔼 Show Details'}
-                                        </button>
                                     </div>
                                 </div>
 
-
                             </div>
+
                         </div>
-
-
+                        <div style={{
+                            marginTop: '10px',
+                            display: 'flex',
+                            gap: '8px',
+                            justifyContent: 'center'
+                        }}>
+                            <button onClick={() => setIsAccordionOpen(!isAccordionOpen)}
+                                style={buttonStyle}>
+                                {isAccordionOpen ? '🔽 Hide' : '🔼 Show Details'}
+                            </button>
+                        </div>
                     </div>
-                <br/>
+
+
+                </div>
+                <br />
 
                 {isAccordionOpen && (
 
-                    <div className="min-h-screen bg-gray-100 p-8">
+                    <div className="max-h-[500px] overflow-y-auto">
+
                         <div className="w-full px-5 py-10">
                             <div
                                 className="max-w-[1000px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
 
                                 <div
-                                    style={{borderRadius: "15px", padding: "10px"}}
+                                    style={{ borderRadius: "15px", padding: "10px" }}
                                     className="flex max-w-6xl mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
 
 
@@ -229,39 +227,39 @@ const JobOffersEmployer = () => {
                                         }}
                                         className="w-full bg-gray-100 p-4 rounded-lg">
                                         {/* İç Beyaz Kutu */}
-                                        <div style={{borderRadius: "15px", padding: "10px"}}
-                                             className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+                                        <div style={{ borderRadius: "15px", padding: "10px" }}
+                                            className="bg-white p-8 rounded-lg space-y-6 shadow-md">
 
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px'
-                                                                                }}/>
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px'
+                                                        }} />
                                                     Profile Details
                                                 </h3>
                                                 <div
                                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm ">
                                                     <p>
                                                         <strong>Nationality:</strong> {candidate?.profileDetails?.nationality
-                                                        ?.replaceAll("_", " ")
-                                                        ?.toLowerCase()
-                                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                            ?.replaceAll("_", " ")
+                                                            ?.toLowerCase()
+                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
                                                     <p><strong>Birth
                                                         Date:</strong> {candidate?.profileDetails?.birthDate || '-'}
                                                     </p>
                                                     <p>
                                                         <strong>Gender:</strong> {candidate?.profileDetails?.gender
-                                                        ?.replaceAll("_", " ")
-                                                        ?.toLowerCase()
-                                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                            ?.replaceAll("_", " ")
+                                                            ?.toLowerCase()
+                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
 
                                                     {candidate?.profileDetails?.gender === "MALE" && (
                                                         <p><strong>Military
                                                             Status:</strong> {candidate?.profileDetails?.militaryStatus?.replaceAll("_", " ")
-                                                            ?.toLowerCase()
-                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}
+                                                                ?.toLowerCase()
+                                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}
                                                         </p>
                                                     )}
 
@@ -273,13 +271,13 @@ const JobOffersEmployer = () => {
 
                                                     <p><strong>Disability
                                                         Status:</strong> {candidate?.profileDetails?.disabilityStatus?.replaceAll("_", " ")
-                                                        ?.toLowerCase()
-                                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                            ?.toLowerCase()
+                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
                                                     <p><strong>Marital
                                                         Status:</strong> {candidate?.profileDetails?.maritalStatus
-                                                        ?.replaceAll("_", " ")
-                                                        ?.toLowerCase()
-                                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                            ?.replaceAll("_", " ")
+                                                            ?.toLowerCase()
+                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
 
                                                     <p><strong>Currently
                                                         Working:</strong> {candidate?.profileDetails?.currentEmploymentStatus ? 'Yes' : 'No'}
@@ -297,10 +295,10 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px'
-                                                                                }}/>
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px'
+                                                        }} />
                                                     Social Links
                                                 </h3>
                                                 <div
@@ -328,10 +326,10 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px'
-                                                                                }}/>
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px'
+                                                        }} />
                                                     Job Preferences
                                                 </h3>
                                                 <div
@@ -381,7 +379,7 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <GlobeAltIcon className="text-blue-600"
-                                                                  style={{width: '20px', height: '20px'}}/>
+                                                        style={{ width: '20px', height: '20px' }} />
                                                     Language Proficiency
                                                 </h3>
                                                 <div
@@ -416,7 +414,7 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <HeartIcon className="text-blue-600"
-                                                               style={{width: '20px', height: '20px'}}/>
+                                                        style={{ width: '20px', height: '20px' }} />
                                                     Hobbies
                                                 </h3>
                                                 <div
@@ -443,10 +441,10 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px'
-                                                                                }}/>
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px'
+                                                        }} />
                                                     Education
                                                 </h3>
 
@@ -615,10 +613,10 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px'
-                                                                                }}/>
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px'
+                                                        }} />
                                                     Certifications
                                                 </h3>
                                                 <div
@@ -638,9 +636,9 @@ const JobOffersEmployer = () => {
                                                                     <strong>Certificate Link: </strong>
                                                                     {cert.certificationUrl ? (
                                                                         <a href={cert.certificationUrl}
-                                                                           target="_blank"
-                                                                           rel="noopener noreferrer"
-                                                                           className="text-blue-600 underline">
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="text-blue-600 underline">
                                                                             View Certificate
                                                                         </a>
                                                                     ) : (
@@ -660,7 +658,7 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <BriefcaseIcon className="text-blue-600"
-                                                                   style={{width: '20px', height: '20px'}}/>
+                                                        style={{ width: '20px', height: '20px' }} />
                                                     Work Experiences
                                                 </h3>
                                                 <div
@@ -697,10 +695,10 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px'
-                                                                                }}/>
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px'
+                                                        }} />
                                                     Exams and Achievements
                                                 </h3>
                                                 <div
@@ -732,10 +730,10 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px'
-                                                                                }}/>
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px'
+                                                        }} />
                                                     Uploaded Documents
                                                 </h3>
                                                 <div
@@ -755,9 +753,9 @@ const JobOffersEmployer = () => {
                                                                     <strong>Document Link:</strong>{' '}
                                                                     {doc.documentUrl ? (
                                                                         <a href={doc.documentUrl}
-                                                                           target="_blank"
-                                                                           rel="noopener noreferrer"
-                                                                           className="text-blue-600 underline">
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="text-blue-600 underline">
                                                                             View Document
                                                                         </a>
                                                                     ) : (
@@ -778,10 +776,10 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px'
-                                                                                }}/>
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px'
+                                                        }} />
                                                     Skills
                                                 </h3>
                                                 <div
@@ -805,10 +803,10 @@ const JobOffersEmployer = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px'
-                                                                                }}/>
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px'
+                                                        }} />
                                                     Projects
                                                 </h3>
                                                 <div
@@ -849,10 +847,10 @@ const JobOffersEmployer = () => {
                                                 <div>
                                                     <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                         <EnvelopeIcon className="text-blue-600"
-                                                                      style={{
-                                                                          width: '20px',
-                                                                          height: '20px'
-                                                                      }}/>
+                                                            style={{
+                                                                width: '20px',
+                                                                height: '20px'
+                                                            }} />
                                                         References
                                                     </h3>
                                                     <div
@@ -860,7 +858,7 @@ const JobOffersEmployer = () => {
                                                         {candidate?.references && candidate?.references.length > 0 && candidate?.references[0].referenceName ? (
                                                             candidate?.references.map((ref, idx) => (
                                                                 <div key={idx}
-                                                                     className="border-b pb-2 mb-2">
+                                                                    className="border-b pb-2 mb-2">
                                                                     <p>
                                                                         <strong>Name:</strong> {ref.referenceName || '-'}
                                                                     </p>
@@ -900,10 +898,10 @@ const JobOffersEmployer = () => {
                                                                 <>
                                                                     {/* Modal Kutusu */}
                                                                     <motion.div
-                                                                        initial={{scale: 0.8, opacity: 0, y: 50}}
-                                                                        animate={{scale: 1, opacity: 1, y: -500}}
-                                                                        exit={{scale: 0.8, opacity: 0, y: 50}}
-                                                                        transition={{duration: 0.3}}
+                                                                        initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                                                                        animate={{ scale: 1, opacity: 1, y: -500 }}
+                                                                        exit={{ scale: 0.8, opacity: 0, y: 50 }}
+                                                                        transition={{ duration: 0.3 }}
                                                                         style={{
                                                                             position: 'relative',
                                                                             bottom: '0', // Alt kenardan biraz yukarıda
@@ -992,6 +990,7 @@ const JobOffersEmployer = () => {
                                                     </div>
 
                                                 )}
+
                                             </div>
 
                                         </div>
@@ -1011,66 +1010,75 @@ const JobOffersEmployer = () => {
     const filteredApplications = offers.filter(job => job.status === selectedStatus);
 
     return (
-        <div style={{
-            backgroundColor: '#ffffff',
-            padding: '20px',
-            minHeight: '100vh',
-            color: '#000000',
-            display: 'flex',
-            flexDirection: 'row',
-            maxWidth: '100vw',
-            margin: '0 auto',
-        }}>
+        <div
+            className="min-h-screen text-black p-4"
+            style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'white' }}
+        >
+            {/* Sol Panel */}
             <div style={{
-                width: '300px',
+                width: '250px',
                 marginRight: '20px',
-                borderRight: '1px solid #ccc',
                 paddingRight: '20px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '10px',
+                borderRight: '2px solid #ccc',
+                overflowY: 'auto', // Sol menüde taşan içeriği kaydırılabilir yapar
+                maxHeight: '100vh',// İlk çizgi
+
             }}>
-                <h3>Offer Status</h3>
-                {['PENDING', 'ACCEPTED', 'REJECTED'].map(status => (
-                    <button
-                        key={status}
-                        onClick={() => setSelectedStatus(status)}
+
+                <h3 className="text-xl font-bold mb-4">Offer Status</h3>
+                <div className="space-y-2">
+                    {['PENDING', 'ACCEPTED', 'REJECTED'].map(status => (
+                        <button
+                            key={status}
+                            onClick={() => setSelectedStatus(status)}
+                            className={`w-full py-2 px-4 rounded text-left font-semibold transition ${selectedStatus === status
+                                ? 'bg-black text-white'
+                                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                }`}
+                        >
+                            {status}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Sağ İçerik Paneli */}
+            <div
+                className="flex-1 overflow-x-hidden"
+                style={{
+                    minWidth: 0,
+                    paddingLeft: '16px',
+                    paddingRight: '16px',
+                    flexGrow: 1,
+                }}
+            >
+                {loading ? (
+                    <p className="text-center mt-10 text-gray-600">Loading offers...</p>
+                ) : filteredApplications.length > 0 ? (
+                    <div
                         style={{
-                            padding: '10px',
-                            backgroundColor: selectedStatus === status ? '#151717' : '#ecf0f1',
-                            color: selectedStatus === status ? 'white' : '#2c3e50',
-                            border: 'none',
-                            borderRadius: '5px',
-                            fontWeight: 'bold',
-                            cursor: 'pointer'
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            justifyContent: 'flex-start',
+                            gap: '16px',
                         }}
                     >
-                        {status}
-                    </button>
-                ))}
-            </div>
-
-            <div style={{
-                flexGrow: 1,
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '16px',
-                justifyContent: 'center',
-            }}>
-                {loading ? (
-                    <p>Loading offers...</p>
-                ) : filteredApplications.length > 0 ? (
-                    filteredApplications.map(job => (
-                        <JobCard key={job.id} job={job}/>
-                    ))
+                        {filteredApplications.map(job => (
+                            <JobCard key={job.id} job={job} />
+                        ))}
+                    </div>
                 ) : (
-                    <p style={{fontSize: '18px', color: '#cc304b'}}>No offers found for this status.</p>
+                    <p className="text-red-600 mt-10 text-lg">No offers found for this status.</p>
                 )}
             </div>
-            <Toast message={message} show={showToast} onClose={handleCloseToast} />
 
+            <Toast message={message} show={showToast} onClose={handleCloseToast} />
         </div>
     );
+
 };
 
 export default JobOffersEmployer;

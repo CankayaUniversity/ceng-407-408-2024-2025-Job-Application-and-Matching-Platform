@@ -112,9 +112,9 @@ function NavbarEmployer() {
             <Button size="sm" variant="warning" onClick={() => addNotification("New message from HR Department!", "/chat", "chat")}>
               Add Chat Notification
             </Button>
-            <Button size="sm" variant="info" onClick={() => addNotification("New blog post: How to ace your tech interview", "/blog", "blog")}>
+            {/* <Button size="sm" variant="info" onClick={() => addNotification("New blog post: How to ace your tech interview", "/blog", "blog")}>
               Add Blog Notification
-            </Button>
+            </Button> */}
           </div>
 
 
