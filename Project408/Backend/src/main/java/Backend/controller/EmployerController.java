@@ -50,9 +50,17 @@ public class EmployerController {
     }
 
     @PutMapping("/updateProfile/{id}")
-    public ResponseEntity<Company> updateProfile(@PathVariable("id") int id, @RequestBody Company company) {
-        return ResponseEntity.ok(employerService.updateProfile(id,company));
+    public ResponseEntity<?> updateProfile(@PathVariable("id") int id, @RequestBody(required = false) Company company) {
+        try {
+            Company updated = employerService.updateProfile(id, company);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException ex) {
+            Map<String, String> error = new HashMap<>();
+            error.put("errorMessage", ex.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
     }
+
 
 
     @PostMapping("/passwordChange")

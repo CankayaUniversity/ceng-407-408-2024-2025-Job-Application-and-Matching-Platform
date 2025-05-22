@@ -55,67 +55,74 @@ public class EmployerService {
     @Transactional
     public Company updateProfile(int id, Company company) {
         Employer emp = employerRepository.findCompanyById(id);
-
-        Company cmp = companyRepository.findById(company.getId()).orElse(new Company());
-
-        cmp.setCompanyName(company.getCompanyName());
-        cmp.setEmail(company.getEmail());
-        cmp.setPhoneNumber(company.getPhoneNumber());
-        cmp.setWebsiteUrl(company.getWebsiteUrl());
-        cmp.setVision(company.getVision());
-        cmp.setMission(company.getMission());
-        cmp.setEstablishedDate(company.getEstablishedDate());
-        cmp.setIndustry(company.getIndustry());
-        cmp.setEmployeeCount(company.getEmployeeCount());
-
-        companyRepository.save(cmp);
-
-        if (company.getProjects() != null) {
-            List<Project> updatedProjects = new ArrayList<>();
-
-            List<Project> existingProjects = projectRepository.findByCompanyId(cmp.getId());
-
-            Set<Integer> updatedProjectIds = company.getProjects().stream()
-                    .filter(p -> p.getId() != 0)
-                    .map(Project::getId)
-                    .collect(Collectors.toSet());
-
-            for (Project oldProject : existingProjects) {
-                if (!updatedProjectIds.contains(oldProject.getId())) {
-                    projectRepository.delete(oldProject);
-                }
-            }
-
-
-            for (Project p : company.getProjects()) {
-                if (p.getId() != 0) {
-                    Project existingProject = projectRepository.findById(p.getId()).orElse(new Project());
-                    existingProject.setProjectName(p.getProjectName());
-                    existingProject.setProjectDescription(p.getProjectDescription());
-                    existingProject.setProjectStartDate(p.getProjectStartDate());
-                    existingProject.setProjectEndDate(p.getProjectEndDate());
-                    existingProject.setProjectStatus(p.getProjectStatus());
-                    existingProject.setIsPrivate(p.getIsPrivate());
-                    existingProject.setCompany(cmp);
-
-                    updatedProjects.add(existingProject);
-                } else {
-                    p.setCompany(cmp);
-                    updatedProjects.add(p);
-                }
-            }
-
-            projectRepository.saveAll(updatedProjects);
-            cmp.setProjects(updatedProjects);
+        if(company == null){
+            throw new RuntimeException("The provided company information cannot be empty.");
         }
 
+        if(company.getCompanyName()!=null && company.getEmail() !=null) {
 
-        companyRepository.save(cmp);
+            Company cmp = companyRepository.findById(company.getId()).orElse(new Company());
+            cmp.setCompanyName(company.getCompanyName());
+            cmp.setEmail(company.getEmail());
+            cmp.setPhoneNumber(company.getPhoneNumber());
+            cmp.setWebsiteUrl(company.getWebsiteUrl());
+            cmp.setVision(company.getVision());
+            cmp.setMission(company.getMission());
+            cmp.setEstablishedDate(company.getEstablishedDate());
+            cmp.setIndustry(company.getIndustry());
+            cmp.setEmployeeCount(company.getEmployeeCount());
 
-        emp.setCompany(cmp);
-        employerRepository.save(emp);
+            companyRepository.save(cmp);
 
-        return cmp;
+            if (company.getProjects() != null) {
+                List<Project> updatedProjects = new ArrayList<>();
+
+                List<Project> existingProjects = projectRepository.findByCompanyId(cmp.getId());
+
+                Set<Integer> updatedProjectIds = company.getProjects().stream()
+                        .filter(p -> p.getId() != 0)
+                        .map(Project::getId)
+                        .collect(Collectors.toSet());
+
+                for (Project oldProject : existingProjects) {
+                    if (!updatedProjectIds.contains(oldProject.getId())) {
+                        projectRepository.delete(oldProject);
+                    }
+                }
+
+
+                for (Project p : company.getProjects()) {
+                    if (p.getProjectName() == null || p.getProjectName().isBlank() || p.getProjectStatus() == null ) {
+                        throw new RuntimeException("The provided project information cannot be empty.");
+                    }
+                    if (p.getId() != 0 ) {
+                        Project existingProject = projectRepository.findById(p.getId()).orElse(new Project());
+                        existingProject.setProjectName(p.getProjectName());
+                        existingProject.setProjectDescription(p.getProjectDescription());
+                        existingProject.setProjectStartDate(p.getProjectStartDate());
+                        existingProject.setProjectEndDate(p.getProjectEndDate());
+                        existingProject.setProjectStatus(p.getProjectStatus());
+                        existingProject.setIsPrivate(p.getIsPrivate());
+                        existingProject.setCompany(cmp);
+
+                        updatedProjects.add(existingProject);
+                    } else {
+                        p.setCompany(cmp);
+                        updatedProjects.add(p);
+                    }
+                }
+
+                projectRepository.saveAll(updatedProjects);
+                cmp.setProjects(updatedProjects);
+            }
+            companyRepository.save(cmp);
+
+            emp.setCompany(cmp);
+            employerRepository.save(emp);
+            return cmp;
+        }
+        throw new RuntimeException("The provided company name and email cannot be empty.");
+
     }
 
     public void changePassword(PasswordChangeDto dto, String email) {

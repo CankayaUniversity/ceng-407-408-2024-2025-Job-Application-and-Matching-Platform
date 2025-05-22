@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEdit, FaSave, FaTimes, FaPhone, FaGlobe } from "react-icons/fa";
 import { BuildingOffice2Icon, GlobeAltIcon, PhoneIcon, EnvelopeIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
+import Toast from "./Toast.jsx";
 
 const EmployerProfile = () => {
     const [error, setError] = useState(null);
@@ -36,7 +37,18 @@ const EmployerProfile = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [direction, setDirection] = useState(1);
     const [formKey, setFormKey] = useState(0);
-
+    const [message, setMessage] = useState(null);
+    const [showToast, setShowToast] = useState(false);
+    const handleCloseToast = () => {
+        setShowToast(false);
+    };
+    const cleanedCompany = {
+        ...profile.company,
+        projects: profile.company.projects.map(p => ({
+            ...p,
+            projectStatus: p.projectStatus === '' ? null : p.projectStatus
+        }))
+    };
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -70,28 +82,34 @@ const EmployerProfile = () => {
                 console.log("Kullanıcı giriş yapmamış");
                 return;
             }
-                console.log("giddeen"+JSON.stringify(profile.company) )
+            console.log("giddeen" + JSON.stringify(profile.company));
+
             const response = await fetch(`http://localhost:9090/employer/updateProfile/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(profile.company)
+                body: JSON.stringify(cleanedCompany)
             });
 
             if (!response.ok) {
-                throw new Error('Profil oluşturulamadı');
+                // Hata mesajını JSON olarak oku
+                const errorData = await response.json();
+                // Backend’de dönen errorMessage alanını alıyoruz
+                throw new Error(errorData.errorMessage || 'Unknown error');
             }
 
             const data = await response.json();
-            console.log('Profil başarıyla oluşturuldu:', data);
+            setMessage('Profile Updated Successfully!');
+            setShowToast(true);
 
-            // Başarılıysa pencere kapat veya yönlendir
         } catch (error) {
-            console.error('Hata:', error);
+            setMessage(error.message);
+            setShowToast(true);
         }
     };
+
     // Panel open/close function
     const handleNextStep = () => {
         setDirection(1);
@@ -479,11 +497,11 @@ const EmployerProfile = () => {
                                                 <div style={{textAlign: 'right'}}>
                                                     <div className="flex justify-between">
                                                         <button onClick={handleBackStep}
-                                                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                                                className="bg-black text-white px-4 py-2 rounded">Back
                                                         </button>
                                                         <div className="flex justify-end">
                                                             <button onClick={handleNextStep}
-                                                                    className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                                                    className="bg-black text-white px-4 py-2 rounded">Next
                                                             </button>
                                                         </div>
                                                     </div>
@@ -582,11 +600,11 @@ const EmployerProfile = () => {
                                                     <div style={{textAlign: 'right'}}>
                                                         <div className="flex justify-between">
                                                             <button onClick={handleBackStep}
-                                                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                                                    className="bg-black text-white px-4 py-2 rounded">Back
                                                             </button>
                                                             <div className="flex justify-end">
                                                                 <button onClick={handleNextStep}
-                                                                        className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                                                        className="bg-black text-white px-4 py-2 rounded">Next
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -734,7 +752,7 @@ const EmployerProfile = () => {
                                                         <div className="text-right mb-3">
                                                             <button
                                                                 onClick={() => removeProject(index)}
-                                                                className="text-red-600 text-sm "
+                                                                className="bg-black text-white px-4 py-2 rounded"
                                                             >
                                                                 Remove
                                                             </button>
@@ -745,7 +763,7 @@ const EmployerProfile = () => {
                                                 <div>
                                                     <button
                                                         onClick={addProject}
-                                                        className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 mb-3"
+                                                        className="bg-black text-white px-4 py-2 rounded mb-3"
                                                     >
                                                         Add Project
                                                     </button>
@@ -754,7 +772,7 @@ const EmployerProfile = () => {
                                                         <div className="flex justify-between">
                                                             <button
                                                                 onClick={handleBackStep}
-                                                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                                                                className="bg-black text-white px-4 py-2 rounded"
                                                             >
                                                                 Back
                                                             </button>
@@ -781,6 +799,8 @@ const EmployerProfile = () => {
                         </div>
                     </div>
                 </div>
+                <Toast message={message} show={showToast} onClose={handleCloseToast} />
+
             </div>
         </div>
     );

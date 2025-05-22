@@ -110,7 +110,7 @@ export default function SignUp() {
 
           <button
             onClick={handleResendCode}
-            className="text-sm text-blue-600 mt-4 hover:underline"
+            className="bg-black text-white px-4 py-2 rounded"
           >
             Resend code
           </button>

@@ -58,7 +58,7 @@ export default function InterviewPage() {
                     }
                 });
                 if (!response.ok) {
-                    throw new Error("Failed to fetch interviews");
+                    throw new Error("Interview not found.");
                 }
                 const data = await response.json();
                 setInterviews(data);
