@@ -190,6 +190,7 @@ const JobOffers = () => {
             console.log(response.data);
             setMessage(response.data);
             setShowToast(true);
+            window.location.reload();
         } catch (error) {
             console.error("Offer sending error:", error);
             setMessage(error.response?.data || "An error occurred while accepting the offer.");
@@ -213,6 +214,7 @@ const JobOffers = () => {
             console.log(response.data);
             setMessage(response.data);
             setShowToast(true);
+            window.location.reload();
         } catch (error) {
             console.error("Offer decline error:", error);
             setMessage(error.response?.data || "An error occurred while declining the offer.");
