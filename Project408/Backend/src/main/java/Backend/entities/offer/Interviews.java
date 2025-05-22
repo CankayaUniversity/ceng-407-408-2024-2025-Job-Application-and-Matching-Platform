@@ -1,5 +1,6 @@
 package Backend.entities.offer;
 
+import Backend.core.enums.InterviewStatus;
 import Backend.core.enums.InterviewType;
 import Backend.entities.user.candidate.Candidate;
 import Backend.entities.user.employer.Employer;
@@ -40,6 +41,9 @@ public class Interviews extends BaseEntity {
 
     @Column(name = "notes", length = 1000)
     private String notes;
+
+    @Enumerated(EnumType.STRING)
+    private InterviewStatus interviewStatus;
 
 
 
@@ -98,5 +102,13 @@ public class Interviews extends BaseEntity {
 
     public void setInterviewType(InterviewType interviewType) {
         this.interviewType = interviewType;
+    }
+
+    public InterviewStatus getInterviewStatus() {
+        return interviewStatus;
+    }
+
+    public void setInterviewStatus(InterviewStatus interviewStatus) {
+        this.interviewStatus = interviewStatus;
     }
 }

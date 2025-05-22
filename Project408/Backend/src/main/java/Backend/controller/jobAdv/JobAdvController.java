@@ -21,7 +21,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -322,5 +325,51 @@ public class JobAdvController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
+    @GetMapping("/getInterviews")
+    public ResponseEntity<?> getInterviews(HttpServletRequest request) {
+        String email = (request.getUserPrincipal() != null)
+                ? request.getUserPrincipal().getName()
+                : "mock@employer.com";
+        try {
+            List<Map<String,Object>> interviews = jobAdvService.getInterviews(email);
+            return ResponseEntity.ok(interviews);
+        } catch (RuntimeException ex) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    @PutMapping("/declineInterview/{jobAdvId}")
+    public ResponseEntity<String> declineInterview(@PathVariable int jobAdvId,HttpServletRequest request) {
+        String email = (request.getUserPrincipal() != null)
+                ? request.getUserPrincipal().getName()
+                : "mock@employer.com";
+        try{
+            jobAdvService.respondToInterview(jobAdvId, false,email);
+            return ResponseEntity.ok("Interview declined successfully.");
+        }
+        catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
+
+
+    }
+
+    @PutMapping("/acceptInterview/{jobAdvId}")
+    public ResponseEntity<String> acceptInterview(@PathVariable int jobAdvId,HttpServletRequest request) {
+        String email = (request.getUserPrincipal() != null)
+                ? request.getUserPrincipal().getName()
+                : "mock@employer.com";
+        try {
+            jobAdvService.respondToInterview(jobAdvId, true,email);
+            return ResponseEntity.ok("Interview accepted successfully.");
+        }catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
+
+    }
+
 
 }

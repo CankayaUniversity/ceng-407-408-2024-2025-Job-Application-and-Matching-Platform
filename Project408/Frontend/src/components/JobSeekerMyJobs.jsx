@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {BriefcaseIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline/index.js";
+import Toast from "./Toast.jsx";
+import axios from "axios";
 
 const JobSeekerMyJobs = () => {
     const [applications, setApplications] = useState([]);
@@ -72,6 +74,55 @@ const JobSeekerMyJobs = () => {
         return statusObj ? statusObj.status : null;
     };
 
+    const handleInterview = async (jobAdvId) => {
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await axios.put(
+                `http://localhost:9090/api/job-adv/acceptInterview/${jobAdvId}`, {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+            console.log(response.data);
+            setMessage(response.data);
+            setShowToast(true);
+        } catch (error) {
+            console.error("Offer sending error:", error);
+            setMessage(error.response?.data || "An error occurred while accepting the offer.");
+            setShowToast(true);
+        }
+    };
+
+    const handleDecline = async (jobAdvId) => {
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await axios.put(
+                `http://localhost:9090/api/job-adv/declineInterview/${jobAdvId}`, {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+            console.log(response.data);
+            setMessage(response.data);
+            setShowToast(true);
+        } catch (error) {
+            console.error("Offer decline error:", error);
+            setMessage(error.response?.data || "An error occurred while declining the offer.");
+            setShowToast(true);
+        }
+    };
+    const [showToast, setShowToast] = useState(false);
+    const handleCloseToast = () => {
+        setShowToast(false);
+    };
     const JobCard = ({ job }) => {
         const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
@@ -392,12 +443,33 @@ const JobSeekerMyJobs = () => {
 
 
                             </div>
+                            <div className="flex justify-between mt-6">
+                                {status === 'INTERVIEW' && (
+                                    <div className="flex w-full justify-between">
+                                        <button
+                                            onClick={() => handleInterview(job?.id)}
+                                            className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                        >
+                                            Confirm Interview
+                                        </button>
+                                        <button
+                                            onClick={() => handleDecline(job?.id)}
+                                            className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                                        >
+                                            Decline
+                                        </button>
+
+                                    </div>
+                                )}
+                            </div>
 
 
                         </div>
                     </div>
                 )}
+
             </div>
+
         );
     };
 
@@ -407,6 +479,7 @@ const JobSeekerMyJobs = () => {
     });
 
     return (
+
         <div style={{
             backgroundColor: '#ffffff',
             padding: '20px',
@@ -448,6 +521,8 @@ const JobSeekerMyJobs = () => {
                         {status}
                     </button>
                 ))}
+                <Toast message={message} show={showToast}
+                       onClose={handleCloseToast}/>
             </div>
 
             {/* Right Content */}
@@ -467,6 +542,8 @@ const JobSeekerMyJobs = () => {
                 )}
             </div>
         </div>
+
+
     );
 };
 

@@ -1,47 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
-import 'react-calendar/dist/Calendar.css'; // Calendar'ın kendi CSS'i
-
-const interviews = [
-    {
-        id: 1,
-        interviewer: "Acme Inc.",
-        date: "2025-05-19",
-        time: "14:30",
-        status: "Confirmed",
-        link: "https://zoom.us/meetinglink1",
-        description: "Technical Interview for Frontend Developer position."
-    },
-    {
-        id: 2,
-        interviewer: "John Doe",
-        date: "2025-05-16",
-        time: "10:00",
-        status: "Waiting",
-        link: "https://meet.google.com/meetinglink2",
-        description: "Technical Interview for Frontend Developer position."
-    },
-    {
-        id: 3,
-        interviewer: "TechCorp HR",
-        date: "2025-05-20",
-        time: "16:00",
-        status: "Cancelled",
-        link: "#",
-        description: "Technical Interview for Frontend Developer position."
-    }
-];
-
-// Google Calendar link oluşturucu
-function generateGoogleCalendarLink(interview) {
-    const startDateTime = `${interview.date}T${interview.time}:00`;
-    const endDateTime = `${interview.date}T${addMinutes(interview.time, 30)}:00`;
-
-    const details = encodeURIComponent(`Interview with ${interview.interviewer}`);
-    const location = encodeURIComponent(interview.link || "Online");
-
-    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${details}&dates=${formatDate(startDateTime)}/${formatDate(endDateTime)}&details=${details}&location=${location}`;
-}
+import 'react-calendar/dist/Calendar.css';
 
 function addMinutes(time, minsToAdd) {
     const [h, m] = time.split(":").map(Number);
@@ -56,43 +15,83 @@ function formatDate(dateTimeString) {
 }
 
 function formatReadableDate(dateString) {
-    const options = { day: 'numeric', month: 'long', year: 'numeric' };
     const date = new Date(dateString);
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
     return date.toLocaleDateString('en-GB', options);
 }
 
-function formatReadableTime(timeString) {
-    const [hour, minute] = timeString.split(":");
+function formatReadableTime(dateString) {
+    const date = new Date(dateString);
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
     return `${hour}:${minute}`;
 }
 
+function generateGoogleCalendarLink(interview) {
+    const start = new Date(interview.date);
+    const end = new Date(start.getTime() + 30 * 60000);
+
+    const details = encodeURIComponent(`Interview with ${interview.interviewer}`);
+    const location = encodeURIComponent(interview.link || "Online");
+
+    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${details}&dates=${formatDate(start.toISOString())}/${formatDate(end.toISOString())}&details=${details}&location=${location}`;
+}
 
 export default function InterviewPage() {
+    const [interviews, setInterviews] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const [filterType, setFilterType] = useState("All");
     const [selectedInterview, setSelectedInterview] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        async function fetchInterviews() {
+            setLoading(true);
+            setError(null);
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch("http://localhost:9090/api/job-adv/getInterviews", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to fetch interviews");
+                }
+                const data = await response.json();
+                setInterviews(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchInterviews();
+    }, []);
 
     const today = new Date();
 
-    // Geçmiş tarihleri filtreleyelim
     const upcomingInterviews = interviews.filter(interview => {
-        const interviewDate = new Date(interview.date + "T" + interview.time);
+        console.log(interview.date)
+        const interviewDate = new Date(interview.date);
+        console.log(interview.date)
         return interviewDate >= today;
     });
 
-    // Statü filtresi
     const sortedInterviews = [...upcomingInterviews].sort((a, b) =>
-        new Date(a.date + "T" + a.time) - new Date(b.date + "T" + b.time)
+        new Date(a.date) - new Date(b.date)
     );
 
     const filteredByStatus = filterType === "All"
         ? sortedInterviews
-        : sortedInterviews.filter(i => i.status === filterType);
+        : sortedInterviews.filter(i => i.status.toLowerCase() === filterType.toLowerCase());
 
     const filteredInterviews = selectedDate
         ? filteredByStatus.filter(interview =>
-            interview.date === selectedDate.toISOString().split("T")[0]
+            new Date(interview.date).toISOString().split("T")[0] === selectedDate.toISOString().split("T")[0]
         )
         : filteredByStatus;
 
@@ -102,14 +101,16 @@ export default function InterviewPage() {
                 Scheduled Interviews
             </h1>
 
-            {/* Filtre */}
+            {loading && <p>Loading interviews...</p>}
+            {error && <p style={{ color: "red" }}>Error: {error}</p>}
+
             <div style={{ marginBottom: "20px" }}>
                 <label style={{ fontWeight: "bold", marginRight: "10px" }}>Filter:</label>
                 <select
                     value={filterType}
                     onChange={(e) => {
                         setFilterType(e.target.value);
-                        setSelectedDate(null); // her filtre değişiminde tarih seçim sıfırlanır
+                        setSelectedDate(null);
                     }}
                     style={{ padding: "5px 10px", borderRadius: "5px" }}
                 >
@@ -120,37 +121,35 @@ export default function InterviewPage() {
                 </select>
             </div>
 
-            {/* Takvim */}
-            <div style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "20px"}}>
                 <Calendar
-                    locale="en-US" // burada İngilizce olarak ayarlanıyor
+                    locale="en-US"
                     onChange={setSelectedDate}
                     value={selectedDate}
                     tileClassName={({ date, view }) => {
                         if (view === 'month') {
-                            const formatted = date.toISOString().split('T')[0];
-                            const matchingInterviews = upcomingInterviews.filter(i => i.date === formatted);
-
-                            if (matchingInterviews.length > 1) {
-                                return 'highlight-multi';
-                            } else if (matchingInterviews.length === 1) {
-                                const interview = matchingInterviews[0];
-                                if (interview.status === "Confirmed") return "highlight-confirmed";
-                                if (interview.status === "Waiting") return "highlight-waiting";
-                                if (interview.status === "Cancelled") return "highlight-cancelled";
+                            const formatted = formatReadableDate(date);
+                            const matchingInterviews = upcomingInterviews.filter(i =>
+                                formatReadableDate(i.date) === formatted
+                            );
+                            if (matchingInterviews.length > 1) return 'highlight-multi';
+                            if (matchingInterviews.length === 1) {
+                                const status = matchingInterviews[0].status;
+                                if (status === "CONFIRMED") return "highlight-confirmed";
+                                if (status === "WAITING") return "highlight-waiting";
+                                if (status === "CANCELLED") return "highlight-cancelled";
                             }
                         }
                     }}
                 />
             </div>
 
-            {/* Görüşme Listesi */}
             {filteredInterviews.length === 0 ? (
                 <p>No interviews scheduled for this date.</p>
             ) : (
                 filteredInterviews.map(interview => (
                     <div
-                        key={interview.id}
+                        key={interview.date + interview.interviewer}
                         onClick={() => {
                             setSelectedInterview(interview);
                             setIsModalOpen(true);
@@ -168,8 +167,7 @@ export default function InterviewPage() {
                             Interview with: {interview.interviewer}
                         </h2>
                         <p>Date: {formatReadableDate(interview.date)}</p>
-                        <p>Time: {formatReadableTime(interview.time)}</p>
-
+                        <p>Time: {formatReadableTime(interview.date)}</p>
                         <span
                             style={{
                                 padding: "6px 12px",
@@ -177,9 +175,9 @@ export default function InterviewPage() {
                                 color: "white",
                                 fontSize: "14px",
                                 backgroundColor:
-                                    interview.status === "Confirmed"
+                                    interview.status === "CONFIRMED"
                                         ? "green"
-                                        : interview.status === "Waiting"
+                                        : interview.status === "WAITING"
                                             ? "orange"
                                             : "red"
                             }}
@@ -190,7 +188,6 @@ export default function InterviewPage() {
                 ))
             )}
 
-            {/* Modal */}
             {isModalOpen && selectedInterview && (
                 <div style={{
                     position: "fixed",
@@ -215,27 +212,38 @@ export default function InterviewPage() {
                         <h2 style={{ fontSize: "24px", marginBottom: "10px" }}>
                             Interview with: {selectedInterview.interviewer}
                         </h2>
+
                         <p>Date: {formatReadableDate(selectedInterview.date)}</p>
-                        <p>Time: {formatReadableTime(selectedInterview.time)}</p>
+                        <p>Time: {formatReadableTime(selectedInterview.date)}</p>
+
                         <p>Status: {selectedInterview.status}</p>
+                        <p>Interview Type: {selectedInterview.interviewType}</p>
 
                         {selectedInterview.description && (
                             <p style={{ marginTop: "10px", fontStyle: "italic" }}>
-                                {selectedInterview.description}
+                                Job Description: {selectedInterview.description}
                             </p>
                         )}
 
-                        {selectedInterview.status !== "Cancelled" && (
+                        {selectedInterview.notes && (
+                            <p style={{ marginTop: "10px" }}>
+                                Notes: {selectedInterview.notes}
+                            </p>
+                        )}
+
+                        {selectedInterview.status !== "CANCELLED" && (
                             <>
                                 <div style={{ marginTop: "20px" }}>
-                                    <a
-                                        href={selectedInterview.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{ margin: "10px", backgroundColor: "blue", color: "white", padding: "10px 20px", borderRadius: "5px", textDecoration: "none" }}
-                                    >
-                                        Join Meeting
-                                    </a>
+                                    {selectedInterview.link && (
+                                        <a
+                                            href={selectedInterview.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ margin: "10px", backgroundColor: "blue", color: "white", padding: "10px 20px", borderRadius: "5px", textDecoration: "none" }}
+                                        >
+                                            Join Meeting
+                                        </a>
+                                    )}
                                     <a
                                         href={generateGoogleCalendarLink(selectedInterview)}
                                         target="_blank"
@@ -247,6 +255,7 @@ export default function InterviewPage() {
                                 </div>
                             </>
                         )}
+
                         <button
                             onClick={() => setIsModalOpen(false)}
                             style={{ marginTop: "20px", backgroundColor: "red", color: "white", padding: "10px 20px", borderRadius: "5px", border: "none" }}

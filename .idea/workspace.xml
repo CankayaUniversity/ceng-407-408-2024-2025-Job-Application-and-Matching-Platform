@@ -6,12 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="af5e9ab0-f157-44fb-a158-8739b861992b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobAdvController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobAdvController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/JobAdvService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/JobAdvService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/JobOfferService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/JobOfferService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/components/JobOffers.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/components/JobOffers.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/components/JobOffersEmployer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/components/JobOffersEmployer.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project408/Frontend/src/components/JobSeekerMyJobs.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Project408/Frontend/src/components/JobSeekerMyJobs.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,7 +140,7 @@
       <workItem from="1747473442212" duration="11134000" />
       <workItem from="1747495472818" duration="340000" />
       <workItem from="1747504405657" duration="12990000" />
-      <workItem from="1747834324891" duration="10394000" />
+      <workItem from="1747834324891" duration="10724000" />
     </task>
     <servers />
   </component>

@@ -1,5 +1,6 @@
 package Backend.entities.dto;
 
+import Backend.core.enums.InterviewStatus;
 import Backend.core.enums.InterviewType;
 import lombok.Data;
 
@@ -18,6 +19,8 @@ public class InterviewDto {
     private InterviewType interviewType;
 
     private String notes;
+
+    private InterviewStatus interviewStatus;
 
     public int getCandidateId() {
         return candidateId;
@@ -67,5 +70,14 @@ public class InterviewDto {
 
     public void setApplicationId(int applicationId) {
         this.applicationId = applicationId;
+    }
+
+
+    public InterviewStatus getInterviewStatus() {
+        return interviewStatus;
+    }
+
+    public void setInterviewStatus(InterviewStatus interviewStatus) {
+        this.interviewStatus = interviewStatus;
     }
 }

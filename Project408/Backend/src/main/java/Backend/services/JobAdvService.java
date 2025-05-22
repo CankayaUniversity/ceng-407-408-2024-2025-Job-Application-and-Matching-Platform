@@ -10,6 +10,7 @@ import Backend.entities.jobAdv.*;
 import Backend.entities.offer.Interviews;
 import Backend.entities.offer.JobOffer;
 import Backend.entities.company.Company;
+import Backend.entities.user.User;
 import Backend.entities.user.candidate.JobApplication;
 import Backend.entities.common.JobPositions;
 import Backend.entities.common.LanguageProficiency;
@@ -20,16 +21,15 @@ import Backend.entities.user.employer.Employer;
 import Backend.repository.*;
 import Backend.request.jobAdv.JobAdvCreateRequest;
 import Backend.request.jobAdv.JobAdvUpdateRequest;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,6 +68,8 @@ public class JobAdvService {
     private BenefitRepository benefitRepository;
     @Autowired
     private InterviewRepository interviewRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
     public void createJobAdv(JobAdvCreateDto request, String employerEmail) {
@@ -634,6 +636,8 @@ public List<JobApplication> getApplicationObjectsForJobAdv(int jobAdvId, String 
             interviews.setInterviewDateTime(dto.getInterviewDateTime());
             interviews.setInterviewType(dto.getInterviewType());
             interviews.setNotes(dto.getNotes());
+            interviews.setInterviewStatus(dto.getInterviewStatus());
+
             interviewRepository.save(interviews);
 
             jobApplication.setStatus(ApplicationStatus.INTERVIEW);
@@ -644,5 +648,68 @@ public List<JobApplication> getApplicationObjectsForJobAdv(int jobAdvId, String 
             throw new RuntimeException("Job Offer not accepted.");
         }
 
+    }
+
+    public List<Map<String, Object>> getInterviews(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        if (user instanceof Candidate candidate) {
+            List<Interviews> interviews = interviewRepository.findByCandidate(candidate);
+            if (interviews == null || interviews.isEmpty()) {
+                throw new RuntimeException("Interview not found.");
+            }
+
+            for (Interviews interview : interviews) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("interviewer", interview.getEmployer().getFirstName() + " " + interview.getEmployer().getLastName());
+                map.put("date", interview.getInterviewDateTime());
+                map.put("interviewType", interview.getInterviewType());
+                map.put("status", interview.getInterviewStatus());
+                map.put("description", interview.getJobApplication().getJobAdv().getDescription());
+                map.put("notes", interview.getNotes());
+                result.add(map);
+            }
+        } else if (user instanceof Employer employer) {
+            List<Interviews> interviews = interviewRepository.findByEmployer(employer);
+            if (interviews == null || interviews.isEmpty()) {
+                throw new RuntimeException("Interview not found.");
+            }
+
+            for (Interviews interview : interviews) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("interviewer", interview.getCandidate().getFirstName() + " " + interview.getCandidate().getLastName());
+                map.put("date", interview.getInterviewDateTime());
+                map.put("interviewType", interview.getInterviewType());
+                map.put("status", interview.getInterviewStatus());
+                map.put("description", interview.getJobApplication().getJobAdv().getDescription());
+                map.put("notes", interview.getNotes());
+                result.add(map);
+            }
+        }
+
+        return result;
+    }
+
+
+    public void respondToInterview(int jobAdvId, boolean b, String email) {
+    Candidate candidate = candidateRepository.findByEmail(email).orElseThrow(()->new RuntimeException("Candidate not found."));
+
+    JobAdv jobAdv = jobAdvRepository.findById(jobAdvId).orElseThrow(()->new RuntimeException("JobAdv not found."));
+
+    JobApplication jobApplication= jobApplicationRepository.findByJobAdvAndCandidate(jobAdv,candidate);
+
+    if(jobApplication.getStatus().equals(ApplicationStatus.INTERVIEW)){
+        Interviews interviews = interviewRepository.findByJobApplicationAndCandidate(jobApplication,candidate);
+        if(interviews.getInterviewStatus().equals(InterviewStatus.WAITING)){
+            interviews.setInterviewStatus(b ? InterviewStatus.CONFIRMED : InterviewStatus.CANCELLED);
+            interviewRepository.save(interviews);
+        }
+        else{
+            throw new RuntimeException("Interview already responded.");
+        }
+    }
     }
 }

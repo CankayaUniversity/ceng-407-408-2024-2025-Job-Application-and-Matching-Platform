@@ -33,6 +33,10 @@ html, body, #root {
   border-radius: 50%;
 }
 
+.react-calendar__tile {
+  color: #000000 !important;
+}
+
 .notification-scroll::-webkit-scrollbar {
   width: 6px;
 }

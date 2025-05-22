@@ -101,7 +101,7 @@ const JobOffersEmployer = () => {
         const {jobadv} = job;
         const {offerId} = job;
         const {applicationId} = job;
-
+        const interviewStatus = 'WAITING';
         return (
             <div
                 style={{
@@ -972,6 +972,7 @@ const JobOffersEmployer = () => {
                                                                                         interviewDateTime: interviewDate,
                                                                                         interviewType,
                                                                                         notes,
+                                                                                        interviewStatus
                                                                                     });
 
                                                                                     setIsModalOpen(false);
@@ -991,7 +992,6 @@ const JobOffersEmployer = () => {
                                                     </div>
 
                                                 )}
-
                                             </div>
 
                                         </div>
