@@ -1,8 +1,8 @@
 import { FaSearch, FaBell } from 'react-icons/fa';
 import { Navbar, Nav, Container, FormControl, Button, Dropdown } from 'react-bootstrap';
 import { useUser } from './UserContext.jsx';
-import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function NavbarCustom() {
   const navigate = useNavigate();
@@ -31,25 +31,29 @@ function NavbarCustom() {
         'Content-Type': 'application/json'
       }
     })
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.userName) {
-            setUserName(data.userName);
-          } else {
-            console.log('No username found in the response');
-          }
-        })
-        .catch(err => console.error("Unable to fetch user info", err));
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.userName) {
+          setUserName(data.userName);
+        } else {
+          console.log('No username found in the response');
+        }
+      })
+      .catch(err => console.error("Unable to fetch user info", err));
   }, []);
 
 
 
   return (
-    <Navbar bg="white" expand="lg" className="shadow-sm px-4 py-2">
+    <Navbar bg="white" expand="lg" className="shadow-sm px-4 py-2 position-relative">
       <Container fluid className="d-flex justify-content-between align-items-center">
         {/* Sol kısım: Logo + Menü */}
-        <div className="d-flex align-items-center gap-5">
+        <div className="d-flex align-items-center gap-3">
           <Navbar.Brand href="/candidate/jobs" className="fw-bold text-primary">Logo</Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        </div>
+        
+        <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="d-flex gap-4">
             <Nav.Link href="/candidate/dashboard" className="text-dark fw-medium nav-item-hover">Profile</Nav.Link>
             <Nav.Link href="/candidate/my-jobs" className="text-dark fw-medium">My Applications</Nav.Link>
@@ -58,7 +62,8 @@ function NavbarCustom() {
             <Nav.Link href="/blog" className="text-dark fw-medium">Blog</Nav.Link>
             <Nav.Link href="/interviews" className="text-dark fw-medium">Interviews</Nav.Link>
           </Nav>
-        </div>
+        </Navbar.Collapse>
+
 
         {/* Sağ kısım: Arama + Bildirim + Kullanıcı */}
         <div className="d-flex align-items-center gap-3">
@@ -80,9 +85,9 @@ function NavbarCustom() {
 
           {/* User */}
           <Dropdown align="end">
-            <Dropdown.Toggle 
-            style={{ backgroundColor: '#0C21C1', borderColor: '#0C21C1' }}
-            variant="primary" className="rounded-pill px-3 py-1 text-white fw-medium">
+            <Dropdown.Toggle
+              style={{ backgroundColor: '#0C21C1', borderColor: '#0C21C1' }}
+              variant="primary" className="rounded-pill px-3 py-1 text-white fw-medium">
               {userName}
             </Dropdown.Toggle>
 

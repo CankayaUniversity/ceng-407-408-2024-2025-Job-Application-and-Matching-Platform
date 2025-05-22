@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { Collapse } from "react-collapse";
 import Toast from "./Toast.jsx";
+import InterviewModal from './InterviewModal';
 import {
     BriefcaseIcon,
     ClipboardDocumentCheckIcon,
@@ -15,6 +16,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 
 const JobOffersEmployer = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [interviewType, setInterviewType] = useState('');
+    const [interviewDate, setInterviewDate] = useState('');
+    const [notes, setNotes] = useState('');
+    const [selectedInterviewJob, setSelectedInterviewJob] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState('PENDING'); // Default selected
     const [message, setMessage] = useState('');
     const [offers, setOffers] = useState([]);
@@ -89,10 +95,9 @@ const JobOffersEmployer = () => {
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
     };
 
-    const JobCard = ({ job }) => {
+    const JobCard = ({ job, setIsModalOpen, setSelectedInterviewJob }) => {
         const [interviewType, setInterviewType] = useState('');
         const [interviewDate, setInterviewDate] = useState('');
-        const [isModalOpen, setIsModalOpen] = useState(false);
         const [notes, setNotes] = useState('');
 
         const [isAccordionOpen, setIsAccordionOpen] = useState(false);
@@ -873,106 +878,111 @@ const JobOffersEmployer = () => {
                                 {status === 'ACCEPTED' && (
                                     <div>
                                         <button
-                                            onClick={() => setIsModalOpen(true)}
+                                            onClick={() => {
+                                                setSelectedInterviewJob(job);
+                                                setIsModalOpen(true);
+                                            }}
                                             className="bg-black text-white px-4 py-2 rounded"
                                         >
                                             Schedule Interview
                                         </button>
 
 
-                                        <AnimatePresence>
-                                            {isModalOpen && (
-                                                <>
-                                                    {/* Modal Kutusu */}
-                                                    <motion.div
-                                                        initial={{ scale: 0.8, opacity: 0, y: 50 }}
-                                                        animate={{ scale: 1, opacity: 1, y: -450 }}
-                                                        exit={{ scale: 0.8, opacity: 0, y: 50 }}
-                                                        transition={{ duration: 0.3 }}
-                                                        style={{
-                                                            position: 'relative',
-                                                            bottom: '0', // Alt kenardan biraz yukarıda
-                                                            left: '50%',
-                                                            transform: 'translateX(-50%)',
-                                                            backgroundColor: 'white',
-                                                            padding: '20px',
-                                                            borderRadius: '8px',
-                                                            width: '360px',
-                                                            zIndex: 1001,
-                                                            boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
-                                                        }}
+
+
+
+                                        {isModalOpen && (
+                                            <>
+                                                {/* Modal Kutusu */}
+                                                <motion.div
+                                                    initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                                                    animate={{ scale: 1, opacity: 1, y: -450 }}
+                                                    exit={{ scale: 0.8, opacity: 0, y: 50 }}
+                                                    transition={{ duration: 0.3 }}
+                                                    style={{
+                                                        position: 'relative',
+                                                        bottom: '0', // Alt kenardan biraz yukarıda
+                                                        left: '50%',
+                                                        transform: 'translateX(-50%)',
+                                                        backgroundColor: 'white',
+                                                        padding: '20px',
+                                                        borderRadius: '8px',
+                                                        width: '360px',
+                                                        zIndex: 1001,
+                                                        boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+                                                    }}
+                                                >
+
+                                                    <h2 className="text-xl font-semibold mb-4">Schedule
+                                                        Interview</h2>
+
+                                                    <label>Interview Type:</label>
+                                                    <select
+                                                        value={interviewType}
+                                                        onChange={(e) => setInterviewType(e.target.value)}
+                                                        className="w-full mb-3 border rounded px-2 py-1 bg-white text-black"
                                                     >
+                                                        <option value="" disabled>Interview Type</option>
+                                                        <option value="ONLINE">ONLINE</option>
+                                                        <option value="PHONE">PHONE</option>
+                                                        <option value="IN_PERSON">IN PERSON</option>
+                                                        <option value="GROUP">GROUP</option>
+                                                        <option value="TECHNICAL">TECHNICAL</option>
+                                                        <option value="HR">HR</option>
+                                                        <option value="ASSESSMENT_CENTER">ASSESSMENT
+                                                            CENTER
+                                                        </option>
+                                                    </select>
 
-                                                        <h2 className="text-xl font-semibold mb-4">Schedule
-                                                            Interview</h2>
+                                                    <label>Interview Date:</label>
+                                                    <input
+                                                        type="datetime-local"
+                                                        value={interviewDate}
+                                                        onChange={(e) => setInterviewDate(e.target.value)}
+                                                        className="w-full mb-3 border rounded px-2 py-1  bg-white text-black"
+                                                    />
 
-                                                        <label>Interview Type:</label>
-                                                        <select
-                                                            value={interviewType}
-                                                            onChange={(e) => setInterviewType(e.target.value)}
-                                                            className="w-full mb-3 border rounded px-2 py-1 bg-white text-black"
+                                                    <label>Notes:</label>
+                                                    <textarea
+                                                        value={notes}
+                                                        onChange={(e) => setNotes(e.target.value)}
+                                                        className="w-full mb-4 border rounded px-2 py-1  bg-white text-black"
+                                                        rows={3}
+                                                    />
+
+                                                    <div className="flex justify-end gap-3">
+                                                        <button
+                                                            onClick={() => setIsModalOpen(false)}
+                                                            className="bg-black text-white px-4 py-2 rounded"
                                                         >
-                                                            <option value="" disabled>Interview Type</option>
-                                                            <option value="ONLINE">ONLINE</option>
-                                                            <option value="PHONE">PHONE</option>
-                                                            <option value="IN_PERSON">IN PERSON</option>
-                                                            <option value="GROUP">GROUP</option>
-                                                            <option value="TECHNICAL">TECHNICAL</option>
-                                                            <option value="HR">HR</option>
-                                                            <option value="ASSESSMENT_CENTER">ASSESSMENT
-                                                                CENTER
-                                                            </option>
-                                                        </select>
+                                                            Cancel
+                                                        </button>
 
-                                                        <label>Interview Date:</label>
-                                                        <input
-                                                            type="datetime-local"
-                                                            value={interviewDate}
-                                                            onChange={(e) => setInterviewDate(e.target.value)}
-                                                            className="w-full mb-3 border rounded px-2 py-1  bg-white text-black"
-                                                        />
+                                                        <button
+                                                            onClick={async () => {
+                                                                await handleInterview({
+                                                                    candidateId: candidate.id,
+                                                                    offerId,
+                                                                    applicationId,
+                                                                    interviewDateTime: interviewDate,
+                                                                    interviewType,
+                                                                    notes,
+                                                                    interviewStatus
+                                                                });
 
-                                                        <label>Notes:</label>
-                                                        <textarea
-                                                            value={notes}
-                                                            onChange={(e) => setNotes(e.target.value)}
-                                                            className="w-full mb-4 border rounded px-2 py-1  bg-white text-black"
-                                                            rows={3}
-                                                        />
+                                                                setIsModalOpen(false);
+                                                            }}
+                                                            className="bg-black text-white px-4 py-2 rounded"
+                                                        >
+                                                            Confirm
+                                                        </button>
 
-                                                        <div className="flex justify-end gap-3">
-                                                            <button
-                                                                onClick={() => setIsModalOpen(false)}
-                                                                className="bg-black text-white px-4 py-2 rounded"
-                                                            >
-                                                                Cancel
-                                                            </button>
+                                                    </div>
+                                                </motion.div>
 
-                                                            <button
-                                                                onClick={async () => {
-                                                                    await handleInterview({
-                                                                        candidateId: candidate.id,
-                                                                        offerId,
-                                                                        applicationId,
-                                                                        interviewDateTime: interviewDate,
-                                                                        interviewType,
-                                                                        notes,
-                                                                        interviewStatus
-                                                                    });
+                                            </>
+                                        )}
 
-                                                                    setIsModalOpen(false);
-                                                                }}
-                                                                className="bg-black text-white px-4 py-2 rounded"
-                                                            >
-                                                                Confirm
-                                                            </button>
-
-                                                        </div>
-                                                    </motion.div>
-
-                                                </>
-                                            )}
-                                        </AnimatePresence>
 
                                     </div>
 
@@ -1052,7 +1062,15 @@ const JobOffersEmployer = () => {
                         }}
                     >
                         {filteredApplications.map(job => (
-                            <JobCard key={job.id} job={job} />
+                            <JobCard
+                                key={job.offerId || job.id} // varsa offerId, yoksa id kullan
+                                job={job}
+                                setIsModalOpen={setIsModalOpen}
+                                setInterviewType={setInterviewType}
+                                setInterviewDate={setInterviewDate}
+                                setNotes={setNotes}
+                                setSelectedInterviewJob={setSelectedInterviewJob}
+                            />
                         ))}
                     </div>
                 ) : (
@@ -1061,7 +1079,32 @@ const JobOffersEmployer = () => {
             </div>
 
             <Toast message={message} show={showToast} onClose={handleCloseToast} />
+
+            <InterviewModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={async () => {
+                    await handleInterview({
+                        candidateId: selectedInterviewJob?.candidate?.id,
+                        offerId: selectedInterviewJob?.offerId,
+                        applicationId: selectedInterviewJob?.applicationId,
+                        interviewDateTime: interviewDate,
+                        interviewType,
+                        notes,
+                        interviewStatus: "WAITING"
+                    });
+                    setIsModalOpen(false);
+                }}
+                interviewType={interviewType}
+                setInterviewType={setInterviewType}
+                interviewDate={interviewDate}
+                setInterviewDate={setInterviewDate}
+                notes={notes}
+                setNotes={setNotes}
+            />
         </div>
+
+
     );
 
 };

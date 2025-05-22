@@ -72,19 +72,23 @@ function NavbarEmployer() {
     <Navbar bg="white" expand="lg" className="shadow-sm px-4 py-2 position-relative">
       <Container fluid className="d-flex justify-content-between align-items-center">
 
-        {/* Sol kısım: Logo + Menü */}
-        <div className="d-flex align-items-center gap-5">
+        {/* LOGO + TOGGLE */}
+        <div className="d-flex align-items-center gap-3">
           <Navbar.Brand href="/employerDashboard" className="fw-bold text-primary">Logo</Navbar.Brand>
-          <Nav className="d-flex gap-4">
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        </div>
+
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto d-flex gap-3 flex-column flex-lg-row mt-3 mt-lg-0">
             <Nav.Link href="/employer/profile" className="text-dark fw-medium">Profile</Nav.Link>
             <Nav.Link href="/employer/create-job" className="text-dark fw-medium">Post Job</Nav.Link>
             <Nav.Link href="/employer/applications" className="text-dark fw-medium">My Job Applications</Nav.Link>
             <Nav.Link href="/job-offers" className="text-dark fw-medium">Offers</Nav.Link>
-            {/*<Nav.Link href="/chat" className="text-dark fw-medium">Chat</Nav.Link>*/}
             <Nav.Link href="/blog" className="text-dark fw-medium">Blog</Nav.Link>
             <Nav.Link href="/interviews" className="text-dark fw-medium">Interviews</Nav.Link>
           </Nav>
-        </div>
+        </Navbar.Collapse>
+
 
         {/* Sağ kısım: Arama + Bildirim + Kullanıcı */}
         <div className="d-flex align-items-center gap-3 position-relative">
@@ -102,20 +106,20 @@ function NavbarEmployer() {
 
           {/* Test için Add Notification Butonu */}
           {/* Add Different Types of Notifications for Testing */}
-          <div className="d-flex gap-2">
-            <Button size="sm" variant="primary" onClick={() => addNotification("Reminder: Your interview with Acme Inc. is starting soon!", "/interviews/123", "interview")}>
+          {/* <div className="d-flex gap-2"> */}
+          {/* <Button size="sm" variant="primary" onClick={() => addNotification("Reminder: Your interview with Acme Inc. is starting soon!", "/interviews/123", "interview")}>
               Add Interview Notification
             </Button>
             <Button size="sm" variant="success" onClick={() => addNotification("You received a new job offer from TechCorp!", "/job-offers", "offer")}>
               Add Offer Notification
-            </Button>
-            {/* <Button size="sm" variant="warning" onClick={() => addNotification("New message from HR Department!", "/chat", "chat")}>
+            </Button> */}
+          {/* <Button size="sm" variant="warning" onClick={() => addNotification("New message from HR Department!", "/chat", "chat")}>
               Add Chat Notification
             </Button> */}
-            {/* <Button size="sm" variant="info" onClick={() => addNotification("New blog post: How to ace your tech interview", "/blog", "blog")}>
+          {/* <Button size="sm" variant="info" onClick={() => addNotification("New blog post: How to ace your tech interview", "/blog", "blog")}>
               Add Blog Notification
             </Button> */}
-          </div>
+          {/* </div> */}
 
 
 
