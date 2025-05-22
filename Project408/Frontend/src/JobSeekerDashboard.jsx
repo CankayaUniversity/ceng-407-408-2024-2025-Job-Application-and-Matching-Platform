@@ -716,7 +716,7 @@ export default function JobSeekerDashboard() {
       disabilityStatus: profileData.profileDetails?.disabilityStatus,
       maritalStatus: profileData.profileDetails?.maritalStatus,
       currentEmploymentStatus: profileData.profileDetails?.currentEmploymentStatus,
-      drivingLicense: profileData.profileDetails?.drivingLicense,
+      drivingLicense: profileData.profileDetails?.drivingLicense || false,
       isPrivateProfile: profileData.profileDetails?.isPrivateProfile || false,
       profilePicture: profileData.profileDetails?.profilePicture,
       birthDate: profileData.profileDetails?.birthDate,
@@ -769,7 +769,7 @@ export default function JobSeekerDashboard() {
       associateUniversityCityName: profileData.education?.associateDepartment?.university?.city?.name,
       associateStartDate: profileData.education?.associateStartDate,
       associateEndDate: profileData.education?.associateEndDate,
-      associateIsOngoing: profileData.education?.associateIsOngoing,
+      associateIsOngoing: profileData.education?.associateIsOngoing || false,
 
       bachelorDepartmentName: profileData.education?.bachelorDepartment?.name,
       bachelorUniversityName: profileData.education?.bachelorDepartment?.university?.name,
