@@ -55,8 +55,11 @@ function NavbarAdmin() {
             <Container fluid className="d-flex justify-content-between align-items-center">
 
                 {/* Logo + Menu */}
-                <div className="d-flex align-items-center gap-5">
+                <div className="d-flex align-items-center gap-3">
                     <Navbar.Brand href="/admin/dashboard" className="fw-bold text-danger">Logo</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                </div>
+                <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="d-flex gap-4">
                         <Nav.Link href="/admin/reported-blogs" className="text-dark fw-medium">
                             <FaBriefcase className="me-2" />Blogs
@@ -68,7 +71,8 @@ function NavbarAdmin() {
                             <FaUsers className="me-2" />Reported Users
                         </Nav.Link>
                     </Nav>
-                </div>
+                </Navbar.Collapse>
+
 
                 {/* Right Area */}
                 <div className="d-flex align-items-center gap-3 position-relative">

@@ -59,8 +59,9 @@ export default function Login() {
                 }
 
                 // Yönlendirme
-                if (data.userEmail === "jobapp408@gmail.com") {
-                    navigate('/reported-blogs');
+                if (payload.sub === "jobapp408@gmail.com") {
+                    navigate('/admin/reported-blogs');
+                    return;
                 }
                 else if (data.userType === 'EMPLOYER') {
                     navigate('/employerDashboard');
