@@ -10,6 +10,7 @@ const EmployerProfile = () => {
 
     const [profile, setProfile] = useState({
         company: {
+
             companyName: '',
             vision:'',
             mission:'',
@@ -20,7 +21,6 @@ const EmployerProfile = () => {
             phoneNumber: '',
             websiteUrl: '',
             projects: [{
-                id:'',
                 projectName: '',
                 projectDescription: '',
                 projectStartDate: '',
@@ -130,7 +130,6 @@ const EmployerProfile = () => {
                 projects: [
                     ...(prevProfile.company?.projects || []),
                     {
-                        id:'',
                         projectName: '',
                         projectDescription: '',
                         projectStartDate: '',

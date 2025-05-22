@@ -49,7 +49,7 @@ public class EmployerController {
     }
 
     @PutMapping("/updateProfile/{id}")
-    public ResponseEntity<Company> updateProfile(@PathVariable("id") int id,@RequestBody Company company) {
+    public ResponseEntity<Company> updateProfile(@PathVariable("id") int id, @RequestBody Company company) {
         return ResponseEntity.ok(employerService.updateProfile(id,company));
     }
 
