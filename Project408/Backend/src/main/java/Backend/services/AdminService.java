@@ -1,5 +1,6 @@
 package Backend.services;
 
+import Backend.entities.dto.ReportMetricsDTO;
 import Backend.entities.dto.ReportedBlogDTO;
 import Backend.entities.dto.ReportedJobDTO;
 import Backend.entities.dto.ReportedUserDTO;
@@ -14,4 +15,5 @@ public interface AdminService {
     void removeJob(Integer id);
     List<ReportedBlogDTO> getReportedBlogs();
     void removeBlog(Integer id);
+    ReportMetricsDTO getReportMetrics();
 } 

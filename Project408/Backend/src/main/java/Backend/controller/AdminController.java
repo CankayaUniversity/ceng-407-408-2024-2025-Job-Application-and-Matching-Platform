@@ -6,6 +6,7 @@ import Backend.services.AdminService;
 import Backend.entities.dto.ReportedBlogDTO;
 import Backend.entities.dto.ReportedJobDTO;
 import Backend.entities.dto.ReportedUserDTO;
+import Backend.entities.dto.ReportMetricsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,12 @@ public class AdminController {
     public ResponseEntity<List<ReportedBlogDTO>> getReportedBlogs() {
         List<ReportedBlogDTO> reportedBlogs = adminService.getReportedBlogs();
         return ResponseEntity.ok(reportedBlogs);
+    }
+
+    @GetMapping("/report-metrics")
+    public ResponseEntity<ReportMetricsDTO> getReportMetrics() {
+        ReportMetricsDTO metrics = adminService.getReportMetrics();
+        return ResponseEntity.ok(metrics);
     }
 
     @PostMapping("/removeBlog/{id}")

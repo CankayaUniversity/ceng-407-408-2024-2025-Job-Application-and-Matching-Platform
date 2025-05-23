@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -113,6 +115,39 @@ public class AdminServiceImpl implements AdminService {
         
         reportedBlog.setStatus(ReportStatus.RESOLVED);
         reportedBlogRepository.save(reportedBlog);
+    }
+
+    @Override
+    public ReportMetricsDTO getReportMetrics() {
+        Map<String, Long> userReportCounts = convertCountsToMap(reportedUserRepository.countByStatus());
+        Map<String, Long> jobReportCounts = convertCountsToMap(reportedJobRepository.countByStatus());
+        Map<String, Long> blogReportCounts = convertCountsToMap(reportedBlogRepository.countByStatus());
+
+        long totalPending = userReportCounts.getOrDefault(ReportStatus.PENDING.name(), 0L) +
+                            jobReportCounts.getOrDefault(ReportStatus.PENDING.name(), 0L) +
+                            blogReportCounts.getOrDefault(ReportStatus.PENDING.name(), 0L);
+
+        long totalResolved = userReportCounts.getOrDefault(ReportStatus.RESOLVED.name(), 0L) +
+                             jobReportCounts.getOrDefault(ReportStatus.RESOLVED.name(), 0L) +
+                             blogReportCounts.getOrDefault(ReportStatus.RESOLVED.name(), 0L);
+        
+        long totalReports = reportedUserRepository.count() + reportedJobRepository.count() + reportedBlogRepository.count();
+
+        return new ReportMetricsDTO(userReportCounts, jobReportCounts, blogReportCounts, totalPending, totalResolved, totalReports);
+    }
+
+    private Map<String, Long> convertCountsToMap(List<Object[]> counts) {
+        Map<String, Long> map = new HashMap<>();
+        for (Object[] count : counts) {
+            if (count[0] instanceof ReportStatus && count[1] instanceof Long) {
+                 map.put(((ReportStatus) count[0]).name(), (Long) count[1]);
+            }
+        }
+        // Ensure all statuses are present in the map, even if count is 0
+        for (ReportStatus status : ReportStatus.values()) {
+            map.putIfAbsent(status.name(), 0L);
+        }
+        return map;
     }
     
     private ReportedUserDTO convertToReportedUserDTO(ReportedUser reportedUser) {

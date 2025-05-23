@@ -33,6 +33,7 @@ import ProfileSettings from './ProfileSettings';
 import ReportedOffers from './ReportedBlogs.jsx';
 import ReportedJobs from './ReportedJobs.jsx';
 import ReportedUsers from './ReportedUsers.jsx';
+import AdminReportMetrics from './AdminReportMetrics.jsx';
 
 
 function App() {
@@ -77,6 +78,7 @@ function App() {
                 <Route path="/admin/reported-blogs" element={<ReportedOffers />} />
                 <Route path="/admin/reported-jobs" element={<ReportedJobs />} />
                 <Route path="/admin/reported-users" element={<ReportedUsers />} />
+                <Route path="/admin/metrics" element={<AdminReportMetrics />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/post/:id" element={<PostDetail />} />
