@@ -70,6 +70,8 @@ public class JobAdvService {
     private InterviewRepository interviewRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private NotificationService notificationService;
 
 
     public void createJobAdv(JobAdvCreateDto request, String employerEmail) {
@@ -333,6 +335,15 @@ public void applyForJob(int jobAdvId, String candidateEmail) {
 
     jobApplicationRepository.save(application);
     System.out.println("✅ Aday başvurusu başarıyla kaydedildi: " + candidate.getUsername());
+
+    // Notify employer
+    Employer employer = jobAdv.getCreatedEmployer();
+    if (employer != null) {
+        String message = candidate.getFirstName() + " " + candidate.getLastName() + " applied to your job posting: " + jobAdv.getJobPositions().stream().map(jp -> jp.getPositionType().name()).collect(Collectors.joining(", "));
+        // Link to the applications page for this job, or a general applications page
+        String link = "/employer/job-advs/" + jobAdv.getId() + "/applications"; // Example link
+        notificationService.notifyUser(employer, message, link);
+    }
 }
 
 

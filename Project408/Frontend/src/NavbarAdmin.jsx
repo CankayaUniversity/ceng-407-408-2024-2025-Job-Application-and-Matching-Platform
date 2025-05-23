@@ -8,7 +8,7 @@ function NavbarAdmin() {
     const navigate = useNavigate();
     const [userName, setUserName] = useState('');
 
-    const { notifications, addNotification, markAsRead, clearAllNotifications } = useNotificationContext();
+    const { notifications, unreadCount, markAsRead, markAllAsRead, fetchNotifications } = useNotificationContext();
     const [showNotifications, setShowNotifications] = useState(false);
 
     const handleLogout = () => {
@@ -18,37 +18,29 @@ function NavbarAdmin() {
         navigate('/login');
     };
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem('token');
-    //     const id = localStorage.getItem('id');
-
-    //     if (!token || !id) return;
-
-    //     fetch(`http://localhost:9090/admin/userName/${id}`, {
-    //         headers: {
-    //             'Authorization': `Bearer ${token}`,
-    //             'Content-Type': 'application/json'
-    //         }
-    //     })
-    //         .then(res => {
-    //             if (!res.ok) throw new Error('Unauthorized or no access');
-    //             return res.json();
-    //         })
-    //         .then(data => {
-    //             if (data?.userName) setUserName(data.userName);
-    //         })
-    //         .catch(err => {
-    //             console.error('Failed to fetch admin user info:', err.message);
-    //         });
-
-    // }, []);
-
     useEffect(() => {
-        setUserName("Admin");
-    }, []);
+        // Fetch username logic (currently mocked)
+        setUserName("Admin"); 
+        // Fetch initial notifications if not already handled by context
+        // fetchNotifications(); // Context now handles initial fetch
+    }, [fetchNotifications]);
 
     const toggleNotifications = () => setShowNotifications(!showNotifications);
-    const unreadCount = notifications.filter(n => !n.isRead).length;
+    // const unreadCount = notifications.filter(n => !n.isRead).length; // Now from context
+
+    const handleMarkNotificationAsRead = (notification) => {
+        markAsRead(notification.id);
+        if (notification.link) {
+            navigate(notification.link);
+        }
+        // Optionally, close dropdown after click
+        // setShowNotifications(false);
+    };
+
+    const handleClearAll = async () => {
+        await markAllAsRead();
+        // Notifications will re-render as read due to context update
+    };
 
     return (
         <Navbar bg="white" expand="lg" className="shadow-sm px-4 py-2 position-relative">
@@ -108,10 +100,7 @@ function NavbarAdmin() {
                                     notifications.map(notification => (
                                         <div
                                             key={notification.id}
-                                            onClick={() => {
-                                                markAsRead(notification.id);
-                                                if (notification.link) navigate(notification.link);
-                                            }}
+                                            onClick={() => handleMarkNotificationAsRead(notification)}
                                             style={{
                                                 padding: "10px",
                                                 borderBottom: "1px solid #eee",
@@ -123,15 +112,18 @@ function NavbarAdmin() {
                                             }}
                                         >
                                             <FaBell className="text-secondary" />
-                                            <span>{notification.title}</span>
+                                            {/* Assuming notification object has a 'message' field from backend DTO */}
+                                            <span>{notification.message || notification.title}</span>
                                         </div>
                                     ))
                                 )}
-                                <div className="text-center py-2">
-                                    <Button size="sm" variant="danger" onClick={clearAllNotifications}>
-                                        Clear All
-                                    </Button>
-                                </div>
+                                {notifications.length > 0 && (
+                                    <div className="text-center py-2 border-top">
+                                        <Button size="sm" variant="link" onClick={handleClearAll} className="text-danger">
+                                            Mark all as read
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
