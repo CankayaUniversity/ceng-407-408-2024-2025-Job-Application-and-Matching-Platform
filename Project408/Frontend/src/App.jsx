@@ -49,51 +49,46 @@ function App() {
 
   return (
     <NotificationProvider>
-    <UserProvider>
-    <PostProvider>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/verification" element={<EmailVerification />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+      <UserProvider>
+        <PostProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/verification" element={<EmailVerification />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* Protected routes with navbar */}
-        {/* <Route element={<PrivateRoute />}> */}
-        <Route>
-          <Route element={<Layout />}>
+            {/* Protected Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/candidate/dashboard" element={<JobSeekerDashboard />} />
+                <Route path="/employerDashboard" element={<EmployerDashboard />} />
+                <Route path="/job-offers" element={<JobOffersEmployer />} />
+                <Route path="/candidate/jobs" element={<JobAdvList />} />
+                <Route path="/employer/jobs/:id/edit" element={<EditJobForm />} />
+                <Route path="/employer/create-job" element={<CreateJobForm />} />
+                <Route path="/employer/profile" element={<EmployerProfile />} />
+                <Route path="/employer/my-jobs" element={<JobListings />} />
+                <Route path="/employer/offers" element={<JobOffers />} />
+                <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs />} />
+                <Route path="/employer/applications" element={<ApplicationsPage />} />
+                <Route path="/candidates" element={<CandidateList />} />
+                <Route path="/profile/settings" element={<ProfileSettings />} />
+                <Route path="/admin/reported-blogs" element={<ReportedOffers />} />
+                <Route path="/admin/reported-jobs" element={<ReportedJobs />} />
+                <Route path="/admin/reported-users" element={<ReportedUsers />} />
+                <Route path="/chat" element={<Chat />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/post/:id" element={<PostDetail />} />
+                <Route path="/interviews" element={<InterviewPage />} />
+                <Route path="/notifications" element={<NotificationsPage notifications={notifications} markAsRead={markAsRead} />} />
+              </Route>
+            </Route>
+          </Routes>
 
-            <Route path="/candidate/dashboard" element={<JobSeekerDashboard/>}/>
-            <Route path="/employerDashboard" element={<EmployerDashboard/>}/>
-            <Route path="/job-offers" element={<JobOffersEmployer/>}/>
-            <Route path="/candidate/jobs" element={<JobAdvList/>}/>
-            <Route path="/employer/jobs/:id/edit" element={<EditJobForm/>}/>
-            <Route path="/employer/create-job" element={<CreateJobForm/>}/>
-            <Route path="/employer/profile" element={<EmployerProfile/>}/>
-            <Route path="/employer/my-jobs" element={<JobListings/>}/>
-            <Route path="/employer/offers" element={<JobOffers/>}/>
-            <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs/>}/>
-            <Route path="/employer/applications" element={<ApplicationsPage/>}/>
-            <Route path="/candidates" element={<CandidateList/>} />
-            <Route path="/profile/settings" element={<ProfileSettings />} />
-
-            <Route path="/admin/reported-blogs" element={<ReportedOffers />} />
-            <Route path="/admin/reported-jobs" element={<ReportedJobs />} />
-            <Route path="/admin/reported-users" element={<ReportedUsers />} />
-
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/post/:id" element={<PostDetail />} />
-            <Route path="/interviews" element={<InterviewPage />} />
-            <Route path="/notifications" element={<NotificationsPage notifications={notifications} markAsRead={markAsRead} />} />
-
-
-          </Route>
-        </Route>
-      </Routes>
-      </PostProvider>
+        </PostProvider>
       </UserProvider>
-      </NotificationProvider>
+    </NotificationProvider>
   );
 }
 
