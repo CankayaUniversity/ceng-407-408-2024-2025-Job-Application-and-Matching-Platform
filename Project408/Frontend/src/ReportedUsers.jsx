@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FaUser } from 'react-icons/fa';
 import Toast from './components/Toast';
+import axios from 'axios';
 
 export default function ReportedUsers() {
     const [users, setUsers] = useState([]);
@@ -8,32 +9,60 @@ export default function ReportedUsers() {
     const [showToast, setShowToast] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        setTimeout(() => {
-            const mockUsers = [
-                {
-                    id: 1,
-                    name: "Alice Johnson",
-                    email: "alice@example.com",
-                    reportReason: "Inappropriate messages to employers",
-                    status: "ACTIVE"
-                },
-                {
-                    id: 2,
-                    name: "Bob Smith",
-                    email: "bob@example.com",
-                    reportReason: "Spamming job applications with fake profiles",
-                    status: "UNDER REVIEW"
-                }
-            ];
-            setUsers(mockUsers);
+    const fetchReportedUsers = useCallback(async () => {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setMessage('Authentication token not found. Please log in.');
+            setShowToast(true);
             setLoading(false);
-        }, 1000);
+            setUsers([]);
+            return;
+        }
+        try {
+            const response = await axios.get('http://localhost:9090/admin/reportedUsers', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setUsers(response.data);
+            if (response.data.length === 0) {
+                setMessage('No reported users found.');
+                setShowToast(true);
+            }
+        } catch (error) {
+            console.error("Failed to fetch reported users:", error);
+            setMessage(error.response?.data?.message || error.message || 'Failed to fetch reported users');
+            setShowToast(true);
+            setUsers([]);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    const handleBan = (userId) => {
-        setMessage(`User #${userId} has been banned.`);
-        setShowToast(true);
+    useEffect(() => {
+        fetchReportedUsers();
+    }, [fetchReportedUsers]);
+
+    const handleBan = async (userId) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setMessage('Authentication token not found. Please log in.');
+            setShowToast(true);
+            return;
+        }
+        try {
+            await axios.post(`http://localhost:9090/admin/banUser/${userId}`, {}, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setMessage(`User #${userId} has been banned successfully.`);
+            setShowToast(true);
+            setUsers(prevUsers => prevUsers.map(user => 
+                user.id === userId ? { ...user, status: 'BANNED' } : user
+            ));
+        } catch (error) {
+            console.error("Failed to ban user:", error);
+            setMessage(error.response?.data?.message || error.message || 'Failed to ban user');
+            setShowToast(true);
+        }
     };
 
     return (

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FaBriefcase } from 'react-icons/fa';
 import Toast from './components/Toast';
+import axios from 'axios';
 
 export default function ReportedJobs() {
     const [jobs, setJobs] = useState([]);
@@ -8,31 +9,58 @@ export default function ReportedJobs() {
     const [showToast, setShowToast] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        setTimeout(() => {
-            const mockData = [
-                {
-                    id: 1,
-                    title: "Frontend Developer (Intern)",
-                    companyName: "Innovatech",
-                    reportedByEmail: "student1@example.com",
-                    reportReason: "Unrealistic job description and missing contact details.",
-                    status: "ACTIVE"
-                },
-                {
-                    id: 2,
-                    title: "Backend Developer",
-                    companyName: "DevSolutions",
-                    reportedByEmail: "testuser@example.com",
-                    reportReason: "Position already filled but still listed.",
-                    status: "ACTIVE"
-                }
-            ];
-            setJobs(mockData);
+    const fetchReportedJobs = useCallback(async () => {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setMessage('Authentication token not found. Please log in.');
+            setShowToast(true);
             setLoading(false);
-            console.log("Mock jobs loaded:", mockData);
-        }, 1000);
+            setJobs([]);
+            return;
+        }
+        try {
+            const response = await axios.get('http://localhost:9090/admin/reportedJobs', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setJobs(response.data);
+            if (response.data.length === 0) {
+                setMessage('No reported jobs found.');
+            }
+        } catch (error) {
+            console.error("Failed to fetch reported jobs:", error);
+            setMessage(error.response?.data?.message || error.message || 'Failed to fetch reported jobs');
+            setShowToast(true);
+            setJobs([]);
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchReportedJobs();
+    }, [fetchReportedJobs]);
+
+    const handleRemoveJob = async (jobId) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setMessage('Authentication token not found. Please log in.');
+            setShowToast(true);
+            return;
+        }
+        try {
+            await axios.post(`http://localhost:9090/admin/removeJob/${jobId}`, {}, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setMessage(`Job #${jobId} has been removed successfully.`);
+            setShowToast(true);
+            setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+        } catch (error) {
+            console.error("Failed to remove job:", error);
+            setMessage(error.response?.data?.message || error.message || 'Failed to remove job');
+            setShowToast(true);
+        }
+    };
 
     return (
         <div style={{ padding: '10px' }} className="p-6 min-h-screen bg-white">
@@ -75,7 +103,7 @@ export default function ReportedJobs() {
                             <button
                                 className="mt-3 px-3 py-1 text-sm rounded text-white"
                                 style={{ backgroundColor: '#b30000' }}
-                                onClick={() => alert(`Removing job #${job.id}`)}
+                                onClick={() => handleRemoveJob(job.id)}
                             >
                                 Remove Job
                             </button>

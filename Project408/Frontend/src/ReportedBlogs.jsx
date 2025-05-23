@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FaBook } from 'react-icons/fa';
 import Toast from './components/Toast';
+import axios from 'axios';
 
 export default function ReportedBlogs() {
   const [blogs, setBlogs] = useState([]);
@@ -8,32 +9,59 @@ export default function ReportedBlogs() {
   const [showToast, setShowToast] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setTimeout(() => {
-      const mockBlogs = [
-        {
-          id: 1,
-          title: "Why I Quit My Developer Job",
-          authorEmail: "writer1@example.com",
-          reportReason: "Contains offensive language",
-          status: "PENDING"
-        },
-        {
-          id: 2,
-          title: "Top 5 Resume Mistakes",
-          authorEmail: "careercoach@example.com",
-          reportReason: "Plagiarized content from another site",
-          status: "REVIEWED"
+  const fetchReportedBlogs = useCallback(async () => {
+    setLoading(true);
+    const token = localStorage.getItem('token');
+    if (!token) {
+        setMessage('Authentication token not found. Please log in.');
+        setShowToast(true);
+        setLoading(false);
+        setBlogs([]);
+        return;
+    }
+    try {
+        const response = await axios.get('http://localhost:9090/admin/reportedBlogs', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setBlogs(response.data);
+        if (response.data.length === 0) {
+            setMessage('No reported blogs found.');
+            // setShowToast(true); // Optional
         }
-      ];
-      setBlogs(mockBlogs);
-      setLoading(false);
-    }, 1000);
+    } catch (error) {
+        console.error("Failed to fetch reported blogs:", error);
+        setMessage(error.response?.data?.message || error.message || 'Failed to fetch reported blogs');
+        setShowToast(true);
+        setBlogs([]);
+    } finally {
+        setLoading(false);
+    }
   }, []);
 
-  const handleRemove = (id) => {
-    setMessage(`Blog #${id} removed.`);
-    setShowToast(true);
+  useEffect(() => {
+    fetchReportedBlogs();
+  }, [fetchReportedBlogs]);
+
+  const handleRemoveBlog = async (blogId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        setMessage('Authentication token not found. Please log in.');
+        setShowToast(true);
+        return;
+    }
+    try {
+        await axios.post(`http://localhost:9090/admin/removeBlog/${blogId}`, {}, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setMessage(`Blog #${blogId} has been removed successfully.`);
+        setShowToast(true);
+        setBlogs(prevBlogs => prevBlogs.filter(blog => blog.id !== blogId));
+        // Or call fetchReportedBlogs();
+    } catch (error) {
+        console.error("Failed to remove blog:", error);
+        setMessage(error.response?.data?.message || error.message || 'Failed to remove blog');
+        setShowToast(true);
+    }
   };
 
   return (
@@ -75,7 +103,7 @@ export default function ReportedBlogs() {
               <button
                 className="mt-3 px-3 py-1 text-sm rounded text-white"
                 style={{ backgroundColor: '#b30000' }}
-                onClick={() => handleRemove(blog.id)}
+                onClick={() => handleRemoveBlog(blog.id)}
               >
                 Remove Blog
               </button>
