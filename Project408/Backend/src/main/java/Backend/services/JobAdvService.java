@@ -6,6 +6,7 @@ import Backend.core.location.Country;
 import Backend.entities.common.CustomJobPosition;
 import Backend.entities.dto.InterviewDto;
 import Backend.entities.dto.JobAdvCreateDto;
+import Backend.entities.dto.JobAdvDto;
 import Backend.entities.jobAdv.*;
 import Backend.entities.offer.Interviews;
 import Backend.entities.offer.JobOffer;
@@ -31,6 +32,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -73,6 +75,108 @@ public class JobAdvService {
     @Autowired
     private NotificationService notificationService;
 
+    // Helper method to convert JobAdv to JobAdvDto - DRY principle
+    private JobAdvDto convertJobAdvToDto(JobAdv jobAdv) {
+        if (jobAdv == null || jobAdv.getCompany() == null) { // Basic null check
+            return null;
+        }
+        JobAdvDto dto = new JobAdvDto();
+        dto.setId(jobAdv.getId());
+        dto.setDescription(jobAdv.getDescription());
+        dto.setCompanyName(jobAdv.getCompany().getCompanyName()); // Assuming company is not null
+        dto.setMinSalary(jobAdv.getMinSalary());
+        dto.setMaxSalary(jobAdv.getMaxSalary());
+        dto.setLastDate(jobAdv.getLastDate());
+        dto.setTravelRest(jobAdv.isTravelRest());
+        dto.setLicense(jobAdv.isLicense());
+        dto.setActive(jobAdv.isActive()); // Added active status to DTO
+
+        if (jobAdv.getJobCondition() != null) {
+            JobCondition jobCondition = jobAdv.getJobCondition();
+            dto.setWorkType(jobCondition.getWorkType());
+            dto.setEmploymentType(jobCondition.getEmploymentType());
+            if (jobCondition.getCountry() != null) {
+                dto.setCountry(jobCondition.getCountry().getName());
+            }
+            if (jobCondition.getCity() != null) {
+                dto.setCity(jobCondition.getCity().getName());
+            }
+            dto.setMinWorkHours(jobCondition.getMinWorkHours());
+            dto.setMaxWorkHours(jobCondition.getMaxWorkHours());
+        }
+
+        if (jobAdv.getJobQualification() != null) {
+            JobQualification jobQualification = jobAdv.getJobQualification();
+            if (jobQualification.getDegreeType() != null) {
+                 dto.setDegreeType(jobQualification.getDegreeType().toString());
+            }
+            if (jobQualification.getJobExperience() != null) {
+                dto.setJobExperience(jobQualification.getJobExperience().toString());
+            }
+            dto.setExperienceYears(jobQualification.getExperienceYears());
+             if (jobQualification.getMilitaryStatus() != null) {
+                dto.setMilitaryStatus(jobQualification.getMilitaryStatus().toString());
+            }
+            if (jobQualification.getTechnicalSkills() != null) {
+                dto.setTechnicalSkills(jobQualification.getTechnicalSkills().stream()
+                    .map(skill -> {
+                        TechnicalSkill tech = new TechnicalSkill();
+                        tech.setPositionName(skill.getPositionName());
+                        tech.setSkillLevel(skill.getSkillLevel());
+                        tech.setDescription(skill.getDescription());
+                        return tech;
+                    })
+                    .collect(Collectors.toList()));
+            }
+            if (jobQualification.getSocialSkills() != null) {
+                dto.setSocialSkills(jobQualification.getSocialSkills().stream()
+                    .map(skill -> {
+                        SocialSkill social = new SocialSkill(); // Corrected variable name
+                        social.setPositionName(skill.getPositionName());
+                        social.setSkillLevel(skill.getSkillLevel());
+                        social.setDescription(skill.getDescription());
+                        return social;
+                    })
+                    .collect(Collectors.toList()));
+            }
+            if (jobQualification.getLanguageProficiencies() != null) {
+                 dto.setLanguageProficiencies(jobQualification.getLanguageProficiencies().stream()
+                    .map(lang -> {
+                        LanguageProficiency langDto = new LanguageProficiency();
+                        langDto.setLanguage(lang.getLanguage());
+                        langDto.setReadingLevel(lang.getReadingLevel());
+                        langDto.setWritingLevel(lang.getWritingLevel());
+                        langDto.setSpeakingLevel(lang.getSpeakingLevel());
+                        langDto.setListeningLevel(lang.getListeningLevel());
+                        return langDto;
+                    })
+                    .collect(Collectors.toList()));
+            }
+        }
+
+        if (jobAdv.getBenefits() != null) {
+            dto.setBenefitTypes(jobAdv.getBenefits().stream()
+                .map(benefit -> {
+                    Benefit b = new Benefit();
+                    b.setBenefitType(benefit.getBenefitType());
+                    b.setDescription(benefit.getDescription());
+                    return b;
+                })
+                .collect(Collectors.toList()));
+        }
+
+        if (jobAdv.getJobPositions() != null) {
+            dto.setJobPositions(jobAdv.getJobPositions().stream()
+                .map(position -> {
+                    JobPositions positions = new JobPositions();
+                    positions.setPositionType(position.getPositionType());
+                    positions.setCustomJobPosition(position.getCustomJobPosition());
+                    return positions;
+                })
+                .collect(Collectors.toList()));
+        }
+        return dto;
+    }
 
     public void createJobAdv(JobAdvCreateDto request, String employerEmail) {
     Employer employer = employerRepository.findByEmail(employerEmail)
@@ -297,16 +401,61 @@ public void updateJobAdv(int jobAdvId, String userEmail, JobAdvUpdateRequest req
 
 
 
-public List<JobAdv> getMyJobAdvs(String userEmail) {
-    Employer employer = employerRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new RuntimeException("İşveren bulunamadı."));
-
-    Company employerCompany = employer.getCompany();
-    if (employerCompany == null) {
-        throw new RuntimeException("İşverenin şirket bilgisi eksik.");
+// Updated method to accept Employer object and filter parameters
+public List<JobAdvDto> getMyJobAdvs(Employer employer, String positionName, String status, String workTypeStr) {
+    if (employer == null || employer.getCompany() == null) {
+        // Or throw an IllegalArgumentException
+        throw new RuntimeException("İşveren veya şirket bilgisi eksik.");
     }
 
-    return jobAdvRepository.findByCompanyId(employerCompany.getId());
+    Company employerCompany = employer.getCompany();
+    List<JobAdv> jobAdvsForCompany = jobAdvRepository.findByCompanyId(employerCompany.getId());
+
+    // Apply filters programmatically
+    Stream<JobAdv> filteredStream = jobAdvsForCompany.stream();
+
+    // Status filter (ACTIVE, EXPIRED, ALL)
+    if (status != null && !status.equalsIgnoreCase("ALL")) {
+        final boolean targetActiveState = status.equalsIgnoreCase("ACTIVE");
+        filteredStream = filteredStream.filter(jobAdv -> {
+            boolean isCurrentlyActive = jobAdv.isActive() && (jobAdv.getLastDate() == null || jobAdv.getLastDate().isAfter(LocalDate.now().minusDays(1)));
+            return isCurrentlyActive == targetActiveState;
+        });
+    } else {
+        // Default to showing only active jobs if no specific status or "ALL" is given and job is marked active by employer
+        // If you want truly all (including manually deactivated), this logic might need adjustment
+        // For now, respecting jobAdv.isActive() as a primary flag from employer
+         filteredStream = filteredStream.filter(JobAdv::isActive); 
+    }
+
+    // Position name filter (case-insensitive, searches in job position types and custom names)
+    if (positionName != null && !positionName.isEmpty()) {
+        String lowerPositionName = positionName.toLowerCase();
+        filteredStream = filteredStream.filter(jobAdv -> 
+            jobAdv.getJobPositions() != null && jobAdv.getJobPositions().stream().anyMatch(jp -> 
+                (jp.getPositionType() != null && jp.getPositionType().name().toLowerCase().contains(lowerPositionName)) ||
+                (jp.getCustomJobPosition() != null && jp.getCustomJobPosition().getPositionName() != null && jp.getCustomJobPosition().getPositionName().toLowerCase().contains(lowerPositionName))
+            )
+        );
+    }
+
+    // Work type filter
+    if (workTypeStr != null && !workTypeStr.isEmpty()) {
+        try {
+            WorkType filterWorkType = WorkType.valueOf(workTypeStr.toUpperCase());
+            filteredStream = filteredStream.filter(jobAdv -> 
+                jobAdv.getJobCondition() != null && jobAdv.getJobCondition().getWorkType() == filterWorkType
+            );
+        } catch (IllegalArgumentException e) {
+            // Log invalid work type string, or ignore, or throw error
+            System.err.println("Invalid work type for filtering: " + workTypeStr);
+        }
+    }
+
+    return filteredStream
+            .map(this::convertJobAdvToDto) // Use the helper method
+            .filter(Objects::nonNull) // Ensure no null DTOs if conversion fails
+            .collect(Collectors.toList());
 }
 
 

@@ -9,34 +9,61 @@ export default function JobListings() {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState({ show: false, id: null });
-  const [activeFilter, setActiveFilter] = useState('all');
+  
+  // activeFilter will now be an object to hold multiple filter aspects
+  const [filters, setFilters] = useState({
+    status: 'ALL', // 'ALL', 'ACTIVE', 'EXPIRED'
+    workType: 'ALL', // 'ALL', 'REMOTE', 'OFFICE', 'HYBRID'
+    // Add more specific filters here if needed, e.g., minSalary, maxSalary
+  });
 
-  useEffect(() => {
-    fetchJobs();
-  }, []);
-
-  const fetchJobs = async () => {
+  // Combined function to fetch and filter jobs from backend
+  const applyEmployerFilters = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:9090/api/job-adv/employer/all', {
+      const queryParams = new URLSearchParams();
+
+      if (searchTerm) {
+        queryParams.append('positionName', searchTerm);
+      }
+      if (filters.status && filters.status !== 'ALL') {
+        queryParams.append('status', filters.status);
+      }
+      if (filters.workType && filters.workType !== 'ALL') {
+        // Backend expects OFFICE for onsite
+        const backendWorkType = filters.workType === 'ONSITE' ? 'OFFICE' : filters.workType;
+        queryParams.append('workType', backendWorkType);
+      }
+      // Add other filters to queryParams here if they are added to the state
+
+      const response = await fetch(`http://localhost:9090/api/job-adv/my-jobadvs?${queryParams.toString()}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch job listings');
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch job listings: ${errorText || response.status}`);
       }
 
       const data = await response.json();
       setJobs(data);
+      if (data.length === 0) setError('No job listings match your filters.');
+      else setError(''); // Clear error if jobs are found
+
     } catch (err) {
       setError(err.message);
+      setJobs([]); // Clear jobs on error
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    applyEmployerFilters(); // Fetch on initial load and when filters change
+  }, [searchTerm, filters]); // Re-fetch when searchTerm or filters change
 
   const handleDelete = async (id) => {
     try {
@@ -72,35 +99,10 @@ export default function JobListings() {
       : 'bg-red-100 text-red-800';
   };
 
-  const getStatusText = (deadline) => {
-    if (!deadline) return 'Unknown';
-    return new Date(deadline) > new Date() ? 'Active' : 'Expired';
-  };
-
-  const filterJobs = (jobs) => {
-    // First filter by search term
-    let filtered = jobs.filter(job => 
-      job.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (job.description && job.description.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-
-    // Then filter by active filter
-    if (activeFilter !== 'all') {
-      if (activeFilter === 'active') {
-        filtered = filtered.filter(job => job.deadline && new Date(job.deadline) > new Date());
-      } else if (activeFilter === 'expired') {
-        filtered = filtered.filter(job => job.deadline && new Date(job.deadline) <= new Date());
-      } else if (activeFilter === 'remote') {
-        filtered = filtered.filter(job => job.workType === 'REMOTE');
-      } else if (activeFilter === 'onsite') {
-        filtered = filtered.filter(job => job.workType === 'ONSITE');
-      } else if (activeFilter === 'hybrid') {
-        filtered = filtered.filter(job => job.workType === 'HYBRID');
-      }
-    }
-
-    return filtered;
+  const getStatusText = (job) => { // Modified to take the whole job DTO
+    if (!job.active) return 'Inactive'; // If manually set to inactive
+    if (!job.lastDate) return 'Active (No Deadline)';
+    return new Date(job.lastDate) > new Date() ? 'Active' : 'Expired';
   };
 
   const getWorkTypeStyle = (workType) => {
@@ -131,7 +133,7 @@ export default function JobListings() {
     );
   }
 
-  const filteredJobs = filterJobs(jobs);
+  const filteredJobs = jobs; // Data is now pre-filtered by backend
 
   return (
     <div className="bg-white rounded-lg">
@@ -155,9 +157,9 @@ export default function JobListings() {
         {/* Filter buttons */}
         <div className="flex flex-wrap gap-2 mb-6 overflow-x-auto pb-2">
           <button 
-            onClick={() => setActiveFilter('all')}
+            onClick={() => setFilters(prev => ({...prev, status: 'ALL', workType: 'ALL'}))} // Reset all relevant filters
             className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeFilter === 'all' 
+              filters.status === 'ALL' && filters.workType === 'ALL' 
                 ? 'bg-blue-600 text-white' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             } transition-colors duration-200`}
@@ -165,9 +167,9 @@ export default function JobListings() {
             Tümünü Göster
           </button>
           <button 
-            onClick={() => setActiveFilter('active')}
+            onClick={() => setFilters(prev => ({...prev, status: 'ACTIVE'}))}
             className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeFilter === 'active' 
+              filters.status === 'ACTIVE' 
                 ? 'bg-green-600 text-white' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             } transition-colors duration-200`}
@@ -175,9 +177,9 @@ export default function JobListings() {
             Aktif İlanlar
           </button>
           <button 
-            onClick={() => setActiveFilter('expired')}
+            onClick={() => setFilters(prev => ({...prev, status: 'EXPIRED'}))}
             className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeFilter === 'expired' 
+              filters.status === 'EXPIRED' 
                 ? 'bg-red-600 text-white' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             } transition-colors duration-200`}
@@ -185,9 +187,9 @@ export default function JobListings() {
             Süresi Dolmuş
           </button>
           <button 
-            onClick={() => setActiveFilter('remote')}
+            onClick={() => setFilters(prev => ({...prev, workType: 'REMOTE'}))}
             className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeFilter === 'remote' 
+              filters.workType === 'REMOTE' 
                 ? 'bg-indigo-600 text-white' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             } transition-colors duration-200`}
@@ -195,58 +197,37 @@ export default function JobListings() {
             Remote
           </button>
           <button 
-            onClick={() => setActiveFilter('onsite')}
+            onClick={() => setFilters(prev => ({...prev, workType: 'ONSITE'}))} // ONSITE will be mapped to OFFICE for backend
             className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeFilter === 'onsite' 
+              filters.workType === 'ONSITE' 
                 ? 'bg-amber-600 text-white' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             } transition-colors duration-200`}
           >
-            İş Tipi
+            Ofis
           </button>
           <button 
-            onClick={() => setActiveFilter('hybrid')}
+            onClick={() => setFilters(prev => ({...prev, workType: 'HYBRID'}))}
             className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeFilter === 'hybrid' 
+              filters.workType === 'HYBRID' 
                 ? 'bg-emerald-600 text-white' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             } transition-colors duration-200`}
           >
-            Min Maaş
+            Hybrid
           </button>
-          <button 
-            onClick={() => setActiveFilter('all')}
-            className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeFilter === 'salarymax' 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            } transition-colors duration-200`}
-          >
-            Max Maaş
-          </button>
-          <button 
-            onClick={() => setActiveFilter('all')}
-            className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeFilter === 'konumsehir' 
-                ? 'bg-pink-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            } transition-colors duration-200`}
-          >
-            Konum (Şehir)
-          </button>
-          <button 
-            onClick={() => setActiveFilter('all')}
-            className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeFilter === 'sirket' 
-                ? 'bg-cyan-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            } transition-colors duration-200`}
-          >
-            Şirket
-          </button>
+          {/* Remove other specific filter buttons unless new state fields are added for them */}
+          {/* Example: 
+          <input 
+            type="number" 
+            placeholder="Min Salary" 
+            onChange={e => setFilters(prev => ({...prev, minSalary: e.target.value}))} 
+            className="px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" 
+          /> 
+          */}
         </div>
 
-        {/* Search bar */}
+        {/* Search bar - uses searchTerm state, triggers useEffect */}
         <div className="mb-8 relative">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <FaSearch className="text-gray-400" />
@@ -263,9 +244,10 @@ export default function JobListings() {
         {/* Filter button */}
         <div className="flex justify-center mb-8">
           <button 
+            onClick={applyEmployerFilters} // Explicit filter button if needed, though useEffect handles changes too
             className="px-6 py-2.5 rounded-lg text-sm font-medium bg-gray-800 text-white hover:bg-gray-700 transition-colors duration-200"
           >
-            Filtrele
+            Filtrele (Yenile)
           </button>
         </div>
 
@@ -300,15 +282,15 @@ export default function JobListings() {
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-bold text-gray-900 truncate">{job.title}</h3>
-                    <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(job.deadline)}`}>
-                      {getStatusText(job.deadline)}
+                    <h3 className="text-xl font-bold text-gray-900 truncate">{job.jobPositions && job.jobPositions.length > 0 ? (job.jobPositions[0].positionType === 'OTHER' ? job.jobPositions[0].customJobPosition?.positionName : job.jobPositions[0].positionType?.replace('_', ' ')) : 'Job Title Not Available'}</h3>
+                    <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(job.lastDate)}`}>
+                      {getStatusText(job)}
                     </span>
                   </div>
                   
                   <div className="mb-1">
                     <div className="text-sm text-gray-800 font-medium">
-                      {job.employer?.companyName || 'Tech Innovators'}
+                      {job.companyName || '-'}
                     </div>
                   </div>
                   

@@ -6,12 +6,15 @@ import Backend.core.location.Country;
 import Backend.entities.common.JobPositions;
 import Backend.entities.common.LanguageProficiency;
 import Backend.entities.dto.*;
+import Backend.entities.dto.JobAdvDto;
 import Backend.entities.jobAdv.*;
 import Backend.entities.offer.JobOffer;
 import Backend.entities.user.candidate.Candidate;
 import Backend.entities.user.candidate.JobApplication;
+import Backend.entities.user.employer.Employer;
 import Backend.request.jobAdv.JobAdvCreateRequest;
 import Backend.request.jobAdv.JobAdvUpdateRequest;
+import Backend.repository.EmployerRepository;
 import Backend.services.JobAdvService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -33,123 +36,36 @@ import java.util.stream.Collectors;
 public class JobAdvController {
     @Autowired
     JobAdvService jobAdvService;
+    @Autowired // Added for fetching Employer to get company ID
+    EmployerRepository employerRepository;
 
 
     // 🔹 4. İşverene ait ilanları getirme
     @GetMapping("/my-jobadvs")
-    public ResponseEntity<List<JobAdvDto>> getMyJobAdvertisements(HttpServletRequest request) {
+    public ResponseEntity<List<JobAdvDto>> getMyJobAdvertisements(
+            HttpServletRequest request,
+            @RequestParam(required = false) String positionName,
+            @RequestParam(required = false) String status, // e.g., "ACTIVE", "EXPIRED", "ALL"
+            @RequestParam(required = false) String workType // e.g., "REMOTE", "OFFICE", "HYBRID"
+    ) {
         String email = (request.getUserPrincipal() != null)
                 ? request.getUserPrincipal().getName()
-                : "mock@employer.com";
+                // Use a non-null default for local testing if principal is null, or handle error
+                : "mock@employer.com"; 
 
-        List<JobAdv> myJobAdvs = jobAdvService.getMyJobAdvs(email);
-        List<JobAdvDto> jobAdvDtos = myJobAdvs.stream()
-                .filter(JobAdv :: isActive )
-                .map(jobAdv -> {
-                    JobAdvDto dto = new JobAdvDto();
-                    dto.setId(jobAdv.getId());
-                    dto.setDescription(jobAdv.getDescription());
-                    dto.setCompanyName(jobAdv.getCompany().getCompanyName());
-                    dto.setMinSalary(jobAdv.getMinSalary());
-                    dto.setMaxSalary(jobAdv.getMaxSalary());
-                    dto.setLastDate(jobAdv.getLastDate());
-                    dto.setTravelRest(jobAdv.isTravelRest());
-                    dto.setLicense(jobAdv.isLicense());
+        // Fetch employer to get company, this is needed by the service method as per current design
+        // Consider if JobAdvService.getMyJobAdvs should resolve employer internally
+        Employer employer = employerRepository.findByEmail(email)
+                .orElse(null); // Handle if employer not found, though principal implies existence
+        
+        if (employer == null) {
+             // Or throw an exception, return 403/404 etc.
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Collections.emptyList());
+        }
 
-                    if (jobAdv.getJobCondition() != null) {
-                        JobCondition jobCondition = jobAdv.getJobCondition();
-
-                        dto.setWorkType(jobCondition.getWorkType());
-                        dto.setEmploymentType(jobCondition.getEmploymentType());
-                        if (jobCondition.getCountry() != null) {
-                            Country country = jobCondition.getCountry();
-                            dto.setCountry(jobCondition.getCountry().getName());
-                        }
-                        if (jobCondition.getCity() != null) {
-                            City country = jobCondition.getCity();
-                            dto.setCity(jobCondition.getCity().getName());
-                        }
-                        dto.setMinWorkHours(jobCondition.getMinWorkHours());
-                        dto.setMaxWorkHours(jobCondition.getMaxWorkHours());
-                    }
-
-                    if (jobAdv.getJobQualification() != null) {
-                        JobQualification jobQualification = jobAdv.getJobQualification();
-
-                        dto.setDegreeType(jobQualification.getDegreeType().toString());
-                        dto.setJobExperience(jobQualification.getJobExperience().toString());
-                        dto.setExperienceYears(jobQualification.getExperienceYears());
-                        dto.setMilitaryStatus(jobQualification.getMilitaryStatus().toString());
-
-                        // Teknik ve sosyal becerileri alıyoruz
-                        dto.setTechnicalSkills(jobQualification.getTechnicalSkills().stream()
-                                .map(skill -> {
-                                    TechnicalSkill tech= new TechnicalSkill();
-                                    tech.setPositionName(skill.getPositionName());
-                                    tech.setSkillLevel(skill.getSkillLevel());
-                                    tech.setDescription(skill.getDescription());
-                                    return tech;
-                                })  // TechnicalSkill'in ismi alınır (örneğin: "Java")
-                                .collect(Collectors.toList()));
-
-                        dto.setSocialSkills(jobQualification.getSocialSkills().stream()
-                                .map(skill -> {
-                                    SocialSkill tech= new SocialSkill();
-                                    tech.setPositionName(skill.getPositionName());
-                                    tech.setSkillLevel(skill.getSkillLevel());
-                                    tech.setDescription(skill.getDescription());
-                                    return tech;
-                                })
-                                .collect(Collectors.toList()));
-
-                        dto.setLanguageProficiencies(
-                                jobQualification.getLanguageProficiencies().stream()
-                                        .map(lang -> {
-                                            LanguageProficiency langDto = new LanguageProficiency();
-                                            langDto.setLanguage(lang.getLanguage());
-                                            langDto.setReadingLevel(lang.getReadingLevel());
-                                            langDto.setWritingLevel(lang.getWritingLevel());
-                                            langDto.setSpeakingLevel(lang.getSpeakingLevel());
-                                            langDto.setListeningLevel(lang.getListeningLevel());
-                                            return langDto;
-                                        })
-                                        .collect(Collectors.toList())
-                        );
-
-                    }
-                    if (jobAdv.getBenefits() != null) {
-                        dto.setBenefitTypes( jobAdv.getBenefits().stream()
-                                .map(benefit -> {
-                                    Benefit b = new Benefit();
-                                    b.setBenefitType(benefit.getBenefitType());
-                                    b.setDescription(benefit.getDescription());
-                                    return b;
-                                }) // BenefitType enum'u string'e çeviriyoruz
-                                .collect(Collectors.toList())
-                     );
-
-                    }
-
-                    if (jobAdv.getJobPositions() != null) {
-                        dto.setJobPositions( jobAdv.getJobPositions().stream()
-                                .map(position -> {
-                                    JobPositions positions= new JobPositions();
-                                    positions.setPositionType(position.getPositionType());
-                                    positions.setCustomJobPosition(position.getCustomJobPosition());
-                                    return positions;
-                                })
-                                .collect(Collectors.toList())
-                        );
-
-
-                    }
-
-
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        // Call the updated service method
+        List<JobAdvDto> jobAdvDtos = jobAdvService.getMyJobAdvs(employer, positionName, status, workType);
         return ResponseEntity.ok(jobAdvDtos);
-
     }
 
     // 🔹 5. İlan başvurularını görüntüleme

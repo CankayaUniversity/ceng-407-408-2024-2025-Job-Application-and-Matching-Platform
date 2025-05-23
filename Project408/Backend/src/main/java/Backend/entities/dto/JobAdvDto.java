@@ -41,6 +41,7 @@ public class JobAdvDto {
     private List<LanguageProficiency> languageProficiencies;
     private List<Benefit> benefitTypes;
     private String companyName;
+    private boolean active;
 
     // Getters and Setters
     public Integer getId() {
@@ -230,5 +231,13 @@ public class JobAdvDto {
 
     public void setJobPositions(List<JobPositions> jobPositions) {
         this.jobPositions = jobPositions;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
