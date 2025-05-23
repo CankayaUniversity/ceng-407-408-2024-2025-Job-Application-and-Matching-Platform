@@ -137,6 +137,9 @@ public class User extends BaseEntity implements UserDetails {
         this.enabled = enabled;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
 }
 
