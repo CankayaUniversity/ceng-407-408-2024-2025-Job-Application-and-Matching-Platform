@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@Setter
 @Getter
+@Setter
 public abstract class BaseEntity {
 
     @Id
@@ -35,6 +35,14 @@ public abstract class BaseEntity {
     // Setter method for id (optional)
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }
 
