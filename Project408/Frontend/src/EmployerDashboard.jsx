@@ -10,10 +10,15 @@ const EmployerDashboard = () => {
     workType: '',
     minSalary: '',
     education: '',
+    active: true // Default to show only active users
   });
 
 
   useEffect(() => {
+    fetchCandidates();
+  }, []);
+
+  const fetchCandidates = (activeStatus = true) => {
     const token = localStorage.getItem('token');
     const id = localStorage.getItem('id');
     if (!token) {
@@ -21,7 +26,7 @@ const EmployerDashboard = () => {
       return;
     }
 
-    fetch('http://localhost:9090/employer/getAvailableCandidates', {
+    fetch(`http://localhost:9090/employer/getCandidates?active=${activeStatus}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -35,11 +40,17 @@ const EmployerDashboard = () => {
           setFilteredCandidates(data);
         })
         .catch(err => console.error("Candidates", err));
-  }, []);
+  };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prevFilters => ({ ...prevFilters, [name]: value }));
+  };
+
+  const handleActivityChange = (e) => {
+    const isActive = e.target.value === 'active';
+    setFilters(prevFilters => ({ ...prevFilters, active: isActive }));
+    fetchCandidates(isActive); // Fetch candidates with the selected activity status
   };
 
   const filterCandidates = () => {
@@ -96,6 +107,11 @@ const EmployerDashboard = () => {
     width: '180px',
     backgroundColor: '#fdfdfd',
     color: '#100e0e',
+  };
+
+  const selectStyle = {
+    ...inputStyle,
+    appearance: 'menulist'
   };
 
   const JobCard = ({ candidate }) => {
@@ -195,7 +211,10 @@ const EmployerDashboard = () => {
                    placeholder="Expected Salary" style={inputStyle} />
             <input type="text" name="education" value={filters.education} onChange={handleFilterChange}
                    placeholder="Education" style={inputStyle} />
-
+            <select name="activityStatus" onChange={handleActivityChange} style={selectStyle} value={filters.active ? 'active' : 'inactive'}>
+              <option value="active">Active Users</option>
+              <option value="inactive">All Users (Including Inactive)</option>
+            </select>
           </div>
           <div style={{ textAlign: 'center' }}>
             <button onClick={filterCandidates} style={{ ...buttonStyle, marginTop: '8px' }}>Filter</button>

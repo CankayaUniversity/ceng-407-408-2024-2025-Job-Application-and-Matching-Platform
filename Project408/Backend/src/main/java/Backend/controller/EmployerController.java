@@ -44,6 +44,12 @@ public class EmployerController {
         return ResponseEntity.ok(candidateService.getAvailableCandidates());
     }
 
+    @GetMapping("/getCandidates")
+    public ResponseEntity<List<Candidate>> getCandidatesByActivityStatus(
+            @RequestParam(name = "active", defaultValue = "true") boolean active) {
+        return ResponseEntity.ok(candidateService.getCandidatesByActivityStatus(active));
+    }
+
     @GetMapping("/profile/{id}")
     public ResponseEntity<HashMap<Object,Object> > getProfileDetails(@PathVariable("id") int id) {
         return ResponseEntity.ok(employerService.getProfileDetails(id));
