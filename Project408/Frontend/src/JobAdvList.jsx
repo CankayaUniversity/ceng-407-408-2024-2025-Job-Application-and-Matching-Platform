@@ -56,9 +56,9 @@ const JobAdvList = () => {
         try {
             const response = await fetch('http://localhost:9090/candidate/filterJobAdv', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(filterPayload)
             });
@@ -67,7 +67,7 @@ const JobAdvList = () => {
                 throw new Error(`Failed to fetch filtered jobs: ${errorText}`);
             }
             const data = await response.json();
-            setFilteredJobs(data);
+                setFilteredJobs(data);
             if (data.length === 0) {
                 setMessage("No jobs found matching your criteria.");
                 setShowToast(true);
@@ -85,12 +85,12 @@ const JobAdvList = () => {
 
         const token = localStorage.getItem('token');
         if (token) {
-            fetch('http://localhost:9090/candidate/myApplications', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+        fetch('http://localhost:9090/candidate/myApplications', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(res => {
                 if (!res.ok) throw new Error('Failed to fetch applications');
                 return res.json();

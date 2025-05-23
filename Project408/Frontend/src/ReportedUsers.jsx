@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { FaUser } from 'react-icons/fa';
+import { FaUserBan, FaUser } from 'react-icons/fa';
 import Toast from './components/Toast';
-import axios from 'axios';
 
 export default function ReportedUsers() {
     const [users, setUsers] = useState([]);
@@ -11,26 +10,30 @@ export default function ReportedUsers() {
 
     const fetchReportedUsers = useCallback(async () => {
         setLoading(true);
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token'); 
         if (!token) {
-            setMessage('Authentication token not found. Please log in.');
+            setMessage("Admin token not found. Please log in.");
             setShowToast(true);
             setLoading(false);
             setUsers([]);
             return;
         }
+
         try {
-            const response = await axios.get('http://localhost:9090/admin/reportedUsers', {
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await fetch('http://localhost:9090/admin/reportedUsers', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
-            setUsers(response.data);
-            if (response.data.length === 0) {
-                setMessage('No reported users found.');
-                setShowToast(true);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to fetch reported users: ${errorText || response.status}`);
             }
+            const data = await response.json();
+            setUsers(data);
         } catch (error) {
-            console.error("Failed to fetch reported users:", error);
-            setMessage(error.response?.data?.message || error.message || 'Failed to fetch reported users');
+            console.error("Error fetching reported users:", error);
+            setMessage(error.message || "Could not fetch reported users.");
             setShowToast(true);
             setUsers([]);
         } finally {
@@ -45,22 +48,29 @@ export default function ReportedUsers() {
     const handleBan = async (userId) => {
         const token = localStorage.getItem('token');
         if (!token) {
-            setMessage('Authentication token not found. Please log in.');
+            setMessage("Admin token not found. Please log in.");
             setShowToast(true);
             return;
         }
         try {
-            await axios.post(`http://localhost:9090/admin/banUser/${userId}`, {}, {
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await fetch(`http://localhost:9090/admin/banUser/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json' 
+                }
             });
-            setMessage(`User #${userId} has been banned successfully.`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to ban user: ${errorText || response.status}`);
+            }
+            setMessage(`User #${userId} has been successfully banned.`);
             setShowToast(true);
-            setUsers(prevUsers => prevUsers.map(user => 
-                user.id === userId ? { ...user, status: 'BANNED' } : user
-            ));
+            // Refresh the list of users after banning
+            fetchReportedUsers(); 
         } catch (error) {
-            console.error("Failed to ban user:", error);
-            setMessage(error.response?.data?.message || error.message || 'Failed to ban user');
+            console.error("Error banning user:", error);
+            setMessage(error.message || "Could not ban user.");
             setShowToast(true);
         }
     };
@@ -72,7 +82,7 @@ export default function ReportedUsers() {
                 className="text-2xl font-bold mb-6">Reported Users</h1>
 
             {loading ? (
-                <p className="text-gray-600">Loading data...</p>
+                <p className="text-gray-600">Loading reported users...</p>
             ) : users.length > 0 ? (
                 <div
                     style={{
@@ -91,28 +101,30 @@ export default function ReportedUsers() {
                                 borderRadius: '8px',
                                 padding: '14px 18px',
                                 boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-                                backgroundColor: '#fdfdfd'
+                                backgroundColor: user.status === 'BANNED' ? '#ffebee' : '#fdfdfd' // Highlight if banned
                             }}
                         >
                             <h2 className="text-lg font-semibold flex items-center gap-2 mb-1">
-                                <FaUser className="text-red-600" />
+                                <FaUser className={user.status === 'BANNED' ? "text-gray-500" : "text-red-600"} />
                                 {user.name}
                             </h2>
                             <p className="text-sm"><strong>Email:</strong> {user.email}</p>
                             <p className="text-sm"><strong>Reason:</strong> {user.reportReason}</p>
-                            <p className="text-sm"><strong>Status:</strong> <span className="text-blue-600 font-medium">{user.status}</span></p>
-                            <button
-                                className="mt-3 px-3 py-1 text-sm rounded text-white"
-                                style={{ backgroundColor: '#b30000' }}
-                                onClick={() => handleBan(user.id)}
-                            >
-                                Ban User
-                            </button>
+                            <p className="text-sm"><strong>Status:</strong> <span className={`font-medium ${user.status === 'BANNED' ? 'text-red-700' : 'text-blue-600'}`}>{user.status}</span></p>
+                            {user.status !== 'BANNED' && (
+                                <button
+                                    className="mt-3 px-3 py-1 text-sm rounded text-white flex items-center gap-1"
+                                    style={{ backgroundColor: '#b30000' }}
+                                    onClick={() => handleBan(user.id)}
+                                >
+                                    <FaUserBan /> Ban User
+                                </button>
+                            )}
                         </div>
                     ))}
                 </div>
             ) : (
-                <p className="text-red-600">No reported users found.</p>
+                <p className="text-gray-700">No reported users found or all reports have been handled.</p>
             )}
 
             <Toast message={message} show={showToast} onClose={() => setShowToast(false)} />

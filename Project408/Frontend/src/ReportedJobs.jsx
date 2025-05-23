@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { FaBriefcase } from 'react-icons/fa';
+import { FaBriefcase, FaTrash } from 'react-icons/fa';
 import Toast from './components/Toast';
-import axios from 'axios';
 
 export default function ReportedJobs() {
     const [jobs, setJobs] = useState([]);
@@ -13,23 +12,28 @@ export default function ReportedJobs() {
         setLoading(true);
         const token = localStorage.getItem('token');
         if (!token) {
-            setMessage('Authentication token not found. Please log in.');
+            setMessage("Admin token not found. Please log in.");
             setShowToast(true);
             setLoading(false);
             setJobs([]);
             return;
         }
+
         try {
-            const response = await axios.get('http://localhost:9090/admin/reportedJobs', {
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await fetch('http://localhost:9090/admin/reportedJobs', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
-            setJobs(response.data);
-            if (response.data.length === 0) {
-                setMessage('No reported jobs found.');
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to fetch reported jobs: ${errorText || response.status}`);
             }
+            const data = await response.json();
+            setJobs(data);
         } catch (error) {
-            console.error("Failed to fetch reported jobs:", error);
-            setMessage(error.response?.data?.message || error.message || 'Failed to fetch reported jobs');
+            console.error("Error fetching reported jobs:", error);
+            setMessage(error.message || "Could not fetch reported jobs.");
             setShowToast(true);
             setJobs([]);
         } finally {
@@ -44,20 +48,28 @@ export default function ReportedJobs() {
     const handleRemoveJob = async (jobId) => {
         const token = localStorage.getItem('token');
         if (!token) {
-            setMessage('Authentication token not found. Please log in.');
+            setMessage("Admin token not found. Please log in.");
             setShowToast(true);
             return;
         }
         try {
-            await axios.post(`http://localhost:9090/admin/removeJob/${jobId}`, {}, {
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await fetch(`http://localhost:9090/admin/removeJob/${jobId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             });
-            setMessage(`Job #${jobId} has been removed successfully.`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to remove job: ${errorText || response.status}`);
+            }
+            setMessage(`Job #${jobId} has been successfully removed.`);
             setShowToast(true);
-            setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+            fetchReportedJobs(); // Refresh the list
         } catch (error) {
-            console.error("Failed to remove job:", error);
-            setMessage(error.response?.data?.message || error.message || 'Failed to remove job');
+            console.error("Error removing job:", error);
+            setMessage(error.message || "Could not remove job.");
             setShowToast(true);
         }
     };
@@ -69,7 +81,7 @@ export default function ReportedJobs() {
                 className="text-2xl font-bold mb-6">Reported Job Advertisements</h1>
 
             {loading ? (
-                <p className="text-gray-600">Loading data...</p>
+                <p className="text-gray-600">Loading reported jobs...</p>
             ) : jobs.length > 0 ? (
                 <div
                     style={{
@@ -80,7 +92,6 @@ export default function ReportedJobs() {
                         margin: '0 auto'
                     }}
                 >
-
                     {jobs.map(job => (
                         <div
                             key={job.id}
@@ -89,29 +100,31 @@ export default function ReportedJobs() {
                                 borderRadius: '8px',
                                 padding: '14px 18px',
                                 boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-                                backgroundColor: '#fdfdfd'
+                                backgroundColor: job.status === 'REMOVED' ? '#ffebee' : '#fdfdfd' 
                             }}
                         >
                             <h2 className="text-lg font-semibold flex items-center gap-2 mb-1">
-                                <FaBriefcase className="text-green-600" />
+                                <FaBriefcase className={job.status === 'REMOVED' ? "text-gray-500" : "text-green-600"} />
                                 {job.title || 'Untitled Job'}
                             </h2>
                             <p className="text-sm"><strong>Company:</strong> {job.companyName}</p>
                             <p className="text-sm"><strong>Reported By:</strong> {job.reportedByEmail}</p>
                             <p className="text-sm"><strong>Reason:</strong> {job.reportReason}</p>
-                            <p className="text-sm"><strong>Status:</strong> <span className="text-blue-600 font-medium">{job.status}</span></p>
-                            <button
-                                className="mt-3 px-3 py-1 text-sm rounded text-white"
-                                style={{ backgroundColor: '#b30000' }}
-                                onClick={() => handleRemoveJob(job.id)}
-                            >
-                                Remove Job
-                            </button>
+                            <p className="text-sm"><strong>Status:</strong> <span className={`font-medium ${job.status === 'REMOVED' ? 'text-red-700' : 'text-blue-600'}`}>{job.status}</span></p>
+                            {job.status !== 'REMOVED' && (
+                                <button
+                                    className="mt-3 px-3 py-1 text-sm rounded text-white flex items-center gap-1"
+                                    style={{ backgroundColor: '#b30000' }}
+                                    onClick={() => handleRemoveJob(job.id)}
+                                >
+                                    <FaTrash /> Remove Job
+                                </button>
+                            )}
                         </div>
                     ))}
                 </div>
             ) : (
-                <p className="text-red-600">No reported jobs found.</p>
+                <p className="text-gray-700">No reported jobs found or all reports have been handled.</p>
             )}
 
             <Toast message={message} show={showToast} onClose={() => setShowToast(false)} />
