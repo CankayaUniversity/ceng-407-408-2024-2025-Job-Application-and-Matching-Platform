@@ -70,10 +70,10 @@ function App() {
                 <Route path="/employer/create-job" element={<CreateJobForm />} />
                 <Route path="/employer/profile" element={<EmployerProfile />} />
                 <Route path="/employer/my-jobs" element={<JobListings />} />
-                <Route path="/employer/offers" element={<JobOffers />} />
+                <Route path="/candidate/offers" element={<JobOffers />} />
                 <Route path="/candidate/my-jobs" element={<JobSeekerMyJobs />} />
                 <Route path="/employer/applications" element={<ApplicationsPage />} />
-                <Route path="/candidates" element={<CandidateList />} />
+                <Route path="/employer/applications/candidates" element={<CandidateList />} />
                 <Route path="/profile/settings" element={<ProfileSettings />} />
                 <Route path="/admin/reported-blogs" element={<ReportedOffers />} />
                 <Route path="/admin/reported-jobs" element={<ReportedJobs />} />

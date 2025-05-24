@@ -806,36 +806,38 @@ function CandidateList() {
                                                                                         }}/>
                                                             Projects
                                                         </h3>
+
                                                         <div
                                                             className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
-                                                            {app.candidate?.projects?.length > 0 && app.candidate?.projects[0].projectName ? (
-                                                                app.candidate?.projects.map((project, idx) => (
-                                                                    <div key={idx} className="border-b pb-2 mb-2">
-                                                                        <p><strong>Project
-                                                                            Name:</strong> {project.projectName}</p>
-                                                                        <p>
-                                                                            <strong>Description:</strong> {project.projectDescription || '-'}
-                                                                        </p>
-                                                                        <p><strong>Start
-                                                                            Date:</strong> {project.projectStartDate || '-'}
-                                                                        </p>
-                                                                        <p><strong>End
-                                                                            Date:</strong> {project.projectStatus === 'ONGOING' ? 'Ongoing' : (project.projectEndDate || '-')}
-                                                                        </p>
-                                                                        <p>
-                                                                            <strong>Status:</strong> {project.projectStatus || '-'}
-                                                                        </p>
-                                                                        <p>
-                                                                            <strong>Company:</strong> {project.company || '-'}
-                                                                        </p>
-                                                                        <p>
-                                                                            <strong>Privacy:</strong> {project.isPrivate ? 'Private' : 'Public'}
-                                                                        </p>
-                                                                    </div>
-                                                                ))
+                                                            {app.candidate?.projects?.length > 0 && app.candidate?.projects.some(p => !p.isPrivate) ? (
+                                                                app.candidate?.projects
+                                                                    .filter(project => !project.isPrivate) // sadece public projeler
+                                                                    .map((project, idx) => (
+                                                                        <div key={idx} className="border-b pb-2 mb-2">
+                                                                            <p><strong>Project
+                                                                                Name:</strong> {project.projectName}</p>
+                                                                            <p>
+                                                                                <strong>Description:</strong> {project.projectDescription || '-'}
+                                                                            </p>
+                                                                            <p><strong>Start
+                                                                                Date:</strong> {project.projectStartDate || '-'}
+                                                                            </p>
+                                                                            <p><strong>End
+                                                                                Date:</strong> {project.projectStatus === 'ONGOING' ? 'Ongoing' : (project.projectEndDate || '-')}
+                                                                            </p>
+                                                                            <p>
+                                                                                <strong>Status:</strong> {project.projectStatus || '-'}
+                                                                            </p>
+                                                                            <p>
+                                                                                <strong>Company:</strong> {project.company || '-'}
+                                                                            </p>
+                                                                            <p><strong>Privacy:</strong> Public</p>
+                                                                        </div>
+                                                                    ))
                                                             ) : (
                                                                 <p className="text-gray-500">No projects added.</p>
                                                             )}
+
                                                         </div>
                                                     </div>
 
@@ -843,25 +845,25 @@ function CandidateList() {
                                                 </div>
                                             </div>
                                         </div>
-                                </div>
-                            </div>
-                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </Collapse>
 
-                                </div>
-                                ))
-                                ) : (
-                                <p>No application found.</p>
-                                )}
-                            </div>
-                            );
-                            }
+                    </div>
+                ))
+            ) : (
+                <p>No application found.</p>
+            )}
+        </div>
+    );
+}
 
-                            export default CandidateList;
+export default CandidateList;
 
 
-                            // 5. <h2 className="text-2xl font-bold mb-4">Başvurular (İlan ID: {selectedJobAdvId})</h2>
-                            // {applications.length > 0 ? (
+// 5. <h2 className="text-2xl font-bold mb-4">Başvurular (İlan ID: {selectedJobAdvId})</h2>
+// {applications.length > 0 ? (
 
 //     applications.map((app, index) => (
 //

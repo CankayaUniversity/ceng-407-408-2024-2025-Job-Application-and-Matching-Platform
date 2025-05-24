@@ -127,7 +127,6 @@ public class DataInitializer implements CommandLineRunner {
         Country turkey = optionalTurkey.get();
 
         List<City> cities = cityRepository.findByCountry(turkey);
-
         List<University> universitiesToSave = new ArrayList<>();
 
         for (City city : cities) {
@@ -135,17 +134,12 @@ public class DataInitializer implements CommandLineRunner {
 
             if (cityName.equalsIgnoreCase("Ankara")) {
                 List<String> ankaraUniversities = List.of(
-                        "Ankara University",
-                        "Middle East Technical University",
-                        "Hacettepe University",
-                        "Gazi University",
-                        "Çankaya University",
-                        "Bilkent University",
+                        "Ankara University", "Middle East Technical University",
+                        "Hacettepe University", "Gazi University",
+                        "Çankaya University", "Bilkent University",
                         "TOBB University of Economics and Technology",
-                        "Yıldırım Beyazıt University",
-                        "Anadolu University",
+                        "Yıldırım Beyazıt University", "Anadolu University",
                         "Başkent University"
-                        // Dilersen daha ekleyebilirim
                 );
                 for (String uniName : ankaraUniversities) {
                     University uni = new University();
@@ -153,19 +147,14 @@ public class DataInitializer implements CommandLineRunner {
                     uni.setCity(city);
                     universitiesToSave.add(uni);
                 }
+
             } else if (cityName.equalsIgnoreCase("Istanbul")) {
                 List<String> istanbulUniversities = List.of(
-                        "Istanbul University",
-                        "Bogazici University",
-                        "Istanbul Technical University",
-                        "Marmara University",
-                        "Yildiz Technical University",
-                        "Koc University",
-                        "Sabanci University",
-                        "Istanbul Bilgi University",
-                        "Istanbul Sehir University",
-                        "Istanbul Aydin University"
-                        // Dilersen daha ekleyebilirim
+                        "Istanbul University", "Bogazici University",
+                        "Istanbul Technical University", "Marmara University",
+                        "Yildiz Technical University", "Koc University",
+                        "Sabanci University", "Istanbul Bilgi University",
+                        "Istanbul Sehir University", "Istanbul Aydin University"
                 );
                 for (String uniName : istanbulUniversities) {
                     University uni = new University();
@@ -173,33 +162,64 @@ public class DataInitializer implements CommandLineRunner {
                     uni.setCity(city);
                     universitiesToSave.add(uni);
                 }
+
+            } else if (cityName.equalsIgnoreCase("Izmir") || cityName.equalsIgnoreCase("İzmir")) {
+                List<String> izmirUniversities = List.of(
+                        "Ege University", "Dokuz Eylül University",
+                        "Izmir Institute of Technology", "Izmir University of Economics",
+                        "Yasar University", "Katip Celebi University"
+                );
+                for (String uniName : izmirUniversities) {
+                    University uni = new University();
+                    uni.setName(uniName);
+                    uni.setCity(city);
+                    universitiesToSave.add(uni);
+                }
+
+            } else if (cityName.equalsIgnoreCase("Antalya")) {
+                List<String> antalyaUniversities = List.of(
+                        "Akdeniz University", "Antalya Bilim University",
+                        "Alanya Alaaddin Keykubat University", "Alanya HEP University"
+                );
+                for (String uniName : antalyaUniversities) {
+                    University uni = new University();
+                    uni.setName(uniName);
+                    uni.setCity(city);
+                    universitiesToSave.add(uni);
+                }
             }
-            // Diğer şehirler için istersen ekleyebilirim
         }
 
         universityRepository.saveAll(universitiesToSave);
-        System.out.println("✅ Realistic universities initialized for Ankara and Istanbul");
+        System.out.println("✅ Universities initialized for Ankara, Istanbul, Izmir, and Antalya");
     }
 
-    private void initializeDepartments() {
-        // Ankara ve İstanbul şehirlerini bul
-        City ankara = cityRepository.findByName("Ankara");
-        City istanbul = cityRepository.findByName("İstanbul");
 
-        if (ankara == null || istanbul == null) {
-            System.out.println("❌ Ankara veya İstanbul bulunamadı!");
+    private void initializeDepartments() {
+        // Türkiye'deki tüm şehirleri al (sadece Ankara ve İstanbul yerine istersen tüm şehirlerdeki üniversiteler için çalışır)
+        Optional<Country> optionalTurkey = countryRepository.findByName("Turkey");
+        if (optionalTurkey.isEmpty()) {
+            System.out.println("❌ Turkey not found!");
             return;
         }
 
-        // Bu şehirlerdeki üniversiteleri getir
-        List<University> universities = universityRepository.findByCityIn(List.of(ankara, istanbul));
+        Country turkey = optionalTurkey.get();
+        List<City> citiesInTurkey = cityRepository.findByCountry(turkey);
 
+        // Bu şehirlerdeki tüm üniversiteleri al
+        List<University> universities = universityRepository.findByCityIn(citiesInTurkey);
+
+        // Sadece bilgisayar mühendisliği ve benzeri alanlar
         List<String> departmentNames = List.of(
                 "Computer Engineering",
                 "Software Engineering",
-                "Electrical Engineering",
-                "Information Systems",
-                "Mechatronics Engineering"
+                "Information Systems Engineering",
+                "Artificial Intelligence Engineering",
+                "Data Science",
+                "Mechatronics Engineering",
+                "Computer Science",
+                "Cyber Security",
+                "Electrical and Electronics Engineering"
         );
 
         List<Department> departmentsToSave = new ArrayList<>();
@@ -214,7 +234,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         departmentRepository.saveAll(departmentsToSave);
-        System.out.println("✅ Departments created for Ankara and İstanbul universities.");
+        System.out.println("✅ Technology-related departments initialized for Turkish universities.");
     }
 
     private void initializeEmployer() {
@@ -248,7 +268,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // Create JobAdv first
         JobAdv jobAdv = new JobAdv();
-        jobAdv.setDescription("Açıklama...");
+        jobAdv.setDescription("Senior Computer Engineer");
         jobAdv.setLastDate(LocalDate.parse("2025-05-30"));
         jobAdv.setLicense(true);
         jobAdv.setMaxSalary(10000.0);

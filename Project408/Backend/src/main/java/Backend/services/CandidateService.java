@@ -964,10 +964,10 @@ public class CandidateService {
             dto.setDocumentCategory(documentCategories);
             dto.setIsPrivate(isPrivateList);
         }
-            List<Skill> skills = candidate.getSkills();
-            if (skills != null && !skills.isEmpty()) {
-                List<String> skillNames = new ArrayList<>();
-                List<SkillLevel> skillLevels = new ArrayList<>();
+        List<Skill> skills = candidate.getSkills();
+        if (skills != null && !skills.isEmpty()) {
+            List<String> skillNames = new ArrayList<>();
+            List<SkillLevel> skillLevels = new ArrayList<>();
 
             for (Skill s : skills) {
                 skillNames.add(s.getSkillName());
@@ -1013,8 +1013,9 @@ public class CandidateService {
             dto.setCompany(companies);
         }
 
-       return dto;
+        return dto;
     }
+
 
 
     public Map<String, Object> getProfileDetails(Candidate candidate) {

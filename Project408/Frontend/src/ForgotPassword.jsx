@@ -77,7 +77,7 @@ function ForgotPassword() {
                                 setNewPassword("");
                                 navigate('/login'); // en son yönlendirme
                             }}
-                            className="text-blue-600 hover:underline mt-2 "
+                            className="bg-black text-white px-4 py-2 rounded "
                         >
                             &larr; Back to Login
                         </button>
@@ -115,7 +115,7 @@ function ForgotPassword() {
 
                         <button
                             onClick={() => setStep(1)}
-                            className="ttext-blue-600 hover:underline mt-2"
+                            className="bg-black text-white px-4 py-2 rounded"
                         >
                             &larr; Go Back
                         </button>

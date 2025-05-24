@@ -288,6 +288,40 @@ export default function JobSeekerDashboard() {
           console.error("Fotoğraf yükleme hatası:", err);
         });
   };
+  useEffect(() => {
+    const githubUrl = profileData.socialLinks?.githubUrl;
+    if (githubUrl && githubUrl.includes("github.com")) {
+      fetchGithubProjects(githubUrl).then(projectsFromGithub => {
+        setProfileData(prevData => ({
+          ...prevData,
+          projects: projectsFromGithub
+        }));
+      });
+    }
+  }, [profileData.socialLinks?.githubUrl]);
+
+  const fetchGithubProjects = async (githubUrl) => {
+    const username = githubUrl.split("https://github.com/")[1]?.split("/")[0];
+    if (!username) return [];
+
+    try {
+      const response = await fetch(`https://api.github.com/users/${username}/repos`);
+      const data = await response.json();
+
+      return data.map(repo => ({
+        projectName: repo.name,
+        projectDescription: repo.description || '',
+        projectStartDate: '',
+        projectEndDate: '',
+        projectStatus: 'COMPLETED',
+        isPrivate: repo.isPrivate,
+        company: null
+      }));
+    } catch (error) {
+      console.error("GitHub verileri alınamadı:", error);
+      return [];
+    }
+  };
 
   const [nationality, setNationality] = useState([]);
 
@@ -708,6 +742,8 @@ export default function JobSeekerDashboard() {
     if (!date) return null;
     const d = new Date(date);
     return d.toISOString().split("T")[0]; // "2000-01-01"
+    if (isNaN(d)) return null;
+    return d.toISOString().split('T')[0]; // sadece yyyy-mm-dd formatı için
   };
 
 
@@ -739,8 +775,8 @@ export default function JobSeekerDashboard() {
 
       // contact info
       phoneNumber: profileData.contactInformation?.phoneNumber,
-      country: profileData.contactInformation?.country,
-      city: profileData.contactInformation?.city,
+      country: profileData.contactInformation?.country?.id,
+      city: profileData.contactInformation?.city?.id,
 
       //job preferences
       jobPositionTypes: jobPositionTypes,
@@ -756,7 +792,8 @@ export default function JobSeekerDashboard() {
       referenceCompany: profileData.references.map(s => s.referenceCompany),
       referenceJobTitle: profileData.references.map(s => s.referenceJobTitle),
       referenceContactInfo: profileData.references.map(s => s.referenceContactInfo),
-      referenceYearsWorked: profileData.references.map(s => s.referenceYearsWorked),
+      referenceYearsWorked: profileData.references.map(s => Number(s.referenceYearsWorked)),
+
 
       //languageproficiency
       languageProficiencyLanguages: profileData.languageProficiency.map(l => l.language),

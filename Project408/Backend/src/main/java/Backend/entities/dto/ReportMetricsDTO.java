@@ -1,14 +1,13 @@
 package Backend.entities.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Map;
 
+@Setter
+@Getter
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class ReportMetricsDTO {
     private Map<String, Long> userReportCountsByStatus;
     private Map<String, Long> jobReportCountsByStatus;
@@ -16,4 +15,14 @@ public class ReportMetricsDTO {
     private long totalPendingReports;
     private long totalResolvedReports;
     private long totalReports;
-} 
+
+    public ReportMetricsDTO(Map<String, Long>  userReportCountsByStatus, Map<String, Long>  jobReportCountsByStatus, Map<String, Long> blogReportCountsByStatus, long totalPendingReports, long totalResolvedReports,long totalReports) {
+        this.userReportCountsByStatus = userReportCountsByStatus;
+        this.jobReportCountsByStatus = jobReportCountsByStatus;
+        this.blogReportCountsByStatus = blogReportCountsByStatus;
+        this.totalPendingReports = totalPendingReports;
+        this.totalResolvedReports = totalResolvedReports;
+        this.totalReports = totalReports;
+    }
+
+}

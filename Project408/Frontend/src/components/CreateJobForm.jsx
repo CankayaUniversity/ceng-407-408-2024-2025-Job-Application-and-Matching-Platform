@@ -896,7 +896,7 @@ export default function CreateJobForm() {
                             <div style={{textAlign: 'right'}}>
                               <div className="flex justify-end">
                                 <button onClick={handleNext}
-                                        className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                        className="bg-black text-white px-4 py-2 rounded">Next
                                 </button>
                               </div>
                             </div>
@@ -1058,11 +1058,11 @@ export default function CreateJobForm() {
 
                                   <div className="flex justify-between">
                                       <button onClick={handleBack}
-                                              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                              className="bg-black text-white px-4 py-2 rounded">Back
                                       </button>
                                       <div className="flex justify-end">
                                         <button onClick={handleNext}
-                                                className="bg-blue-600 text-grey px-4 py-2 rounded-md hover:bg-blue-700">Next
+                                                className="bg-black text-white px-4 py-2 rounded">Next
                                         </button>
                                       </div>
                                     </div>
@@ -1253,7 +1253,7 @@ export default function CreateJobForm() {
                                             <div className="text-right mb-3">
                                               <button
                                                   onClick={() => removeTechnicalSkills(index)}
-                                                  className="text-red-600 text-sm "
+                                                  className="bg-black text-white px-4 py-2 rounded"
                                               >
                                                 Remove
                                               </button>
@@ -1321,7 +1321,7 @@ export default function CreateJobForm() {
                                             <div className="text-right mb-3">
                                               <button
                                                   onClick={() => removeSocialSkills(index)}
-                                                  className="text-red-600 text-sm "
+                                                  className="bg-black text-white px-4 py-2 rounded"
                                               >
                                                 Remove
                                               </button>
@@ -1473,7 +1473,7 @@ export default function CreateJobForm() {
                                           <div className="text-right mb-3">
                                             <button
                                                 onClick={() => removeLanguageSkill(index)}
-                                                className="text-red-600 text-sm "
+                                                className="bg-black text-white px-4 py-2 rounded"
                                             >
                                               Remove
                                             </button>
@@ -1532,7 +1532,7 @@ export default function CreateJobForm() {
                                             <div className="text-right mb-3">
                                               <button
                                                   onClick={() => removeBenefits(index)}
-                                                  className="text-red-600 text-sm "
+                                                  className="bg-black text-white px-4 py-2 rounded"
                                               >
                                                 Remove
                                               </button>
@@ -1548,21 +1548,21 @@ export default function CreateJobForm() {
                                     <div className="flex justify-content-center">
                                       <button
                                           onClick={addTechnicalSkills}
-                                          className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                          className="bg-black text-white px-4 py-2 rounded"
                                       >
                                         Add Technical Skills
                                       </button>
                                       &nbsp;&nbsp;
                                       <button
                                           onClick={addSocialSkills}
-                                          className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                          className="bg-black text-white px-4 py-2 rounded"
                                       >
                                         Add Social Skills
                                       </button>
                                       &nbsp;&nbsp;
                                       <button
                                           onClick={addLanguageSkill}
-                                          className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                          className="bg-black text-white px-4 py-2 rounded"
                                       >
                                         Add Language Skill
                                       </button>
@@ -1571,7 +1571,7 @@ export default function CreateJobForm() {
 
                                       <button
                                           onClick={addBenefits}
-                                          className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                          className="bg-black text-white px-4 py-2 rounded"
                                       >
                                         Add Benefits
                                       </button>
@@ -1583,7 +1583,7 @@ export default function CreateJobForm() {
                                     <div style={{textAlign: 'right'}}>
                                       <div className="flex justify-between">
                                         <button onClick={handleBack}
-                                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Back
+                                                className="bg-black text-white px-4 py-2 rounded">Back
                                         </button>
 
                                         <button

@@ -369,7 +369,7 @@ const EmployerProfile = () => {
                                                 <h3 className="text-xl font-semibold text-black mb-3">Company
                                                     Informations</h3>
                                                 <button onClick={() => setShowForm(false)}
-                                                        className="text-gray-500 hover:text-gray-700 mb-3">✕
+                                                        className="bg-black text-white px-4 py-2 rounded mb-3">✕
                                                 </button>
                                             </div>
                                             <div className="space-y-4">
@@ -527,7 +527,7 @@ const EmployerProfile = () => {
                                                     <h3 className="text-xl font-semibold text-black mb-3">Company
                                                         Contact Information</h3>
                                                     <button onClick={() => setShowForm(false)}
-                                                            className="text-gray-500 hover:text-gray-700 mb-3">✕
+                                                            className="bg-black text-white px-4 py-2 rounded mb-3">✕
                                                     </button>
                                                 </div>
                                                 <div className="space-y-4">
@@ -633,7 +633,7 @@ const EmployerProfile = () => {
                                                     <h3 className="text-xl font-semibold text-black mb-3">Projects</h3>
                                                     <button
                                                         onClick={() => setShowForm(false)}
-                                                        className="text-gray-500 hover:text-gray-700 mb-3"
+                                                        className="bg-black text-white px-4 py-2 rounded mb-3"
                                                     >
                                                         ✕
                                                     </button>

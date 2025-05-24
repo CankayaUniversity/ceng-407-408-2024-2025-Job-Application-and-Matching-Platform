@@ -30,4 +30,36 @@ public class ReportedUser extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ReportStatus status = ReportStatus.PENDING;
-} 
+
+    public User getReportedUser() {
+        return reportedUser;
+    }
+
+    public void setReportedUser(User reportedUser) {
+        this.reportedUser = reportedUser;
+    }
+
+    public User getReporter() {
+        return reporter;
+    }
+
+    public void setReporter(User reporter) {
+        this.reporter = reporter;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public ReportStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReportStatus status) {
+        this.status = status;
+    }
+}

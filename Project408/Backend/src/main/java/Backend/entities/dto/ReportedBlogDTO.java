@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+
 @NoArgsConstructor
 public class ReportedBlogDTO {
     private Integer id;
@@ -13,4 +13,12 @@ public class ReportedBlogDTO {
     private String authorEmail;
     private String reportReason;
     private String status;
+
+    public ReportedBlogDTO(Integer id, String title, String authorEmail, String reportReason, String status) {
+        this.id = id;
+        this.title = title;
+        this.authorEmail = authorEmail;
+        this.reportReason = reportReason;
+        this.status = status;
+    }
 } 

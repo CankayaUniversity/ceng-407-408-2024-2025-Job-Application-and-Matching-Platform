@@ -442,7 +442,7 @@ const ApplicationsPage = () => {
                             <div className="flex justify-between">
                                 <button
                                     className="bg-black text-white px-4 py-2 rounded"
-                                    onClick={() => navigate("/candidates", {state: {selectedJob}})}
+                                    onClick={() => navigate("/employer/applications/candidates", {state: {selectedJob}})}
 
                                 >
                                     View Applications

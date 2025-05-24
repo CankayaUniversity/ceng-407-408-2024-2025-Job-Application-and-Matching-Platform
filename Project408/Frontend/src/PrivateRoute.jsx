@@ -24,7 +24,7 @@ const PrivateRoute = () => {
   }
 
   // Candidate sayfaları kontrolü
-  if (path.startsWith('/candidate')) {
+  if (path.startsWith('/candidate') ) {
     if (userType !== 'CANDIDATE') {
       return <Navigate to="/login" />;
     }
