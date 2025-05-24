@@ -1,139 +1,107 @@
-import React, { useEffect, useState } from "react";
-import { FaSearch, FaBell, FaUserCircle, FaSignOutAlt, FaFileAlt, FaBriefcase, FaCalendarCheck, FaComments, FaBlog } from 'react-icons/fa';
-import { Navbar, Nav, NavDropdown, Container, FormControl, Button, Dropdown } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { useNotificationContext } from "./NotificationContext";
-import axios from "axios";
+import { FaSearch, FaBell } from 'react-icons/fa';
+import { Navbar, Nav, Container, FormControl, Button, Dropdown } from 'react-bootstrap';
+import { useUser } from './UserContext.jsx';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const NavbarJobSeeker = () => {
-    const navigate = useNavigate();
-    const [userName, setUserName] = useState('Job Seeker');
-    const { notifications, unreadCount, markAsRead, markAllAsRead, fetchNotifications } = useNotificationContext();
-    const [showNotifications, setShowNotifications] = useState(false);
+function NavbarCustom() {
+  const navigate = useNavigate();
+  const [userName, setUserName] = useState('');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const id = localStorage.getItem('id');
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userType');
+    navigate('/login');
+  };
 
-        if (token && id) {
-            axios.get(`http://localhost:9090/candidate/userName/${id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(response => {
-                setUserName(response.data.userName || 'Job Seeker');
-            })
-            .catch(error => {
-                console.error("Failed to fetch user name:", error);
-            });
-            // fetchNotifications(); // Context handles initial fetch
+  // const { user } = useUser();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const id = localStorage.getItem('id');
+
+    if (!token || !id) {
+      console.log('User not logged in or ID is missing');
+      return;
+    }
+
+    fetch(`http://localhost:9090/candidate/userName/${id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.userName) {
+          setUserName(data.userName);
         } else {
-            navigate('/login');
+          console.log('No username found in the response');
         }
-    }, [navigate, fetchNotifications]);
+      })
+      .catch(err => console.error("Unable to fetch user info", err));
+  }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userType');
-        localStorage.removeItem('id');
-        navigate('/login');
-    };
 
-    const toggleNotifications = () => setShowNotifications(!showNotifications);
 
-    const handleMarkNotificationAsRead = (notification) => {
-        markAsRead(notification.id);
-        if (notification.link) {
-            navigate(notification.link);
-        }
-        // setShowNotifications(false);
-    };
+  return (
+    <Navbar bg="white" expand="lg" className="shadow-sm px-4 py-2 position-relative">
+      <Container fluid className="d-flex justify-content-between align-items-center">
+        {/* Sol kısım: Logo + Menü */}
+        <div className="d-flex align-items-center gap-3">
+          <Navbar.Brand href="/candidate/jobs" className="fw-bold text-primary">Logo</Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        </div>
+        
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="d-flex gap-4">
+            <Nav.Link href="/candidate/dashboard" className="text-dark fw-medium nav-item-hover">Profile</Nav.Link>
+            <Nav.Link href="/candidate/my-jobs" className="text-dark fw-medium">My Applications</Nav.Link>
+            <Nav.Link href="/employer/offers" className="text-dark fw-medium">My Offers</Nav.Link>
+            {/*<Nav.Link href="/chat" className="text-dark fw-medium">Chat</Nav.Link>*/}
+            <Nav.Link href="/blog" className="text-dark fw-medium">Blog</Nav.Link>
+            <Nav.Link href="/interviews" className="text-dark fw-medium">Interviews</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
 
-    const handleClearAll = async () => {
-        await markAllAsRead();
-    };
 
-    return (
-        <Navbar bg="white" expand="lg" className="shadow-sm px-4 py-3 fixed-top">
-            <Container fluid>
-                <Navbar.Brand href="/JobSeekerDashboard" className="fw-bold text-success">Logo</Navbar.Brand>
-                <Navbar.Toggle aria-controls="jobseeker-navbar-nav" />
-                <Navbar.Collapse id="jobseeker-navbar-nav">
-                    <Nav className="me-auto">
-                        <Nav.Link href="/JobSeekerDashboard" className="fw-medium">
-                            <FaBriefcase className="me-2" />Dashboard
-                        </Nav.Link>
-                        <Nav.Link href="/my-applications" className="fw-medium">
-                            <FaFileAlt className="me-2" />My Applications
-                        </Nav.Link>
-                         <Nav.Link href="/job-offers" className="fw-medium">
-                            <FaBriefcase className="me-2" />Offers
-                        </Nav.Link>
-                        <Nav.Link href="/interviews" className="fw-medium">
-                            <FaCalendarCheck className="me-2" />Interviews
-                        </Nav.Link>
-                        <Nav.Link href="/chat" className="fw-medium">
-                            <FaComments className="me-2" />Chat
-                        </Nav.Link>
-                        <Nav.Link href="/blog" className="fw-medium">
-                            <FaBlog className="me-2" />Blog
-                        </Nav.Link>
-                    </Nav>
-                    <Nav className="ms-auto d-flex align-items-center">
-                        <div className="position-relative me-3">
-                            <Button variant="light" className="rounded-circle p-2" onClick={toggleNotifications}>
-                                <FaBell />
-                                {unreadCount > 0 && (
-                                    <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                        <span className="visually-hidden">New alerts</span>
-                                    </span>
-                                )}
-                            </Button>
-                            {showNotifications && (
-                                <div className="dropdown-menu dropdown-menu-end show position-absolute mt-2 shadow-lg" style={{ width: '320px', right: 0, left: 'auto' }}>
-                                    <div className="p-2 border-bottom">
-                                        <h6 className="mb-0">Notifications</h6>
-                                    </div>
-                                    <div style={{ maxHeight: '280px', overflowY: 'auto' }}>
-                                        {notifications.length === 0 ? (
-                                            <div className="p-3 text-center text-muted">No new notifications.</div>
-                                        ) : (
-                                            notifications.map(notification => (
-                                                <Dropdown.Item key={notification.id} onClick={() => handleMarkNotificationAsRead(notification)} className={`d-flex align-items-start p-2 ${!notification.isRead ? 'bg-light' : ''}`}>
-                                                    <FaBell className="text-info me-2 mt-1 flex-shrink-0" />
-                                                    <div className="flex-grow-1">
-                                                        <small className="fw-bold">{notification.message || notification.title}</small>
-                                                        <div className="text-muted x-small">
-                                                             {new Date(notification.createdAt).toLocaleTimeString()} - {new Date(notification.createdAt).toLocaleDateString()}
-                                                        </div>
-                                                    </div>
-                                                </Dropdown.Item>
-                                            ))
-                                        )}
-                                    </div>
-                                    {notifications.length > 0 && (
-                                        <div className="p-2 border-top text-center">
-                                            <Button variant="link" size="sm" onClick={handleClearAll} className="text-danger">
-                                                Mark all as read
-                                            </Button>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                        <NavDropdown title={<><FaUserCircle className="me-1" /> {userName}</>} id="jobseeker-profile-dropdown" align="end">
-                            <NavDropdown.Item href="/profile-settings">
-                                <FaUserCircle className="me-2" />Profile Settings
-                            </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item onClick={handleLogout}>
-                                <FaSignOutAlt className="me-2" />Sign Out
-                            </NavDropdown.Item>
-                        </NavDropdown>
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
-    );
-};
+        {/* Sağ kısım: Arama + Bildirim + Kullanıcı */}
+        <div className="d-flex align-items-center gap-3">
+          {/* Search
+          <div className="position-relative bg-light rounded-pill px-3 py-1 d-flex align-items-center">
+            <FaSearch className="text-muted me-2" />
+            <FormControl
+              type="search"
+              placeholder="Search"
+              className="border-0 bg-transparent shadow-none"
+              style={{ width: '160px' }}
+            />
+          </div> */}
 
-export default NavbarJobSeeker;
+          {/* Notification */}
+          <Button variant="light" className="rounded-circle p-2">
+            <FaBell className="text-dark" />
+          </Button>
+
+          {/* User */}
+          <Dropdown align="end">
+            <Dropdown.Toggle
+              style={{ backgroundColor: '#0C21C1', borderColor: '#0C21C1' }}
+              variant="primary" className="rounded-pill px-3 py-1 text-white fw-medium">
+              {userName}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item href="/profile/settings">Profile Settings</Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item onClick={handleLogout}>Sign Out</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+
+        </div>
+      </Container>
+    </Navbar>
+  );
+}
+
+export default NavbarCustom;
