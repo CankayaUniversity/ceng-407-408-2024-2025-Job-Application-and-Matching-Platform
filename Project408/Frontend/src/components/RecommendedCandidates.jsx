@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { getRecommendedCandidates } from './RecommendationService';
+import {useLocation} from "react-router-dom";
 
-const RecommendedCandidates = ({ jobId }) => {
+const RecommendedCandidates = () => {
+    const location = useLocation();
+    const jobId = location.state?.jobId;
+
   const [recommendedCandidates, setRecommendedCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

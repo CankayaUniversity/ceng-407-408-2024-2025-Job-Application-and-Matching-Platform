@@ -51,7 +51,8 @@ public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
             "\ts.lastname ,\n" +
             "\ts.email ,\n" +
             "\ts.user_type ,\n" +
-            "\ts.\"password\" \n" +
+            "\ts.\"password\" ,\n" +
+            "\ts.enabled \n" +
             "from\n" +
             "\tcandidates c\n" +
             "inner join users s on\n" +

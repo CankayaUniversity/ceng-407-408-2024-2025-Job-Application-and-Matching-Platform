@@ -300,6 +300,7 @@ public class CandidateService {
             education = candidate.getEducation();
         }
 
+        education.setDegreeType(dto.getEducationDegreeType());
 
         University uni = universityRepository.findByName(dto.getAssociateUniversityName());
         if(uni!=null){

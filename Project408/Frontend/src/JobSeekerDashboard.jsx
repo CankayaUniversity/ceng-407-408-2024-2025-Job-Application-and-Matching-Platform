@@ -472,7 +472,7 @@ export default function JobSeekerDashboard() {
         .then(res => res.json())
         .then(data => {
           console.log("data:", data);
-          setProfileData(data);                // nested objeyi state'e ata
+          setProfileData(data);
         })
         .catch(err => console.error("Unable to fetch profile", err));
 
@@ -738,13 +738,19 @@ export default function JobSeekerDashboard() {
   const selectedCountry = countries.find(c => c.id === Number(profileData?.contactInformation?.country));
   const selectedCity = cities.find(c => c.id === Number(profileData?.contactInformation?.city));
 
-  const formatDate = (date) => {
-    if (!date) return null;
-    const d = new Date(date);
-    return d.toISOString().split("T")[0]; // "2000-01-01"
-    if (isNaN(d)) return null;
-    return d.toISOString().split('T')[0]; // sadece yyyy-mm-dd formatı için
+  const formatDate = (dateString) => {
+    if (!dateString) return null;
+
+    const [day, month, year] = dateString.split("-");
+
+    const formatted = `${year}-${month}-${day}`;
+    const d = new Date(formatted);
+
+    if (isNaN(d.getTime())) return null;
+
+    return d.toISOString().split("T")[0]; d
   };
+
 
 
   const handleSubmit = async (e) => {
@@ -775,8 +781,14 @@ export default function JobSeekerDashboard() {
 
       // contact info
       phoneNumber: profileData.contactInformation?.phoneNumber,
-      country: profileData.contactInformation?.country?.id,
-      city: profileData.contactInformation?.city?.id,
+      country: typeof profileData.contactInformation?.country === "object"
+          ? profileData.contactInformation.country.id
+          : profileData.contactInformation?.country,
+
+      city: typeof profileData.contactInformation?.city === "object"
+          ? profileData.contactInformation.city.id
+          : profileData.contactInformation?.city,
+
 
       //job preferences
       jobPositionTypes: jobPositionTypes,
@@ -1077,10 +1089,10 @@ export default function JobSeekerDashboard() {
 
                         <p><strong>Phone Number:</strong> {profileData.contactInformation?.phoneNumber || '-'}</p>
                         <p>
-                          <strong>Country:</strong> {selectedCountry?.name || profileData.contactInformation?.country?.name || '-'}
+                          <strong>Country:</strong> {selectedCountry?.name||profileData.contactInformation?.country?.name|| '-'}
                         </p>
                         <p>
-                          <strong>City:</strong> {selectedCity?.name || profileData.contactInformation?.city?.name || '-'}
+                          <strong>City:</strong> {selectedCity?.name||profileData.contactInformation?.city?.name||  '-'}
                         </p>
 
                         <p><strong>Github:</strong> {profileData.socialLinks?.githubUrl || '-'}</p>
@@ -1885,7 +1897,7 @@ export default function JobSeekerDashboard() {
 
                         {/* Country */}
                         <select
-                            value={selectedCountryId || ""}
+                            value={profileData.contactInformation?.country || ""}
                             onChange={(e) => {
                               const countryId = e.target.value;
                               setSelectedCountryId(countryId);

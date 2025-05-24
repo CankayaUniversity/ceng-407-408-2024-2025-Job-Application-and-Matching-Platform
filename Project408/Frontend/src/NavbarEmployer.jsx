@@ -74,7 +74,7 @@ function NavbarEmployer() {
 
         {/* LOGO + TOGGLE */}
         <div className="d-flex align-items-center gap-3">
-          <Navbar.Brand href="/employerDashboard" className="fw-bold text-primary">Logo</Navbar.Brand>
+          <Navbar.Brand href="/employer/applications" className="fw-bold text-primary">Logo</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         </div>
 
@@ -82,7 +82,7 @@ function NavbarEmployer() {
           <Nav className="me-auto d-flex gap-3 flex-column flex-lg-row mt-3 mt-lg-0">
             <Nav.Link href="/employer/profile" className="text-dark fw-medium">Profile</Nav.Link>
             <Nav.Link href="/employer/create-job" className="text-dark fw-medium">Post Job</Nav.Link>
-            <Nav.Link href="/employer/applications" className="text-dark fw-medium">My Job Applications</Nav.Link>
+            {/*<Nav.Link href="/employer/applications" className="text-dark fw-medium">My Job Applications</Nav.Link>*/}
             <Nav.Link href="/job-offers" className="text-dark fw-medium">Offers</Nav.Link>
 
             <Nav.Link href="/blog" className="text-dark fw-medium">Blog</Nav.Link>

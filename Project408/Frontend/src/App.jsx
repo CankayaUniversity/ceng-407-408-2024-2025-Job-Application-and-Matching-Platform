@@ -34,6 +34,8 @@ import ReportedOffers from './ReportedBlogs.jsx';
 import ReportedJobs from './ReportedJobs.jsx';
 import ReportedUsers from './ReportedUsers.jsx';
 import AdminReportMetrics from './AdminReportMetrics.jsx';
+import RecommendedJobs from "./components/RecommendedJobs.jsx";
+import RecommendedCandidates from "./components/RecommendedCandidates.jsx";
 
 
 function App() {
@@ -63,7 +65,7 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route element={<Layout />}>
                 <Route path="/candidate/dashboard" element={<JobSeekerDashboard />} />
-                <Route path="/employerDashboard" element={<EmployerDashboard />} />
+                {/*<Route path="/employerDashboard" element={<EmployerDashboard />} />*/}
                 <Route path="/job-offers" element={<JobOffersEmployer />} />
                 <Route path="/candidate/jobs" element={<JobAdvList />} />
                 <Route path="/employer/jobs/:id/edit" element={<EditJobForm />} />
@@ -84,6 +86,10 @@ function App() {
                 <Route path="/post/:id" element={<PostDetail />} />
                 <Route path="/interviews" element={<InterviewPage />} />
                 <Route path="/notifications" element={<NotificationsPage notifications={notifications} markAsRead={markAsRead} />} />
+                <Route path="/candidate/recommendedJobs" element={<RecommendedJobs />} />
+                <Route path="/employer/recommendedCandidates" element={<RecommendedCandidates />} />
+                <Route path="/candidate/recommendedJobs" element={<RecommendedJobs />} />
+
               </Route>
             </Route>
           </Routes>

@@ -104,7 +104,18 @@ public class CandidateController {
         String fileUrl = "/uploads/" + fileName;
 
         Candidate candidate = candidateRepository.findById(userId).orElseThrow();
-        candidate.getProfileDetails().setProfilePicture(fileUrl);
+
+
+        ProfileDetails profileDetails = candidate.getProfileDetails();
+
+        if (profileDetails == null) {
+            profileDetails = new ProfileDetails();
+            candidate.setProfileDetails(profileDetails);
+        }
+
+        profileDetails.setProfilePicture(fileUrl);
+
+
         candidateRepository.save(candidate);
         return ResponseEntity.ok(fileUrl);
     }

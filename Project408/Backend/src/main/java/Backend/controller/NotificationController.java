@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/notifications")
-@CrossOrigin(origins = "*") // Adjust according to your CORS policy
 public class NotificationController {
 
     @Autowired

@@ -64,7 +64,7 @@ export default function Login() {
                     return;
                 }
                 else if (data.userType === 'EMPLOYER') {
-                    navigate('/employerDashboard');
+                    navigate('/employer/applications');
                 }
                 else if (data.userType === 'CANDIDATE') {
                     // navigate('/dashboard');
@@ -199,22 +199,22 @@ export default function Login() {
                     </form>
 
 
-                    <div className="mt-8 text-center">
-                        {/* or sign up with */}
-                        <div className="flex items-center mb-6">
-                            <hr className="flex-grow border-gray-300" />
-                            <span className="mx-4 text-sm text-gray-500">or sign up with</span>
-                            <hr className="flex-grow border-gray-300" />
-                        </div>
-                        <div className="flex justify-center gap-6">
-                            <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGithub size={24}
-                                className="text-black" />
-                            </button>
-                            <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGoogle size={24}
-                                className="text-black" />
-                            </button>
-                        </div>
-                    </div>
+                    {/*<div className="mt-8 text-center">*/}
+                    {/*    /!* or sign up with *!/*/}
+                    {/*    <div className="flex items-center mb-6">*/}
+                    {/*        <hr className="flex-grow border-gray-300" />*/}
+                    {/*        <span className="mx-4 text-sm text-gray-500">or sign up with</span>*/}
+                    {/*        <hr className="flex-grow border-gray-300" />*/}
+                    {/*    </div>*/}
+                    {/*    <div className="flex justify-center gap-6">*/}
+                    {/*        <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGithub size={24}*/}
+                    {/*            className="text-black" />*/}
+                    {/*        </button>*/}
+                    {/*        <button className="p-2 bg-white hover:opacity-80 transition-opacity"><FaGoogle size={24}*/}
+                    {/*            className="text-black" />*/}
+                    {/*        </button>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                 </div>
             </div>
 

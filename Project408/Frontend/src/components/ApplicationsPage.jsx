@@ -447,13 +447,24 @@ const ApplicationsPage = () => {
                                 >
                                     View Applications
                                 </button>
+
+                                <button
+                                    className="bg-black text-white px-4 py-2 rounded"
+                                    onClick={() => {
+                                        console.log('Job ID:', selectedJob?.id);
+                                        navigate("/employer/recommendedCandidates", {state: {jobId: selectedJob?.id}});
+                                    }}
+                                >
+                                    Recommended Candidates
+                                </button>
+
                                 <button
                                     className="bg-black text-white px-4 py-2 rounded"
                                     onClick={() => handleDelete(selectedJob)}
                                 >
                                     Delete
                                 </button>
-                                <Toast message={message} show={showToast} onClose={handleCloseToast} />
+                                <Toast message={message} show={showToast} onClose={handleCloseToast}/>
 
                             </div>
                         </div>
