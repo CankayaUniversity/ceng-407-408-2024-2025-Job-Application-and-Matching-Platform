@@ -1,5 +1,7 @@
 package Backend.services.impl;
 
+import Backend.entities.dto.ReportMetricsDTO;
+
 import Backend.entities.common.ReportedBlog;
 import Backend.entities.common.ReportedJob;
 import Backend.entities.common.ReportedUser;

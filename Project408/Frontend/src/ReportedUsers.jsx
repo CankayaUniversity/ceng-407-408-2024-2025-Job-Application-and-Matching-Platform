@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { FaUserBan, FaUser } from 'react-icons/fa';
+import { FaBan, FaUser } from 'react-icons/fa';
 import Toast from './components/Toast';
 
 export default function ReportedUsers() {
@@ -117,7 +117,7 @@ export default function ReportedUsers() {
                                     style={{ backgroundColor: '#b30000' }}
                                     onClick={() => handleBan(user.id)}
                                 >
-                                    <FaUserBan /> Ban User
+                                    <FaBan /> Ban User
                                 </button>
                             )}
                         </div>

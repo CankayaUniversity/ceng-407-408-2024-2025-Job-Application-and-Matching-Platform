@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaSearch, FaBell, FaUserCircle, FaSignOutAlt, FaFileAlt, FaBriefcase, FaCalendarCheck, FaComments, FaBlog } from 'react-icons/fa';
-import { Navbar, Nav, Container, FormControl, Button, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, Container, FormControl, Button, Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useNotificationContext } from "./NotificationContext";
 import axios from "axios";
