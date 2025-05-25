@@ -11,7 +11,6 @@ const EmployerProfile = () => {
 
     const [profile, setProfile] = useState({
         company: {
-
             companyName: '',
             vision:'',
             mission:'',
@@ -42,13 +41,15 @@ const EmployerProfile = () => {
     const handleCloseToast = () => {
         setShowToast(false);
     };
+
     const cleanedCompany = {
         ...profile.company,
-        projects: profile.company.projects.map(p => ({
+        projects: (profile.company?.projects || []).map(p => ({
             ...p,
             projectStatus: p.projectStatus === '' ? null : p.projectStatus
         }))
     };
+
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -310,8 +311,8 @@ const EmployerProfile = () => {
                                                     Projects
                                                 </h3>
 
-                                                {profile.company?.projects && profile.company.projects.length > 0 ? (
-                                                    profile.company.projects.map((proj, idx) => (
+                                                {profile?.company?.projects && profile?.company?.projects.length > 0 ? (
+                                                    profile.company?.projects.map((proj, idx) => (
                                                         <div key={idx}
                                                              className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                                             <p><strong>Project Name:</strong> {proj.projectName || '-'}
@@ -455,7 +456,7 @@ const EmployerProfile = () => {
                                                         <div className="flex-1 mb-0">
                                                             <select
                                                                 name="employeeCount"
-                                                                value={profile.company?.employeeCount || ''}
+                                                                value={profile?.company?.employeeCount || ''}
                                                                 onChange={(e) => handleProfileFieldChange(['company', 'employeeCount'], e.target.value)}
                                                                 className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"
                                                             >
@@ -483,7 +484,7 @@ const EmployerProfile = () => {
                                                         <div className="flex-1 mb-0">
                                                             <input
                                                                 type="date"
-                                                                value={profile.company?.establishedDate}
+                                                                value={profile?.company?.establishedDate}
                                                                 onChange={(e) => handleProfileFieldChange(['company', 'establishedDate'], e.target.value)}
                                                                 placeholder="Established Date"
                                                                 className="w-full border border-gray-300 p-3 rounded-md bg-white text-black focus:outline-none"

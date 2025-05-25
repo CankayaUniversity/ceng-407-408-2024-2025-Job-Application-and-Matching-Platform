@@ -757,7 +757,7 @@ export default function CreateJobForm() {
                           <div className="flex justify-between items-center mb-3">
                             <h3 className="text-xl font-semibold text-black mb-3">Job Advertisement</h3>
                             <button onClick={() => setShowForm(false)}
-                                    className="text-gray-500 hover:text-gray-700">✕
+                                    className="bg-black text-white px-4 py-2 rounded">✕
                             </button>
                           </div>
 
@@ -918,7 +918,7 @@ export default function CreateJobForm() {
                           <div className="flex justify-between items-center">
                             <h3 className="text-xl font-semibold text-black mb-3">Job Condition</h3>
                             <button onClick={() => setShowForm(false)}
-                                    className="text-gray-500 hover:text-gray-700 mb-3">✕
+                                    className="bg-black text-white px-4 py-2 rounded mb-3">✕
                             </button>
                           </div>
                           <div className="space-y-4">
@@ -1088,7 +1088,7 @@ export default function CreateJobForm() {
                                 <div className="flex justify-between items-center">
                                   <h3 className="text-xl font-semibold text-black mb-3">Job Qualifications</h3>
                                   <button onClick={() => setShowForm(false)}
-                                          className="text-gray-500 hover:text-gray-700 mb-3 ">✕
+                                          className="bg-black text-white px-4 py-2 rounded mb-3 ">✕
                                   </button>
                                 </div>
 
