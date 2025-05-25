@@ -48,7 +48,7 @@ function NavbarAdmin() {
 
                 {/* Logo + Menu */}
                 <div className="d-flex align-items-center gap-3">
-                    <Navbar.Brand href="/admin/dashboard" className="fw-bold text-danger">Logo</Navbar.Brand>
+                    <Navbar.Brand href="/admin/dashboard" className="fw-bold text-danger">Hirely</Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 </div>
                 <Navbar.Collapse id="responsive-navbar-nav">

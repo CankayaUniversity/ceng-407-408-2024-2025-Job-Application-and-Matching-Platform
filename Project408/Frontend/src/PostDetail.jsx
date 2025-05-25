@@ -1,138 +1,107 @@
-import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Button } from './components/ui/Button';
+import { usePostContext } from './PostContext';
+import { avatarStyle, buttonStyle } from './styles/inlineStyles';
+import { useUser } from './UserContext.jsx';
+import { motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import axios from 'axios';
-import { FaFlag } from 'react-icons/fa';
+import PostActions from './PostActions';
 
-const PostActions = ({ post, user }) => {
-    const { posts, setPosts } = usePostContext();
-    const [newComment, setNewComment] = useState('');
-    const [reportReason, setReportReason] = useState('');
-    const [showReport, setShowReport] = useState(false);
+export default function PostDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const { posts, setPosts } = usePostContext();
 
-    const token = localStorage.getItem('token');
+  const [post, setPost] = useState(null);
+  const token = localStorage.getItem('token');
 
-    const handleAddComment = async () => {
-        if (!newComment.trim()) return;
-
-        try {
-            const response = await axios.post(
-                'http://localhost:9090/blogs/add-comment',
-                {
-                    postId: post.id,
-                    authorId: user.id,
-                    content: newComment,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            const updatedPost = { ...post, comments: [...post.comments, response.data] };
-            const updatedPosts = posts.map((p) => (p.id === post.id ? updatedPost : p));
-            setPosts(updatedPosts);
-            setNewComment('');
-        } catch (error) {
-            console.error('Yorum eklenemedi:', error);
-        }
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const res = await axios.get(`http://localhost:9090/blog/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setPost(res.data);
+      } catch (err) {
+        console.error('Post alınamadı:', err);
+      }
     };
+    fetchPost();
+  }, [id, token]);
 
-    const handleLike = async () => {
-        try {
-            await axios.post(
-                `http://localhost:9090/blogs/${post.id}/like`,
-                {
-                    userId: user.id,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+  if (!post) {
+    return <div className="p-6 text-center">Post not found.</div>;
+  }
 
-            const updatedPost = { ...post, likes: post.likes + 1 };
-            const updatedPosts = posts.map((p) => (p.id === post.id ? updatedPost : p));
-            setPosts(updatedPosts);
-        } catch (error) {
-            console.error('Beğeni gönderilemedi:', error);
-        }
-    };
+  return (
+    <motion.div
+      className="p-6 max-w-4xl mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'linear' }}
+    >
+      <div className="min-h-screen bg-blue-500 py-10 px-4 flex justify-center">
+        <div
+          className="w-full max-w-[1100px] rounded-2xl shadow-lg p-6 md:p-10"
+          style={{
+            backgroundColor: '#000842',
+            borderRadius: '20px',
+            padding: '5px',
+          }}
+        >
+          <Button style={buttonStyle} onClick={() => navigate('/blog')} className="mb-4">
+            ← Back to Blog
+          </Button>
 
-    const handleReportSubmit = async () => {
-        if (!reportReason.trim()) return;
+          <div
+            className="rounded-xl shadow-md p-6 space-y-6"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.97)',
+              padding: '50px',
+              borderRadius: '20px',
+              margin: '20px',
+            }}
+          >
+            <h1 className="text-3xl font-bold">{post.title}</h1>
+            <p className="text-sm text-gray-500">
+              By {post.author} • {new Date(post.timestamp).toLocaleString()}
+            </p>
 
-        try {
-            await axios.post(
-                `http://localhost:9090/blogs/${post.id}/report`,
-                {
-                    blogId: post.id,
-                    blogTitle: post.title,
-                    authorId: post.authorId,
-                    reporterId: user.id,
-                    reason: reportReason,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            setReportReason('');
-            setShowReport(false);
-            alert('Rapor gönderildi.');
-        } catch (error) {
-            console.error('Rapor gönderilemedi:', error);
-        }
-    };
-
-    return (
-        <div className="p-2 border-t mt-4">
-            {/* Yorum alanı */}
-            <div className="mb-2">
-                <input
-                    type="text"
-                    placeholder="Yorum yap..."
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    className="border p-1 w-full rounded"
-                />
-                <button onClick={handleAddComment} className="mt-1 bg-blue-500 text-white px-3 py-1 rounded">
-                    Ekle
-                </button>
+            <div className="prose prose-sm sm:prose lg:prose-lg max-w-none text-gray-800">
+              <ReactMarkdown
+                children={post.content}
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+              />
             </div>
 
-            {/* Beğeni Butonu */}
-            <button onClick={handleLike} className="bg-green-500 text-white px-3 py-1 mr-2 rounded">
-                Beğen ({post.likes})
-            </button>
+            <h2 className="text-lg font-semibold mb-2 mt-6">
+              Comments ({post.comments?.length || 0})
+            </h2>
 
-            {/* Rapor Butonu */}
-            <button
-                onClick={() => setShowReport(!showReport)}
-                className="bg-red-500 text-white px-3 py-1 rounded inline-flex items-center"
-            >
-                <FaFlag className="mr-1" />
-                Raporla
-            </button>
-
-            {/* Rapor formu */}
-            {showReport && (
-                <div className="mt-2">
-          <textarea
-              placeholder="Rapor sebebi..."
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}
-              className="w-full p-2 border rounded"
-          />
-                    <button onClick={handleReportSubmit} className="mt-1 bg-red-600 text-white px-3 py-1 rounded">
-                        Gönder
-                    </button>
+            {(post.comments || []).map((cmt) => (
+              <div
+                key={cmt.id}
+                className="flex items-start gap-2 mb-3 p-2 border border-gray-200 rounded-lg"
+              >
+                <img src={cmt.avatar} alt={cmt.author} style={avatarStyle} />
+                <div className="text-sm">
+                  <p className="font-semibold text-xs">{cmt.author}</p>
+                  <p className="text-xs">{cmt.content}</p>
                 </div>
-            )}
-        </div>
-    );
-};
+              </div>
+            ))}
 
-export default PostActions;
+            {/* Ekip arkadaşlarının backend bağlantılı yorum / beğeni / rapor bileşeni */}
+            <PostActions post={post} user={user} />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}

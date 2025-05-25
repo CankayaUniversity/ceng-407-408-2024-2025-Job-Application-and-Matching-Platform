@@ -74,7 +74,7 @@ function NavbarEmployer() {
 
         {/* LOGO + TOGGLE */}
         <div className="d-flex align-items-center gap-3">
-          <Navbar.Brand href="/employer/applications" className="fw-bold text-primary">Logo</Navbar.Brand>
+          <Navbar.Brand href="/employer/applications" className="fw-bold text-primary">Hirely</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         </div>
 

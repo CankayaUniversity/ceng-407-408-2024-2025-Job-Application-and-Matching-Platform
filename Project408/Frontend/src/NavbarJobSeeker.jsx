@@ -49,7 +49,7 @@ function NavbarCustom() {
       <Container fluid className="d-flex justify-content-between align-items-center">
         {/* Sol kısım: Logo + Menü */}
         <div className="d-flex align-items-center gap-3">
-          <Navbar.Brand href="/candidate/jobs" className="fw-bold text-primary">Logo</Navbar.Brand>
+          <Navbar.Brand href="/candidate/jobs" className="fw-bold text-primary">Hirely</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         </div>
         
