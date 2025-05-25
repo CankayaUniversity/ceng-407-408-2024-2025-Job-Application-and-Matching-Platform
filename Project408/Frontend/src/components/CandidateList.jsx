@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {useLocation, useParams} from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Collapse } from 'react-collapse';
 import Toast from "./Toast.jsx";
+import ReportModal from "../ReportModal";
+
 import {
     BriefcaseIcon,
     ClipboardDocumentCheckIcon,
@@ -10,10 +12,10 @@ import {
     GlobeAltIcon,
     HeartIcon
 } from "@heroicons/react/24/outline/index.js";
-import {FlagIcon} from "@heroicons/react/16/solid/index.js";
-import {Textarea} from "./ui/TextArea.jsx";
-import {Button} from "./ui/Button.jsx";
-import {buttonStyle} from "../styles/inlineStyles.jsx"; // react-collapse ile açılıp kapanabilen alanlar
+import { FlagIcon } from "@heroicons/react/16/solid/index.js";
+import { Textarea } from "./ui/TextArea.jsx";
+import { Button } from "./ui/Button.jsx";
+import { buttonStyle } from "../styles/inlineStyles.jsx"; // react-collapse ile açılıp kapanabilen alanlar
 
 function CandidateList() {
     const [applications, setApplications] = useState([]);
@@ -59,9 +61,9 @@ function CandidateList() {
         const token = localStorage.getItem('token');
         const offerDetails = {
             salaryOffer: selectedJob.maxSalary,
-            workHours: selectedJob.maxWorkHours ,
+            workHours: selectedJob.maxWorkHours,
             startDate: selectedJob.lastDate,
-            location:selectedJob.workType,
+            location: selectedJob.workType,
             benefits: selectedJob.benefitTypes.map(b => b.benefitType).join(", ")
         };
         console.log(offerDetails);
@@ -187,27 +189,11 @@ function CandidateList() {
                                 }}
                                 title="Report this job"
                             >
-                                <FlagIcon style={{width: '20px', height: '20px', color: 'white'}}/>
-                                <span style={{fontSize: '14px'}}>Report</span>
+                                <FlagIcon style={{ width: '20px', height: '20px', color: 'white' }} />
+                                <span style={{ fontSize: '14px' }}>Report</span>
                             </button>
 
-                            {reportingCandidateId === app?.candidate?.id && (
-                                <div className="mt-4 border p-4 rounded bg-red-50">
-                                    <Textarea
-                                        placeholder="Reason for reporting this blog..."
-                                        rows={3}
-                                        value={reportReason}
-                                        onChange={(e) => setReportReason(e.target.value)}
-                                    />
-                                    <div className="flex gap-2 mt-2">
-                                        <Button style={buttonStyle} onClick={submitReport}>Submit Report</Button>
-                                        <Button style={buttonStyle} onClick={cancelReport}>Cancel</Button>
-                                    </div>
-                                    {reportStatusMsg && (
-                                        <p className="mt-2 text-sm text-red-700">{reportStatusMsg}</p>
-                                    )}
-                                </div>
-                            )}
+
 
                         </div>
 
@@ -219,7 +205,7 @@ function CandidateList() {
                                         className="max-w-[1900px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
 
                                         <div
-                                            style={{borderRadius: "15px", padding: "10px"}}
+                                            style={{ borderRadius: "15px", padding: "10px" }}
                                             className="flex max-w-6xl mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
                                             {/* Sol Lacivert Sidebar */}
                                             <div
@@ -241,7 +227,7 @@ function CandidateList() {
                                                     <img
                                                         src={`http://localhost:9090${app.candidate?.profileDetails?.profilePicture}`}
                                                         alt="Profile"
-                                                        style={{width: '150px', height: '150px'}}
+                                                        style={{ width: '150px', height: '150px' }}
                                                         className="rounded-full border-4 border-white"
                                                     />
 
@@ -252,23 +238,23 @@ function CandidateList() {
                                                         </p>
                                                         <p>
                                                             <strong>Nationality:</strong> {app.candidate?.profileDetails?.nationality
-                                                            ?.replaceAll("_", " ")
-                                                            ?.toLowerCase()
-                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                                ?.replaceAll("_", " ")
+                                                                ?.toLowerCase()
+                                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
                                                         <p><strong>Birth
                                                             Date:</strong> {app.candidate?.profileDetails?.birthDate || '-'}
                                                         </p>
                                                         <p>
                                                             <strong>Gender:</strong> {app.candidate?.profileDetails?.gender
-                                                            ?.replaceAll("_", " ")
-                                                            ?.toLowerCase()
-                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                                ?.replaceAll("_", " ")
+                                                                ?.toLowerCase()
+                                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
 
                                                         {app.candidate?.profileDetails?.gender === "MALE" && (
                                                             <p><strong>Military
                                                                 Status:</strong> {app.candidate?.profileDetails?.militaryStatus?.replaceAll("_", " ")
-                                                                ?.toLowerCase()
-                                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                                    ?.toLowerCase()
+                                                                    ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
                                                         )}
 
                                                         {app.candidate?.profileDetails?.militaryStatus === "DEFERRED" && (
@@ -279,13 +265,13 @@ function CandidateList() {
 
                                                         <p><strong>Disability
                                                             Status:</strong> {app.candidate?.profileDetails?.disabilityStatus?.replaceAll("_", " ")
-                                                            ?.toLowerCase()
-                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                                ?.toLowerCase()
+                                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
                                                         <p><strong>Marital
                                                             Status:</strong> {app.candidate?.profileDetails?.maritalStatus
-                                                            ?.replaceAll("_", " ")
-                                                            ?.toLowerCase()
-                                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                                                ?.replaceAll("_", " ")
+                                                                ?.toLowerCase()
+                                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
 
                                                         <p><strong>Currently
                                                             Working:</strong> {app.candidate?.profileDetails?.currentEmploymentStatus ? 'Yes' : 'No'}
@@ -331,29 +317,32 @@ function CandidateList() {
                                                             Description:</strong> {app.candidate?.socialLinks?.otherLinksDescription || '-'}
                                                         </p>
                                                     </div>
-                                                    <div style={{textAlign: 'right'}}>
-
+                                                    <div
+                                                        style={{
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            alignItems: 'center', // ortala
+                                                            gap: '10px',
+                                                            marginTop: '12px',
+                                                        }}
+                                                    >
                                                         <button
-                                                            style={{backgroundColor: '#0C21C1', borderColor: '#0C21C2'}}
                                                             onClick={() => handleOffer(app.applicationId)}
-                                                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                                            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
+                                                            style={{ backgroundColor: '#0C21C1', borderColor: '#0C21C2', width: '100%' }}
                                                         >
                                                             Make Offer
                                                         </button>
-                                                        <Toast message={message} show={showToast}
-                                                               onClose={handleCloseToast}/>
-                                                        &nbsp; &nbsp; &nbsp;
+
                                                         <button
-                                                            style={{backgroundColor: '#0C21C1', borderColor: '#0C21C2'}}
                                                             onClick={() => handleDecline(app.applicationId)}
-                                                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                                            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
+                                                            style={{ backgroundColor: '#0C21C1', borderColor: '#0C21C2', width: '100%' }}
                                                         >
                                                             Decline
                                                         </button>
-                                                        <Toast message={message} show={showToast}
-                                                               onClose={handleCloseToast}/>
-
                                                     </div>
+
 
 
                                                 </div>
@@ -369,16 +358,16 @@ function CandidateList() {
                                                 }}
                                                 className="w-2/3 bg-gray-100 p-4 rounded-lg">
                                                 {/* İç Beyaz Kutu */}
-                                                <div style={{borderRadius: "15px", padding: "10px"}}
-                                                     className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+                                                <div style={{ borderRadius: "15px", padding: "10px" }}
+                                                    className="bg-white p-8 rounded-lg space-y-6 shadow-md">
 
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                        style={{
-                                                                                            width: '20px',
-                                                                                            height: '20px'
-                                                                                        }}/>
+                                                                style={{
+                                                                    width: '20px',
+                                                                    height: '20px'
+                                                                }} />
                                                             Job Preferences
                                                         </h3>
                                                         <div
@@ -430,10 +419,10 @@ function CandidateList() {
                                                             <div>
                                                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                                     <EnvelopeIcon className="text-blue-600"
-                                                                                  style={{
-                                                                                      width: '20px',
-                                                                                      height: '20px'
-                                                                                  }}/>
+                                                                        style={{
+                                                                            width: '20px',
+                                                                            height: '20px'
+                                                                        }} />
                                                                     References
                                                                 </h3>
                                                                 <div
@@ -441,7 +430,7 @@ function CandidateList() {
                                                                     {app.candidate?.references && app.candidate?.references.length > 0 && app.candidate?.references[0].referenceName ? (
                                                                         app.candidate?.references.map((ref, idx) => (
                                                                             <div key={idx}
-                                                                                 className="border-b pb-2 mb-2">
+                                                                                className="border-b pb-2 mb-2">
                                                                                 <p>
                                                                                     <strong>Name:</strong> {ref.referenceName || '-'}
                                                                                 </p>
@@ -472,7 +461,7 @@ function CandidateList() {
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <GlobeAltIcon className="text-blue-600"
-                                                                          style={{width: '20px', height: '20px'}}/>
+                                                                style={{ width: '20px', height: '20px' }} />
                                                             Language Proficiency
                                                         </h3>
                                                         <div
@@ -507,7 +496,7 @@ function CandidateList() {
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <HeartIcon className="text-blue-600"
-                                                                       style={{width: '20px', height: '20px'}}/>
+                                                                style={{ width: '20px', height: '20px' }} />
                                                             Hobbies
                                                         </h3>
                                                         <div
@@ -534,10 +523,10 @@ function CandidateList() {
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                        style={{
-                                                                                            width: '20px',
-                                                                                            height: '20px'
-                                                                                        }}/>
+                                                                style={{
+                                                                    width: '20px',
+                                                                    height: '20px'
+                                                                }} />
                                                             Education
                                                         </h3>
 
@@ -705,10 +694,10 @@ function CandidateList() {
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                        style={{
-                                                                                            width: '20px',
-                                                                                            height: '20px'
-                                                                                        }}/>
+                                                                style={{
+                                                                    width: '20px',
+                                                                    height: '20px'
+                                                                }} />
                                                             Certifications
                                                         </h3>
                                                         <div
@@ -727,9 +716,9 @@ function CandidateList() {
                                                                             <strong>Certificate Link: </strong>
                                                                             {cert.certificationUrl ? (
                                                                                 <a href={cert.certificationUrl}
-                                                                                   target="_blank"
-                                                                                   rel="noopener noreferrer"
-                                                                                   className="text-blue-600 underline">
+                                                                                    target="_blank"
+                                                                                    rel="noopener noreferrer"
+                                                                                    className="text-blue-600 underline">
                                                                                     View Certificate
                                                                                 </a>
                                                                             ) : (
@@ -749,7 +738,7 @@ function CandidateList() {
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <BriefcaseIcon className="text-blue-600"
-                                                                           style={{width: '20px', height: '20px'}}/>
+                                                                style={{ width: '20px', height: '20px' }} />
                                                             Work Experiences
                                                         </h3>
                                                         <div
@@ -785,10 +774,10 @@ function CandidateList() {
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                        style={{
-                                                                                            width: '20px',
-                                                                                            height: '20px'
-                                                                                        }}/>
+                                                                style={{
+                                                                    width: '20px',
+                                                                    height: '20px'
+                                                                }} />
                                                             Exams and Achievements
                                                         </h3>
                                                         <div
@@ -816,10 +805,10 @@ function CandidateList() {
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                        style={{
-                                                                                            width: '20px',
-                                                                                            height: '20px'
-                                                                                        }}/>
+                                                                style={{
+                                                                    width: '20px',
+                                                                    height: '20px'
+                                                                }} />
                                                             Uploaded Documents
                                                         </h3>
                                                         <div
@@ -839,9 +828,9 @@ function CandidateList() {
                                                                             <strong>Document Link:</strong>{' '}
                                                                             {doc.documentUrl ? (
                                                                                 <a href={doc.documentUrl}
-                                                                                   target="_blank"
-                                                                                   rel="noopener noreferrer"
-                                                                                   className="text-blue-600 underline">
+                                                                                    target="_blank"
+                                                                                    rel="noopener noreferrer"
+                                                                                    className="text-blue-600 underline">
                                                                                     View Document
                                                                                 </a>
                                                                             ) : (
@@ -861,10 +850,10 @@ function CandidateList() {
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                        style={{
-                                                                                            width: '20px',
-                                                                                            height: '20px'
-                                                                                        }}/>
+                                                                style={{
+                                                                    width: '20px',
+                                                                    height: '20px'
+                                                                }} />
                                                             Skills
                                                         </h3>
                                                         <div
@@ -888,10 +877,10 @@ function CandidateList() {
                                                     <div>
                                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                                             <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                                        style={{
-                                                                                            width: '20px',
-                                                                                            height: '20px'
-                                                                                        }}/>
+                                                                style={{
+                                                                    width: '20px',
+                                                                    height: '20px'
+                                                                }} />
                                                             Projects
                                                         </h3>
 
@@ -943,6 +932,17 @@ function CandidateList() {
             ) : (
                 <p>No application found.</p>
             )}
+
+            <ReportModal
+                isOpen={reportingCandidateId !== null}
+                onClose={cancelReport}
+                onSubmit={submitReport}
+                reportReason={reportReason}
+                setReportReason={setReportReason}
+                reportStatusMsg={reportStatusMsg}
+            />
+
+
         </div>
     );
 }
