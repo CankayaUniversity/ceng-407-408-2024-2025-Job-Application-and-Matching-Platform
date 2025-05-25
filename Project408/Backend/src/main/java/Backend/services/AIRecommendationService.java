@@ -4,6 +4,7 @@ import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.user.candidate.Candidate;
 import Backend.repository.CandidateRepository;
 import Backend.repository.JobAdvRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -15,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 /**
  * AI model servisi ile haberleşen ve önerileri sağlayan servis
  */
@@ -29,6 +30,8 @@ public class AIRecommendationService {
     private CandidateRepository candidateRepository;
 
     private final RestTemplate restTemplate = new RestTemplate();
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${ai.service.url:http://localhost:5000}")
     private String aiServiceUrl;
@@ -121,19 +124,30 @@ public class AIRecommendationService {
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
         try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(
-                    aiServiceUrl + "/recommend-candidates", request, Map.class);
+            ResponseEntity<String> response= restTemplate.postForEntity(
+                    aiServiceUrl + "/recommend-candidates", request, String.class);
 
-            // Sonuçları işle
-            if (response.getBody() != null && response.getBody().containsKey("candidate_ids")) {
-                @SuppressWarnings("unchecked")
-                List<Integer> recommendedCandidateIds = (List<Integer>) response.getBody().get("candidate_ids");
-                
-                // Önerilen adayları getir
-                return allCandidates.stream()
-                        .filter(candidate -> recommendedCandidateIds.contains(candidate.getId()))
-                        .collect(Collectors.toList());
+            String responseBody = response.getBody();
+            System.out.println("Raw response body: " + responseBody);
+            responseBody = responseBody.replaceAll(": NaN", ": null");
+            if (responseBody != null) {
+                // 2. Gelen JSON'u Map<String, Object> olarak parse et
+                Map<String, Object> responseMap = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
+
+                if (responseMap.containsKey("candidate_ids")) {
+                    // 3. candidate_ids listesini al ve Integer listesine çevir
+                    List<?> rawList = (List<?>) responseMap.get("candidate_ids");
+                    List<Integer> recommendedCandidateIds = rawList.stream()
+                            .map(o -> ((Number) o).intValue())
+                            .collect(Collectors.toList());
+
+                    // 4. Önerilen adayları filtrele ve döndür
+                    return allCandidates.stream()
+                            .filter(candidate -> recommendedCandidateIds.contains(candidate.getId()))
+                            .collect(Collectors.toList());
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
