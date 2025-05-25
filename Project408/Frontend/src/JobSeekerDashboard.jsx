@@ -748,7 +748,7 @@ export default function JobSeekerDashboard() {
 
     if (isNaN(d.getTime())) return null;
 
-    return d.toISOString().split("T")[0]; d
+    return d.toISOString().split("T")[0];
   };
 
 

@@ -236,7 +236,7 @@ const JobAdvList = () => {
                     transform: 'scale(1)',
                     width: 'calc(33.33% - 16px)',
                     marginBottom: '16px',
-                    height: isAccordionOpen ? '700px' : '500px',
+                    height: isAccordionOpen ? '700px' : '550px',
                     overflowY: 'auto',
                 }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}

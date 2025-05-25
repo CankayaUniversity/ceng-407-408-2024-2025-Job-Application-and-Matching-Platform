@@ -157,13 +157,13 @@ const JobSeekerMyJobs = () => {
                         <div>
                             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"><BriefcaseIcon
                                 className="text-blue-600" style={{width: '20px', height: '20px'}}/>
-                                {job?.description || '-'}
+                                {job?.companyName || '-'}
                             </h3>
                             <div className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                 <p className="text-sm">
                                 <span
-                                    className="font-medium text-gray-700"> <strong> Company Name: </strong> </span>{' '}<span
-                                    className="text-gray-600">{job?.companyName || '-'}</span>
+                                    className="font-medium text-gray-700"> <strong> Description: </strong> </span>{' '}<span
+                                    className="text-gray-600">{job?.description || '-'}</span>
                                 </p>
 
                                 <p className="text-sm">
