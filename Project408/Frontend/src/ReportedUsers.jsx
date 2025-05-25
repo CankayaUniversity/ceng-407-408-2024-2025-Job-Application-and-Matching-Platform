@@ -77,9 +77,9 @@ export default function ReportedUsers() {
 
     return (
         <div style={{ padding: '10px' }} className="p-6 min-h-screen bg-white">
-            <h1
+            <h2
                 style={{ marginTop: '10px', marginBottom: '25px' }}
-                className="text-2xl font-bold mb-6">Reported Users</h1>
+                className="text-2xl font-bold mb-6">Reported Users</h2>
 
             {loading ? (
                 <p className="text-gray-600">Loading reported users...</p>

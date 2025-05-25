@@ -76,9 +76,9 @@ export default function ReportedJobs() {
 
     return (
         <div style={{ padding: '10px' }} className="p-6 min-h-screen bg-white">
-            <h1
+            <h2
                 style={{ marginTop: '10px', marginBottom: '25px' }}
-                className="text-2xl font-bold mb-6">Reported Job Advertisements</h1>
+                className="text-2xl font-bold mb-6">Reported Job Advertisements</h2>
 
             {loading ? (
                 <p className="text-gray-600">Loading reported jobs...</p>
