@@ -71,21 +71,26 @@ const JobAdvList = () => {
 
     const filterJobs = () => {
         let filtered = jobs;
+
         if (filters.position) {
+            const normalize = str => str.toLowerCase().replace(/[\s_]+/g, '');
+
+            const filterValue = normalize(filters.position);
+
             filtered = filtered.filter(job =>
                 job.jobPositions?.some(position => {
-                    const posType = position.positionType || '';
-                    const customPosName = position.customJobPosition?.positionName || '';
-                    const filterValue = filters.position.toLowerCase();
+                    const posType = normalize(position.positionType || '');
+                    const customPosName = normalize(position.customJobPosition?.positionName || '');
 
-                    if (posType.toLowerCase() === 'other') {
-                        return customPosName.toLowerCase().includes(filterValue);
+                    if (posType === 'other') {
+                        return customPosName.includes(filterValue);
                     } else {
-                        return posType.toLowerCase().includes(filterValue);
+                        return posType.includes(filterValue);
                     }
                 })
             );
         }
+
 
 
         if (filters.workType) {
