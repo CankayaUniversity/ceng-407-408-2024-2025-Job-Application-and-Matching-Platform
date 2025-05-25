@@ -22,11 +22,11 @@ public class ReportedBlog extends BaseEntity {
     @Column(name = "blog_title", nullable = false)
     private String blogTitle;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     private User author;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reporter_id")
     private User reporter;
     

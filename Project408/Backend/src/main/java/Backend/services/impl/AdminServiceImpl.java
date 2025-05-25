@@ -1,21 +1,14 @@
 package Backend.services.impl;
 
+import Backend.entities.common.*;
 import Backend.entities.dto.ReportMetricsDTO;
 
-import Backend.entities.common.ReportedBlog;
-import Backend.entities.common.ReportedJob;
-import Backend.entities.common.ReportedUser;
-import Backend.entities.common.ReportStatus;
 import Backend.entities.dto.ReportedBlogDTO;
 import Backend.entities.dto.ReportedJobDTO;
 import Backend.entities.dto.ReportedUserDTO;
 import Backend.entities.jobAdv.JobAdv;
 import Backend.entities.user.User;
-import Backend.repository.JobAdvRepository;
-import Backend.repository.ReportedBlogRepository;
-import Backend.repository.ReportedJobRepository;
-import Backend.repository.ReportedUserRepository;
-import Backend.repository.UserRepository;
+import Backend.repository.*;
 import Backend.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +37,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private JobAdvRepository jobAdvRepository;
+    @Autowired
+    private BlogRepository blogRepository;
 
     @Override
     public String getAdminName(Integer id) {
@@ -112,9 +107,10 @@ public class AdminServiceImpl implements AdminService {
         ReportedBlog reportedBlog = reportedBlogRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Reported blog not found with id: " + id));
         
-        // Here we would delete the blog from a blog repository
-        // But since we don't have the blog entity yet, we'll just update the status
-        
+        Blog blog = blogRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Blog not found with id: " + id));
+        blog.setActive(false);
+        blogRepository.save(blog);
+
         reportedBlog.setStatus(ReportStatus.RESOLVED);
         reportedBlogRepository.save(reportedBlog);
     }
