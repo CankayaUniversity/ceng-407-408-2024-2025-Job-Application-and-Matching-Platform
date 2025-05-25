@@ -2,17 +2,14 @@ package Backend.controller;
 
 import Backend.core.location.City;
 import Backend.core.location.Country;
-import Backend.entities.common.JobPositions;
-import Backend.entities.common.LanguageProficiency;
-import Backend.entities.dto.CandidateProfileDto;
-import Backend.entities.dto.FilterDto;
-import Backend.entities.dto.JobAdvDto;
-import Backend.entities.dto.ReferenceDto;
+import Backend.entities.common.*;
+import Backend.entities.dto.*;
 import Backend.entities.jobAdv.*;
 import Backend.entities.user.User;
 import Backend.entities.user.candidate.*;
 import Backend.repository.CandidateRepository;
 import Backend.repository.JobAdvRepository;
+import Backend.repository.ReportedJobRepository;
 import Backend.services.CandidateService;
 import Backend.services.JobAdvService;
 import Backend.services.JobApplicationService;
@@ -59,6 +56,8 @@ public class CandidateController {
     private JobAdvRepository jobAdvRepository;
     @Autowired
     private CandidateRepository candidateRepository;
+    @Autowired
+    private ReportedJobRepository reportedJobRepository;
 
     public CandidateController(CandidateService candidateService) {
         this.candidateService = candidateService;
@@ -421,6 +420,27 @@ public class CandidateController {
         }
 
         return jobAdvDtos;
+    }
+    @PostMapping("/report/{jobId}")
+    public ResponseEntity<?> reportBlog(@PathVariable Integer jobId, @RequestBody ReportRequestDto reportReason) {
+        try {
+            JobAdv jobadv = jobAdvRepository.findById(jobId).orElseThrow(()-> new RuntimeException("Job Adv not found"));
+
+            String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+            User reporter = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+            ReportedJob job = new ReportedJob();
+            job.setJobAdv(jobadv);
+            job.setReporter(reporter);
+            job.setReason(reportReason.getReason());
+            job.setStatus(ReportStatus.PENDING);
+
+            reportedJobRepository.save(job);
+
+            return ResponseEntity.ok("Report submitted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 

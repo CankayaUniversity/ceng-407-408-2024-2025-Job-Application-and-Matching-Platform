@@ -17,11 +17,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReportedJob extends BaseEntity {
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "job_id")
     private JobAdv jobAdv;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reporter_id")
     private User reporter;
     

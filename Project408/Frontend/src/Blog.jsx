@@ -226,6 +226,7 @@ export default function BlogPage() {
                     setCommentInputs({ ...commentInputs, [post.id]: e.target.value })
                   }
                 />
+
                 <Button style={buttonStyle} className="mt-2" onClick={() => handleAddComment(post.id)}>Comment</Button>
               </div>
             </CardContent>

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {BriefcaseIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline/index.js";
 import Toast from "./components/Toast.jsx";
+import {FlagIcon} from "@heroicons/react/16/solid/index.js";
+import axios from "axios";
+import { AnimatePresence, motion } from 'framer-motion';
 
 
 const JobAdvList = () => {
@@ -113,7 +116,7 @@ const JobAdvList = () => {
         color: 'white',
         border: 'none',
         borderRadius: '8px',
-        fontSize: '12px',
+        fontSize: '16px',
         cursor: 'pointer',
         transition: 'background-color 0.3s',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
@@ -127,6 +130,47 @@ const JobAdvList = () => {
         width: '180px',
         backgroundColor: '#fdfdfd',
         color: '#100e0e',
+    };
+    const [reportReason, setReportReason] = useState(''); // rapor sebebi inputu için
+    const [reportJobId, setReportJobId] = useState(null);
+    const [reportStatusMsg, setReportStatusMsg] = useState('');
+
+    const openReportForm = (jobId) => {
+        setReportJobId(jobId);
+        setReportReason('');
+        setReportStatusMsg('');
+    };
+
+    const cancelReport = () => {
+        setReportJobId(null);
+        setReportReason('');
+        setReportStatusMsg('');
+    };
+    const submitReport = () => {
+        if (!reportReason.trim()) {
+            setReportStatusMsg('Please enter a reason for reporting.');
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        console.log(reportReason)
+        axios.post(`http://localhost:9090/candidate/report/${reportJobId}`, { reason: reportReason }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+
+            .then(() => {
+                setReportStatusMsg('Report submitted successfully.');
+                setTimeout(() => {
+                    cancelReport();
+                }, 2000);
+            })
+            .catch(err => {
+                setReportStatusMsg('Failed to submit report.');
+                console.error(err);
+            });
     };
 
     const JobCard = ({ job, applications }) => {
@@ -201,9 +245,94 @@ const JobAdvList = () => {
                     <div style={{borderRadius: "15px", padding: "10px"}}
                          className="bg-white p-8 rounded-lg space-y-6 shadow-md">
                         <div>
-                            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"><BriefcaseIcon
-                                className="text-blue-600"
-                                style={{width: '20px', height: '20px'}}/> {job?.description || '-'}
+                            <h3 className="text-lg font-semibold mb-4 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <BriefcaseIcon
+                                        className="text-blue-600"
+                                        style={{width: '20px', height: '20px'}}
+                                    />
+                                    {job?.description || '-'}
+                                </div>
+
+                                {/* Report butonu */}
+                                <button
+                                    onClick={() => setReportJobId(job?.id)}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        backgroundColor: 'darkred',
+                                        color: 'white',
+                                        padding: '8px 16px',
+                                        borderRadius: '6px',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                    }}
+                                    title="Report this job"
+                                >
+                                    <FlagIcon style={{ width: '20px', height: '20px', color: 'white' }} />
+                                    <span style={{ fontSize: '14px' }}>Report</span>
+                                </button>
+
+                                {/* Modal gösterimi */}
+                                <AnimatePresence>
+                                    {reportJobId === job?.id && (
+                                        <>
+                                            {/* Arkaplan karartma */}
+                                            <motion.div
+                                                className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                onClick={() => setReportJobId(null)}
+                                            />
+
+                                            {/* Modal kutusu */}
+                                            <motion.div
+                                                initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                                exit={{ scale: 0.8, opacity: 0, y: 50 }}
+                                                transition={{ duration: 0.3 }}
+                                                className="fixed z-50 top-1/2 left-1/2 bg-white p-6 rounded-lg shadow-lg"
+                                                style={{ transform: 'translate(-50%, -50%)', width: '360px' }}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <h2 className="text-lg font-semibold mb-2">Report this job</h2>
+                                                <textarea
+                                                    placeholder="Reason for reporting this job..."
+                                                    className="w-full border border-red-400 p-2 rounded mb-2"
+                                                    value={reportReason}
+                                                    onChange={(e) => setReportReason(e.target.value)}
+                                                    rows={3}
+                                                />
+                                                <div className="flex gap-2 justify-end">
+                                                    <button
+                                                        onClick={() => {
+                                                            submitReport();
+                                                            setReportJobId(null);
+                                                        }}
+                                                        className="bg-black text-white px-4 py-2 rounded"
+                                                    >
+                                                        Submit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setReportJobId(null)}
+                                                        className="bg-gray-500 text-white px-4 py-2 rounded"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                                {reportStatusMsg && (
+                                                    <p className="mt-2 text-sm text-red-700">{reportStatusMsg}</p>
+                                                )}
+                                            </motion.div>
+                                        </>
+                                    )}
+                                </AnimatePresence>
+
+
+
+
                             </h3>
                             <div className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                 <p className="text-sm">

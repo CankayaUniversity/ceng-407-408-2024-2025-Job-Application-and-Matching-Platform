@@ -86,7 +86,10 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new NoSuchElementException("Reported job not found with id: " + id));
         
         JobAdv jobAdv = reportedJob.getJobAdv();
-        jobAdvRepository.delete(jobAdv);
+        jobAdv.setActive(false);
+        jobAdvRepository.save(jobAdv);
+
+//        jobAdvRepository.delete(jobAdv);
         
         reportedJob.setStatus(ReportStatus.RESOLVED);
         reportedJobRepository.save(reportedJob);
