@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {BriefcaseIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline/index.js";
+import { BriefcaseIcon, ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline/index.js";
 import Toast from "./components/Toast.jsx";
-import {FlagIcon} from "@heroicons/react/16/solid/index.js";
+import { FlagIcon } from "@heroicons/react/16/solid/index.js";
 import axios from "axios";
 import { AnimatePresence, motion } from 'framer-motion';
+import ReportModal from './ReportModal.jsx';
+
 
 
 const JobAdvList = () => {
@@ -134,6 +136,8 @@ const JobAdvList = () => {
     const [reportReason, setReportReason] = useState(''); // rapor sebebi inputu için
     const [reportJobId, setReportJobId] = useState(null);
     const [reportStatusMsg, setReportStatusMsg] = useState('');
+    const [isReportOpen, setIsReportOpen] = useState(false);
+
 
     const openReportForm = (jobId) => {
         setReportJobId(jobId);
@@ -239,17 +243,17 @@ const JobAdvList = () => {
                 onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
             >
                 <div
-                    style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+                    style={{ backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px" }}
                     className="w-full bg-gray-100 p-4 rounded-lg">
                     {/* İç Beyaz Kutu */}
-                    <div style={{borderRadius: "15px", padding: "10px"}}
-                         className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+                    <div style={{ borderRadius: "15px", padding: "10px" }}
+                        className="bg-white p-8 rounded-lg space-y-6 shadow-md">
                         <div>
                             <h3 className="text-lg font-semibold mb-4 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <BriefcaseIcon
                                         className="text-blue-600"
-                                        style={{width: '20px', height: '20px'}}
+                                        style={{ width: '20px', height: '20px' }}
                                     />
                                     {job?.description || '-'}
                                 </div>
@@ -257,81 +261,22 @@ const JobAdvList = () => {
                                 {/* Report butonu */}
                                 <button
                                     onClick={() => setReportJobId(job?.id)}
+                                    title="Report this job"
                                     style={{
+                                        backgroundColor: '#8B0000',
+                                        borderColor:'#5e0000',
+                                        color: 'white',
+                                        padding: '6px 10px',
+                                        borderRadius: '4px',
+                                        fontSize: '14px',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '8px',
-                                        backgroundColor: 'darkred',
-                                        color: 'white',
-                                        padding: '8px 16px',
-                                        borderRadius: '6px',
-                                        border: 'none',
-                                        cursor: 'pointer',
+                                        gap: '4px',
                                     }}
-                                    title="Report this job"
                                 >
-                                    <FlagIcon style={{ width: '20px', height: '20px', color: 'white' }} />
-                                    <span style={{ fontSize: '14px' }}>Report</span>
+                                    <FlagIcon style={{ width: '16px', height: '16px' }} />
+                                    <span className="hidden sm:inline">Report</span>
                                 </button>
-
-                                {/* Modal gösterimi */}
-                                <AnimatePresence>
-                                    {reportJobId === job?.id && (
-                                        <>
-                                            {/* Arkaplan karartma */}
-                                            <motion.div
-                                                className="fixed inset-0 bg-black bg-opacity-50 z-40"
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                onClick={() => setReportJobId(null)}
-                                            />
-
-                                            {/* Modal kutusu */}
-                                            <motion.div
-                                                initial={{ scale: 0.8, opacity: 0, y: 50 }}
-                                                animate={{ scale: 1, opacity: 1, y: 0 }}
-                                                exit={{ scale: 0.8, opacity: 0, y: 50 }}
-                                                transition={{ duration: 0.3 }}
-                                                className="fixed z-50 top-1/2 left-1/2 bg-white p-6 rounded-lg shadow-lg"
-                                                style={{ transform: 'translate(-50%, -50%)', width: '360px' }}
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                <h2 className="text-lg font-semibold mb-2">Report this job</h2>
-                                                <textarea
-                                                    placeholder="Reason for reporting this job..."
-                                                    className="w-full border border-red-400 p-2 rounded mb-2"
-                                                    value={reportReason}
-                                                    onChange={(e) => setReportReason(e.target.value)}
-                                                    rows={3}
-                                                />
-                                                <div className="flex gap-2 justify-end">
-                                                    <button
-                                                        onClick={() => {
-                                                            submitReport();
-                                                            setReportJobId(null);
-                                                        }}
-                                                        className="bg-black text-white px-4 py-2 rounded"
-                                                    >
-                                                        Submit
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setReportJobId(null)}
-                                                        className="bg-gray-500 text-white px-4 py-2 rounded"
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                </div>
-                                                {reportStatusMsg && (
-                                                    <p className="mt-2 text-sm text-red-700">{reportStatusMsg}</p>
-                                                )}
-                                            </motion.div>
-                                        </>
-                                    )}
-                                </AnimatePresence>
-
-
-
 
                             </h3>
                             <div className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
@@ -344,21 +289,21 @@ const JobAdvList = () => {
                                 <p className="text-sm">
                                     <span
                                         className="font-medium text-gray-700"> <strong>Job Position: </strong> </span>{' '}<span
-                                    className="text-gray-600">{
-                                    job.jobPositions?.[0]?.positionType === 'OTHER'
-                                        ? job.jobPositions?.[0]?.customJobPosition?.positionName || '-'
-                                        : job.jobPositions?.[0]?.positionType
-                                        ?.replaceAll("_", " ")
-                                        ?.toLowerCase()
-                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'
-                                }
-                              </span>
+                                            className="text-gray-600">{
+                                            job.jobPositions?.[0]?.positionType === 'OTHER'
+                                                ? job.jobPositions?.[0]?.customJobPosition?.positionName || '-'
+                                                : job.jobPositions?.[0]?.positionType
+                                                    ?.replaceAll("_", " ")
+                                                    ?.toLowerCase()
+                                                    ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'
+                                        }
+                                    </span>
                                 </p>
 
 
                                 <p className="text-sm">
-                                <span
-                                    className="font-medium text-gray-700"> <strong> Salary Range: </strong> </span>{' '}
+                                    <span
+                                        className="font-medium text-gray-700"> <strong> Salary Range: </strong> </span>{' '}
                                     <span
                                         className="text-gray-600">{job?.minSalary} - {job?.maxSalary}</span>
                                 </p>
@@ -376,8 +321,8 @@ const JobAdvList = () => {
                                         className="text-gray-600">{job.travelRest ? 'Yes' : 'No'}</span>
                                 </p>
                                 <p className="text-sm">
-                                            <span
-                                                className="font-medium text-gray-700"><strong>License: </strong></span>{' '}
+                                    <span
+                                        className="font-medium text-gray-700"><strong>License: </strong></span>{' '}
                                     <span
                                         className="text-gray-600">{job.license ? 'Yes' : 'No'}</span>
                                 </p>
@@ -406,47 +351,47 @@ const JobAdvList = () => {
                         backgroundColor: status === 'PENDING' ? '#ffc107' : (status === 'ACCEPTED' || status === 'INTERVIEW' ? '#28a745' : '#dc3545'),
                         color: status === 'PENDING' ? 'black' : 'white',
                         borderRadius: '8px',
-                        fontSize: '12px',
+                        fontSize: '14px',
                         fontWeight: 'bold'
                     }}>
-                                    {status ? status.replace("_", " ") : 'Not Applied'}
-                                </span>
+                        {status ? status.replace("_", " ") : 'Not Applied'}
+                    </span>
                 </div>
 
 
                 {isAccordionOpen && (
-                    <div style={{marginTop: '10px', lineHeight: '1.4', fontSize: '14px'}}>
+                    <div style={{ marginTop: '10px', lineHeight: '1.4', fontSize: '14px' }}>
                         <div
-                            style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+                            style={{ backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px" }}
                             className="w-full bg-gray-100 p-4 rounded-lg">
                             {/* İç Beyaz Kutu */}
-                            <div style={{borderRadius: "15px", padding: "10px"}}
-                                 className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+                            <div style={{ borderRadius: "15px", padding: "10px" }}
+                                className="bg-white p-8 rounded-lg space-y-6 shadow-md">
 
                                 <div>
-                                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                         <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                    style={{width: '20px', height: '20px'}}/>Job
+                                            style={{ width: '20px', height: '20px' }} />Job
                                         Conditions</h3>
                                     <div
                                         className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                         <p className="text-sm">
-                           <span
-                               className="font-medium text-gray-700"><strong>Work Type: </strong></span>{' '}
+                                            <span
+                                                className="font-medium text-gray-700"><strong>Work Type: </strong></span>{' '}
                                             <span
                                                 className="text-gray-600">{
-                                                job.workType
-                                                    ?.replaceAll("_", " ")
-                                                    ?.toLowerCase()
-                                                    ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                                    job.workType
+                                                        ?.replaceAll("_", " ")
+                                                        ?.toLowerCase()
+                                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
                                         </p>
                                         <p className="text-sm">
-                           <span
-                               className="font-medium text-gray-700"><strong>Employment Type: </strong></span>{' '}
+                                            <span
+                                                className="font-medium text-gray-700"><strong>Employment Type: </strong></span>{' '}
                                             <span
                                                 className="text-gray-600">{job.employmentType?.replaceAll("_", " ")
-                                                ?.toLowerCase()
-                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                                    ?.toLowerCase()
+                                                    ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
                                         </p>
 
                                         <p className="text-sm">
@@ -462,8 +407,8 @@ const JobAdvList = () => {
 
 
                                         <p className="text-sm">
-                          <span
-                              className="font-medium text-gray-700"><strong>Work Hours: </strong></span>{' '}
+                                            <span
+                                                className="font-medium text-gray-700"><strong>Work Hours: </strong></span>{' '}
                                             <span
                                                 className="text-gray-600">{job.minWorkHours} - {job.maxWorkHours}</span>
                                         </p>
@@ -473,40 +418,40 @@ const JobAdvList = () => {
                                 <div>
                                     <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                         <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                    style={{width: '20px', height: '20px'}}/>Job
+                                            style={{ width: '20px', height: '20px' }} />Job
                                         Qualification
                                     </h3>
                                     <div
                                         className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                         <p className="text-sm">
-                           <span
-                               className="font-medium text-gray-700"><strong>Degree Type: </strong></span>{' '}
+                                            <span
+                                                className="font-medium text-gray-700"><strong>Degree Type: </strong></span>{' '}
                                             <span
                                                 className="text-gray-600">{job.degreeType?.replaceAll("_", " ")
-                                                ?.toLowerCase()
-                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                                    ?.toLowerCase()
+                                                    ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
                                         </p>
                                         <p className="text-sm">
-                           <span
-                               className="font-medium text-gray-700"><strong>Job Experience: </strong></span>{' '}
+                                            <span
+                                                className="font-medium text-gray-700"><strong>Job Experience: </strong></span>{' '}
                                             <span
                                                 className="text-gray-600">{job.jobExperience?.replaceAll("_", " ")
-                                                ?.toLowerCase()
-                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                                    ?.toLowerCase()
+                                                    ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
                                         </p>
                                         <p className="text-sm">
-                          <span
-                              className="font-medium text-gray-700"><strong>Experience Years: </strong></span>{' '}
+                                            <span
+                                                className="font-medium text-gray-700"><strong>Experience Years: </strong></span>{' '}
                                             <span
                                                 className="text-gray-600">{job.experienceYears || '-'}</span>
                                         </p>
                                         <p className="text-sm">
-                          <span
-                              className="font-medium text-gray-700"><strong>Military Status: </strong></span>{' '}
+                                            <span
+                                                className="font-medium text-gray-700"><strong>Military Status: </strong></span>{' '}
                                             <span
                                                 className="text-gray-600">{job.militaryStatus?.replaceAll("_", " ")
-                                                ?.toLowerCase()
-                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
+                                                    ?.toLowerCase()
+                                                    ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</span>
                                         </p>
 
                                     </div>
@@ -517,7 +462,7 @@ const JobAdvList = () => {
                                     <div>
                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                             <BriefcaseIcon className="text-purple-600"
-                                                           style={{width: '20px', height: '20px'}}
+                                                style={{ width: '20px', height: '20px' }}
                                             />
                                             Benefits
                                         </h3>
@@ -525,7 +470,7 @@ const JobAdvList = () => {
                                         {job.benefitTypes && job.benefitTypes?.length > 0 ? (
                                             job.benefitTypes?.map((benefit, idx) => (
                                                 <div key={idx}
-                                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                    className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                                     <p><strong>Benefit
                                                         Type: </strong> {benefit.benefitType || '-'}
                                                     </p>
@@ -543,7 +488,7 @@ const JobAdvList = () => {
                                     <div>
                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                             <BriefcaseIcon className="text-purple-600"
-                                                           style={{width: '20px', height: '20px'}}
+                                                style={{ width: '20px', height: '20px' }}
                                             />
                                             Technical Skills
                                         </h3>
@@ -551,7 +496,7 @@ const JobAdvList = () => {
                                         {job.technicalSkills && job.technicalSkills.length > 0 ? (
                                             job.technicalSkills.map((technicalSkills, idx) => (
                                                 <div key={idx}
-                                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                    className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                                     <p><strong>Position
                                                         Name: </strong> {technicalSkills.positionName || '-'}
                                                     </p>
@@ -572,7 +517,7 @@ const JobAdvList = () => {
                                     <div>
                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                             <BriefcaseIcon className="text-purple-600"
-                                                           style={{width: '20px', height: '20px'}}
+                                                style={{ width: '20px', height: '20px' }}
                                             />
                                             Social Skills
                                         </h3>
@@ -580,7 +525,7 @@ const JobAdvList = () => {
                                         {job.socialSkills && job.socialSkills.length > 0 ? (
                                             job.socialSkills.map((socialSkills, idx) => (
                                                 <div key={idx}
-                                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                    className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                                     <p><strong>Position
                                                         Name: </strong> {socialSkills.positionName || '-'}
                                                     </p>
@@ -602,7 +547,7 @@ const JobAdvList = () => {
                                     <div>
                                         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                             <BriefcaseIcon className="text-purple-600"
-                                                           style={{width: '20px', height: '20px'}}
+                                                style={{ width: '20px', height: '20px' }}
                                             />
                                             Language Proficiency
                                         </h3>
@@ -610,7 +555,7 @@ const JobAdvList = () => {
                                         {job.languageProficiencies && job.languageProficiencies.length > 0 ? (
                                             job.languageProficiencies.map((languageProficiency, idx) => (
                                                 <div key={idx}
-                                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
+                                                    className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm">
                                                     <p><strong>Reading
                                                         Level: </strong> {languageProficiency.readingLevel || '-'}
                                                     </p>
@@ -638,13 +583,13 @@ const JobAdvList = () => {
                         </div>
 
                         {status ? (
-                            <p style={{marginTop: '8px', fontWeight: 'bold', color: '#cc304b'}}>
+                            <p style={{ marginTop: '8px', fontWeight: 'bold', color: '#cc304b' }}>
                                 Application Status: {status}
                             </p>
                         ) : (
                             <button
                                 onClick={() => handleApply(job.id)}
-                                style={{...buttonStyle, marginTop: '12px'}}
+                                style={{ ...buttonStyle, marginTop: '12px' }}
                             >
                                 🚀 Apply
                             </button>
@@ -677,7 +622,7 @@ const JobAdvList = () => {
                 marginBottom: '20px',
                 marginTop: '20px'
             }}>
-                <h2 style={{textAlign: 'center', fontSize: '30px'}}>Job Listings</h2>
+                <h2 style={{ textAlign: 'center', fontSize: '30px' }}>Job Listings</h2>
                 {/*{message &&*/}
                 {/*    <p style={{color: '#cc304b', textAlign: 'center', fontSize: '14px'}}>{message}</p>}*/}
                 <Toast message={message} show={showToast} onClose={handleCloseToast} />
@@ -690,24 +635,24 @@ const JobAdvList = () => {
                     flexWrap: 'wrap'
                 }}>
                     <input type="text" name="position" value={filters.position}
-                           onChange={handleFilterChange}
-                           placeholder="Position" style={inputStyle}/>
+                        onChange={handleFilterChange}
+                        placeholder="Position" style={inputStyle} />
                     <input type="text" name="workType" value={filters.workType}
-                           onChange={handleFilterChange}
-                           placeholder="Work Type" style={inputStyle}/>
+                        onChange={handleFilterChange}
+                        placeholder="Work Type" style={inputStyle} />
                     <input type="number" name="minSalary" value={filters.minSalary}
-                           onChange={handleFilterChange}
-                           placeholder="Min Salary" style={inputStyle}/>
+                        onChange={handleFilterChange}
+                        placeholder="Min Salary" style={inputStyle} />
                     <input type="number" name="maxSalary" value={filters.maxSalary}
-                           onChange={handleFilterChange}
-                           placeholder="Max Salary" style={inputStyle}/>
+                        onChange={handleFilterChange}
+                        placeholder="Max Salary" style={inputStyle} />
                     <input type="text" name="city" value={filters.city} onChange={handleFilterChange}
-                           placeholder="Location (City)" style={inputStyle}/>
+                        placeholder="Location (City)" style={inputStyle} />
                     <input type="text" name="company" value={filters.company} onChange={handleFilterChange}
-                           placeholder="Company" style={inputStyle}/>
+                        placeholder="Company" style={inputStyle} />
                 </div>
-                <div style={{textAlign: 'center'}}>
-                    <button onClick={filterJobs} style={{...buttonStyle, marginTop: '8px'}}>Filter</button>
+                <div style={{ textAlign: 'center' }}>
+                    <button onClick={filterJobs} style={{ ...buttonStyle, marginTop: '8px' }}>Filter</button>
                 </div>
             </div>
 
@@ -720,10 +665,23 @@ const JobAdvList = () => {
             }}>
                 {filteredJobs.map(job => {
                     return (
-                        <JobCard key={job.id} job={job} applications={applications}/>
+                        <JobCard key={job.id} job={job} applications={applications} />
                     );
                 })}
             </div>
+
+            <ReportModal
+                isOpen={reportJobId !== null}
+                onClose={cancelReport}
+                onSubmit={() => {
+                    submitReport();
+                    cancelReport();
+                }}
+                reportReason={reportReason}
+                setReportReason={setReportReason}
+                reportStatusMsg={reportStatusMsg}
+            />
+
         </div>
     );
 };

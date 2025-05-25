@@ -488,16 +488,17 @@ const JobSeekerMyJobs = () => {
         }}>
             {/* Left Menu */}
             <div style={{
-                width: '300px',  // Expanded sidebar
+                width: '250px',
                 marginRight: '20px',
-                borderRight: '1px solid #ccc',
                 paddingRight: '20px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '10px',
-
-
+                borderRight: '2px solid #ccc',
+                overflowY: 'auto', // Sol menüde taşan içeriği kaydırılabilir yapar
+                maxHeight: '100vh',// İlk çizgi
             }}>
+                
                 <h3>Application Status</h3>
                 {['PENDING', 'ACCEPTED', 'REJECTED', 'INTERVIEW'].map(status => (
                     <button
@@ -521,13 +522,15 @@ const JobSeekerMyJobs = () => {
             </div>
 
             {/* Right Content */}
-            <div style={{
-                flexGrow: 1,
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '16px',
-                justifyContent: 'center',
-            }}>
+            <div
+                className="flex-1 overflow-x-hidden"
+                style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'flex-start',
+                    gap: '16px',
+                }}
+            >
                 {filteredApplications.length > 0 ? (
                     filteredApplications.map(job => (
                         <JobCard key={job.id} job={job}/>

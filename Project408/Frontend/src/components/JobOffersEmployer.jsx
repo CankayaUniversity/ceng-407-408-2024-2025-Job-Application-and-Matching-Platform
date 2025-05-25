@@ -212,42 +212,42 @@ const JobOffersEmployer = () => {
                 {isAccordionOpen && (
 
                     <div
-                        style={{backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px"}}
+                        style={{ backgroundColor: "#f8f9f9", borderRadius: "15px", padding: "10px" }}
                         className="w-full bg-gray-100 p-4 rounded-lg">
                         {/* İç Beyaz Kutu */}
-                        <div style={{borderRadius: "15px", padding: "10px"}}
-                             className="bg-white p-8 rounded-lg space-y-6 shadow-md">
+                        <div style={{ borderRadius: "15px", padding: "10px" }}
+                            className="bg-white p-8 rounded-lg space-y-6 shadow-md">
 
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                style={{
-                                                                    width: '20px',
-                                                                    height: '20px'
-                                                                }}/>
+                                        style={{
+                                            width: '20px',
+                                            height: '20px'
+                                        }} />
                                     Profile Details
                                 </h3>
                                 <div
                                     className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50 shadow-sm ">
                                     <p>
                                         <strong>Nationality:</strong> {candidate?.profileDetails?.nationality
-                                        ?.replaceAll("_", " ")
-                                        ?.toLowerCase()
-                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                            ?.replaceAll("_", " ")
+                                            ?.toLowerCase()
+                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
                                     <p><strong>Birth
                                         Date:</strong> {candidate?.profileDetails?.birthDate || '-'}
                                     </p>
                                     <p>
                                         <strong>Gender:</strong> {candidate?.profileDetails?.gender
-                                        ?.replaceAll("_", " ")
-                                        ?.toLowerCase()
-                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                            ?.replaceAll("_", " ")
+                                            ?.toLowerCase()
+                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
 
                                     {candidate?.profileDetails?.gender === "MALE" && (
                                         <p><strong>Military
                                             Status:</strong> {candidate?.profileDetails?.militaryStatus?.replaceAll("_", " ")
-                                            ?.toLowerCase()
-                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}
+                                                ?.toLowerCase()
+                                                ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}
                                         </p>
                                     )}
 
@@ -259,13 +259,13 @@ const JobOffersEmployer = () => {
 
                                     <p><strong>Disability
                                         Status:</strong> {candidate?.profileDetails?.disabilityStatus?.replaceAll("_", " ")
-                                        ?.toLowerCase()
-                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                            ?.toLowerCase()
+                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
                                     <p><strong>Marital
                                         Status:</strong> {candidate?.profileDetails?.maritalStatus
-                                        ?.replaceAll("_", " ")
-                                        ?.toLowerCase()
-                                        ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
+                                            ?.replaceAll("_", " ")
+                                            ?.toLowerCase()
+                                            ?.replace(/\b\w/g, c => c.toUpperCase()) || '-'}</p>
 
                                     <p><strong>Currently
                                         Working:</strong> {candidate?.profileDetails?.currentEmploymentStatus ? 'Yes' : 'No'}
@@ -283,10 +283,10 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                style={{
-                                                                    width: '20px',
-                                                                    height: '20px'
-                                                                }}/>
+                                        style={{
+                                            width: '20px',
+                                            height: '20px'
+                                        }} />
                                     Social Links
                                 </h3>
                                 <div
@@ -314,10 +314,10 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                style={{
-                                                                    width: '20px',
-                                                                    height: '20px'
-                                                                }}/>
+                                        style={{
+                                            width: '20px',
+                                            height: '20px'
+                                        }} />
                                     Job Preferences
                                 </h3>
                                 <div
@@ -367,7 +367,7 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <GlobeAltIcon className="text-blue-600"
-                                                  style={{width: '20px', height: '20px'}}/>
+                                        style={{ width: '20px', height: '20px' }} />
                                     Language Proficiency
                                 </h3>
                                 <div
@@ -402,7 +402,7 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <HeartIcon className="text-blue-600"
-                                               style={{width: '20px', height: '20px'}}/>
+                                        style={{ width: '20px', height: '20px' }} />
                                     Hobbies
                                 </h3>
                                 <div
@@ -429,10 +429,10 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                style={{
-                                                                    width: '20px',
-                                                                    height: '20px'
-                                                                }}/>
+                                        style={{
+                                            width: '20px',
+                                            height: '20px'
+                                        }} />
                                     Education
                                 </h3>
 
@@ -601,10 +601,10 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                style={{
-                                                                    width: '20px',
-                                                                    height: '20px'
-                                                                }}/>
+                                        style={{
+                                            width: '20px',
+                                            height: '20px'
+                                        }} />
                                     Certifications
                                 </h3>
                                 <div
@@ -624,9 +624,9 @@ const JobOffersEmployer = () => {
                                                     <strong>Certificate Link: </strong>
                                                     {cert.certificationUrl ? (
                                                         <a href={cert.certificationUrl}
-                                                           target="_blank"
-                                                           rel="noopener noreferrer"
-                                                           className="text-blue-600 underline">
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-blue-600 underline">
                                                             View Certificate
                                                         </a>
                                                     ) : (
@@ -646,7 +646,7 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <BriefcaseIcon className="text-blue-600"
-                                                   style={{width: '20px', height: '20px'}}/>
+                                        style={{ width: '20px', height: '20px' }} />
                                     Work Experiences
                                 </h3>
                                 <div
@@ -683,10 +683,10 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                style={{
-                                                                    width: '20px',
-                                                                    height: '20px'
-                                                                }}/>
+                                        style={{
+                                            width: '20px',
+                                            height: '20px'
+                                        }} />
                                     Exams and Achievements
                                 </h3>
                                 <div
@@ -718,10 +718,10 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                style={{
-                                                                    width: '20px',
-                                                                    height: '20px'
-                                                                }}/>
+                                        style={{
+                                            width: '20px',
+                                            height: '20px'
+                                        }} />
                                     Uploaded Documents
                                 </h3>
                                 <div
@@ -741,9 +741,9 @@ const JobOffersEmployer = () => {
                                                     <strong>Document Link:</strong>{' '}
                                                     {doc.documentUrl ? (
                                                         <a href={doc.documentUrl}
-                                                           target="_blank"
-                                                           rel="noopener noreferrer"
-                                                           className="text-blue-600 underline">
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-blue-600 underline">
                                                             View Document
                                                         </a>
                                                     ) : (
@@ -764,10 +764,10 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                style={{
-                                                                    width: '20px',
-                                                                    height: '20px'
-                                                                }}/>
+                                        style={{
+                                            width: '20px',
+                                            height: '20px'
+                                        }} />
                                     Skills
                                 </h3>
                                 <div
@@ -791,10 +791,10 @@ const JobOffersEmployer = () => {
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                     <ClipboardDocumentCheckIcon className="text-blue-600"
-                                                                style={{
-                                                                    width: '20px',
-                                                                    height: '20px'
-                                                                }}/>
+                                        style={{
+                                            width: '20px',
+                                            height: '20px'
+                                        }} />
                                     Projects
                                 </h3>
                                 <div
@@ -829,10 +829,10 @@ const JobOffersEmployer = () => {
                                 <div>
                                     <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                         <EnvelopeIcon className="text-blue-600"
-                                                      style={{
-                                                          width: '20px',
-                                                          height: '20px'
-                                                      }}/>
+                                            style={{
+                                                width: '20px',
+                                                height: '20px'
+                                            }} />
                                         References
                                     </h3>
                                     <div
@@ -840,7 +840,7 @@ const JobOffersEmployer = () => {
                                         {candidate?.references && candidate?.references.length > 0 && candidate?.references[0].referenceName ? (
                                             candidate?.references.map((ref, idx) => (
                                                 <div key={idx}
-                                                     className="border-b pb-2 mb-2">
+                                                    className="border-b pb-2 mb-2">
                                                     <p>
                                                         <strong>Name:</strong> {ref.referenceName || '-'}
                                                     </p>
@@ -886,10 +886,10 @@ const JobOffersEmployer = () => {
                                             <>
                                                 {/* Modal Kutusu */}
                                                 <motion.div
-                                                    initial={{scale: 0.8, opacity: 0, y: 50}}
-                                                    animate={{scale: 1, opacity: 1, y: -450}}
-                                                    exit={{scale: 0.8, opacity: 0, y: 50}}
-                                                    transition={{duration: 0.3}}
+                                                    initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                                                    animate={{ scale: 1, opacity: 1, y: -450 }}
+                                                    exit={{ scale: 0.8, opacity: 0, y: 50 }}
+                                                    transition={{ duration: 0.3 }}
                                                     style={{
                                                         position: 'relative',
                                                         bottom: '0', // Alt kenardan biraz yukarıda
@@ -997,7 +997,7 @@ const JobOffersEmployer = () => {
     return (
         <div
             className="min-h-screen text-black p-4"
-            style={{display: 'flex', flexDirection: 'row', backgroundColor: 'white'}}
+            style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'white' }}
         >
             {/* Sol Panel */}
             <div style={{
@@ -1010,20 +1010,19 @@ const JobOffersEmployer = () => {
                 borderRight: '2px solid #ccc',
                 overflowY: 'auto', // Sol menüde taşan içeriği kaydırılabilir yapar
                 maxHeight: '100vh',// İlk çizgi
-
             }}>
 
                 <h3 className="text-xl font-bold mb-4">Offer Status</h3>
                 <div className="space-y-2">
                     {['PENDING', 'ACCEPTED', 'REJECTED'].map(status => (
                         <button
-                            style={{margin: '5px'}}
+                            style={{ margin: '5px' }}
                             key={status}
                             onClick={() => setSelectedStatus(status)}
                             className={`w-full py-2 px-4 rounded text-left font-semibold transition ${selectedStatus === status
                                 ? 'bg-black text-white'
                                 : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                            }`}
+                                }`}
                         >
                             {status}
                         </button>
@@ -1069,7 +1068,7 @@ const JobOffersEmployer = () => {
                 )}
             </div>
 
-            <Toast message={message} show={showToast} onClose={handleCloseToast}/>
+            <Toast message={message} show={showToast} onClose={handleCloseToast} />
 
             <InterviewModal
                 isOpen={isModalOpen}
