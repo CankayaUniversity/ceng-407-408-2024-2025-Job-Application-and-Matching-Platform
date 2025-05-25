@@ -798,9 +798,10 @@ const RecommendedCandidates = () => {
 
     return (
         <div style={{width: '100%'}}>
-            <h2 style={{fontSize: '24px', fontWeight: 'bold', marginBottom: '20px', textAlign: 'center'}}>
+            <br/>
+            <h1 style={{fontSize: '30px', fontWeight: 'bold', marginBottom: '20px', textAlign: 'center'}}>
                 Recommended Candidates <span role="img" aria-label="ai">🤖</span>
-            </h2>
+            </h1>
             <div style={{
                 display: 'flex',
                 flexWrap: 'wrap',

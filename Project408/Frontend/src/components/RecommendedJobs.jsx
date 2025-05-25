@@ -517,9 +517,9 @@ const RecommendedJobs = () => {
           {message}
         </div>}
         <br/>
-        <h2 style={{fontSize: '30px', fontWeight: 'bold', marginBottom: '20px', textAlign: 'center'}}>
+        <h1 style={{fontSize: '30px', fontWeight: 'bold', marginBottom: '20px', textAlign: 'center'}}>
           Recommended for You <span role="img" aria-label="ai">🤖</span>
-        </h2>
+        </h1>
 
         <div style={{
           display: 'flex',
