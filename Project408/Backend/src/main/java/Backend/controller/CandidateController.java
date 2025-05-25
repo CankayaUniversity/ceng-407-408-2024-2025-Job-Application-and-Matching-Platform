@@ -7,14 +7,11 @@ import Backend.entities.dto.*;
 import Backend.entities.jobAdv.*;
 import Backend.entities.user.User;
 import Backend.entities.user.candidate.*;
-import Backend.repository.CandidateRepository;
-import Backend.repository.JobAdvRepository;
-import Backend.repository.ReportedJobRepository;
+import Backend.repository.*;
 import Backend.services.CandidateService;
 import Backend.services.JobAdvService;
 import Backend.services.JobApplicationService;
 import Backend.services.JwtService;
-import Backend.repository.UserRepository;
 import jakarta.persistence.Column;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +55,8 @@ public class CandidateController {
     private CandidateRepository candidateRepository;
     @Autowired
     private ReportedJobRepository reportedJobRepository;
+    @Autowired
+    private ReportedUserRepository reportedUserRepository;
 
     public CandidateController(CandidateService candidateService) {
         this.candidateService = candidateService;
@@ -422,7 +421,7 @@ public class CandidateController {
         return jobAdvDtos;
     }
     @PostMapping("/report/{jobId}")
-    public ResponseEntity<?> reportBlog(@PathVariable Integer jobId, @RequestBody ReportRequestDto reportReason) {
+    public ResponseEntity<?> reportJob(@PathVariable Integer jobId, @RequestBody ReportRequestDto reportReason) {
         try {
             JobAdv jobadv = jobAdvRepository.findById(jobId).orElseThrow(()-> new RuntimeException("Job Adv not found"));
 
@@ -442,6 +441,30 @@ public class CandidateController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PostMapping("/report-user/{jobId}")
+    public ResponseEntity<?> reportUser(@PathVariable Integer jobId, @RequestBody ReportRequestDto reportReason) {
+        try {
+            User user = userRepository.findById(jobId).orElseThrow(()-> new RuntimeException("User not found"));
+
+            String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+            User reporter = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+            ReportedUser reportedUser = new ReportedUser();
+            reportedUser.setReportedUser(user);
+            reportedUser.setReporter(reporter);
+            reportedUser.setReason(reportReason.getReason());
+            reportedUser.setStatus(ReportStatus.PENDING);
+
+            reportedUserRepository.save(reportedUser);
+
+            return ResponseEntity.ok("Report submitted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 
 

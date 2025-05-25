@@ -9,7 +9,11 @@ import {
     EnvelopeIcon,
     GlobeAltIcon,
     HeartIcon
-} from "@heroicons/react/24/outline/index.js"; // react-collapse ile açılıp kapanabilen alanlar
+} from "@heroicons/react/24/outline/index.js";
+import {FlagIcon} from "@heroicons/react/16/solid/index.js";
+import {Textarea} from "./ui/TextArea.jsx";
+import {Button} from "./ui/Button.jsx";
+import {buttonStyle} from "../styles/inlineStyles.jsx"; // react-collapse ile açılıp kapanabilen alanlar
 
 function CandidateList() {
     const [applications, setApplications] = useState([]);
@@ -88,7 +92,43 @@ function CandidateList() {
         }
 
     };
+    const [reportingCandidateId, setReportingCandidateId] = useState(null);
+    const [reportReason, setReportReason] = useState('');
+    const [reportStatusMsg, setReportStatusMsg] = useState('');
 
+    const openReportForm = (postId) => {
+        setReportingCandidateId(postId);
+        setReportReason('');
+        setReportStatusMsg('');
+    };
+
+    const cancelReport = () => {
+        setReportingCandidateId(null);
+        setReportReason('');
+        setReportStatusMsg('');
+    };
+
+    const submitReport = () => {
+        if (!reportReason.trim()) {
+            setReportStatusMsg('Please enter a reason for reporting.');
+            return;
+        }
+
+        axios.post(`http://localhost:9090/candidate/report-user/${reportingCandidateId}`, { reason: reportReason }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(() => {
+                setReportStatusMsg('Report submitted successfully.');
+                setTimeout(() => cancelReport(), 2000);
+            })
+            .catch(err => {
+                setReportStatusMsg('Failed to submit report.');
+                console.error(err);
+            });
+    };
     const handleDecline = async (applicationId) => {
         const token = localStorage.getItem('token');
 
@@ -123,18 +163,60 @@ function CandidateList() {
             {applications.length > 0 ? (
                 applications.map((app, index) => (
                     <div key={index} className="border p-4 mb-4 rounded shadow bg-gray-100">
-                        <h4
-                            onClick={() => toggleExpand(index)}
-                            className="cursor-pointer text-xl font-semibold text-black"
-                        >
-                            {app.candidate?.firstName} {app.candidate?.lastName} Application's
-                        </h4>
+
+                        <div className="flex items-center justify-between mb-4">
+                            <h4
+                                onClick={() => toggleExpand(index)}
+                                className="cursor-pointer text-xl font-semibold text-black"
+                            >
+                                {app.candidate?.firstName} {app.candidate?.lastName} Application's
+                            </h4>
+
+                            <button
+                                onClick={() => setReportingCandidateId(app?.candidate?.id)}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    backgroundColor: 'darkred',
+                                    color: 'white',
+                                    padding: '8px 16px',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                }}
+                                title="Report this job"
+                            >
+                                <FlagIcon style={{width: '20px', height: '20px', color: 'white'}}/>
+                                <span style={{fontSize: '14px'}}>Report</span>
+                            </button>
+
+                            {reportingCandidateId === app?.candidate?.id && (
+                                <div className="mt-4 border p-4 rounded bg-red-50">
+                                    <Textarea
+                                        placeholder="Reason for reporting this blog..."
+                                        rows={3}
+                                        value={reportReason}
+                                        onChange={(e) => setReportReason(e.target.value)}
+                                    />
+                                    <div className="flex gap-2 mt-2">
+                                        <Button style={buttonStyle} onClick={submitReport}>Submit Report</Button>
+                                        <Button style={buttonStyle} onClick={cancelReport}>Cancel</Button>
+                                    </div>
+                                    {reportStatusMsg && (
+                                        <p className="mt-2 text-sm text-red-700">{reportStatusMsg}</p>
+                                    )}
+                                </div>
+                            )}
+
+                        </div>
 
 
-                                    <Collapse isOpened={expandedIndex === index}>
-                                        <div className="min-h-screen bg-gray-100 p-8">
-                                            <div className="w-full px-4 py-10">
-                                                <div className="max-w-[1900px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
+                        <Collapse isOpened={expandedIndex === index}>
+                            <div className="min-h-screen bg-gray-100 p-8">
+                                <div className="w-full px-4 py-10">
+                                    <div
+                                        className="max-w-[1900px] mx-auto bg-gray-100 rounded-xl p-10 space-y-10 shadow-md">
 
                                         <div
                                             style={{borderRadius: "15px", padding: "10px"}}
@@ -217,12 +299,18 @@ function CandidateList() {
 
                                                         {!app.candidate?.profileDetails?.privateProfile
                                                             && (
-                                                            <>
-                                                                <p><strong>Phone Number:</strong> {app.candidate?.contactInformation?.phoneNumber || '-'}</p>
-                                                                <p><strong>Country:</strong> {app.candidate?.contactInformation?.country?.name || '-'}</p>
-                                                                <p><strong>City:</strong> {app.candidate?.contactInformation?.city?.name || '-'}</p>
-                                                            </>
-                                                        )}
+                                                                <>
+                                                                    <p><strong>Phone
+                                                                        Number:</strong> {app.candidate?.contactInformation?.phoneNumber || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>Country:</strong> {app.candidate?.contactInformation?.country?.name || '-'}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong>City:</strong> {app.candidate?.contactInformation?.city?.name || '-'}
+                                                                    </p>
+                                                                </>
+                                                            )}
 
                                                         <p>
                                                             <strong>Github:</strong> {app.candidate?.socialLinks?.githubUrl || '-'}
@@ -845,10 +933,10 @@ function CandidateList() {
                                                 </div>
                                             </div>
                                         </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Collapse>
+                                    </div>
+                                </div>
+                            </div>
+                        </Collapse>
 
                     </div>
                 ))

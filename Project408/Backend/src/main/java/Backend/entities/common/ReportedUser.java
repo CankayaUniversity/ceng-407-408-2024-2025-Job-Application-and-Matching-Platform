@@ -16,11 +16,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReportedUser extends BaseEntity {
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reported_user_id")
     private User reportedUser;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reporter_id")
     private User reporter;
     

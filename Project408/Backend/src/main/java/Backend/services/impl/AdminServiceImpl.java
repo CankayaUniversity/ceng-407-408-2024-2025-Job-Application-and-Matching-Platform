@@ -63,6 +63,7 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new NoSuchElementException("Reported user not found with id: " + id));
         
         User user = reportedUser.getReportedUser();
+        user.setActive(false);
         user.setEnabled(false);
         userRepository.save(user);
         
