@@ -88,7 +88,6 @@ function App() {
                 <Route path="/notifications" element={<NotificationsPage notifications={notifications} markAsRead={markAsRead} />} />
                 <Route path="/candidate/recommendedJobs" element={<RecommendedJobs />} />
                 <Route path="/employer/recommendedCandidates" element={<RecommendedCandidates />} />
-                <Route path="/candidate/recommendedJobs" element={<RecommendedJobs />} />
 
               </Route>
             </Route>

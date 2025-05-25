@@ -10,16 +10,20 @@ import Backend.entities.dto.CommentDto;
 import Backend.entities.dto.ReportRequestDto;
 import Backend.entities.user.User;
 import Backend.repository.BlogRepository;
+import Backend.repository.CommentRepository;
 import Backend.repository.ReportedBlogRepository;
 import Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import Backend.entities.common.Comment;
 import java.util.ArrayList;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +38,8 @@ public class BlogController {
     private UserRepository userRepository;
     @Autowired
     private ReportedBlogRepository reportedBlogRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
     @PostMapping("/saveBlog")
     public ResponseEntity<?> saveBlog(@RequestBody BlogDto user) {
@@ -59,6 +65,7 @@ public class BlogController {
 
             List<BlogResponseDto> response = blogs.stream()
                     .filter(BaseEntity::isActive)
+                    .sorted(Comparator.comparing(Blog::getTimestamp).reversed())
                     .map(blog -> {
                         BlogResponseDto dto = new BlogResponseDto();
                         dto.setId(blog.getId());
@@ -119,6 +126,29 @@ public class BlogController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+    @PostMapping("/like/{postId}")
+    public ResponseEntity<String> likePost(@PathVariable Integer postId) {
+        Blog post = blogRepository.findById(postId).orElseThrow();
+        post.setLikes(post.getLikes() + 1);
+        blogRepository.save(post);
+        return ResponseEntity.ok("Post liked");
+    }
+
+    @PostMapping("/comment/{postId}")
+    public ResponseEntity<Comment> addComment(@PathVariable Integer postId, @RequestBody CommentDto comment) {
+        String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Blog post = blogRepository.findById(postId).orElseThrow();
+
+        Comment cmt = new Comment();
+        cmt.setAuthor(username);
+        cmt.setContent(comment.getContent());
+        cmt.setAvatar(comment.getAvatar());
+        cmt.setBlog(post);
+
+        return ResponseEntity.ok( commentRepository.save(cmt));
     }
 
 

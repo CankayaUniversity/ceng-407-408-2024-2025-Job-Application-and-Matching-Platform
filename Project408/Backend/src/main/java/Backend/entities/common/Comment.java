@@ -11,9 +11,6 @@ import lombok.NoArgsConstructor;
 @Table(name="comments")
 
 public class Comment extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
     private String author;
 
@@ -25,15 +22,6 @@ public class Comment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "blog_id")
     private Blog blog;
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getAuthor() {
         return author;
@@ -57,5 +45,13 @@ public class Comment extends BaseEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Blog getBlog() {
+        return blog;
+    }
+
+    public void setBlog(Blog blog) {
+        this.blog = blog;
     }
 }
