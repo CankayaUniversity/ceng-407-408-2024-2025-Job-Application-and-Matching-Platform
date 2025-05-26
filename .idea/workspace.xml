@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="af5e9ab0-f157-44fb-a158-8739b861992b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Enum" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2uzEKw8w0v1phQU46SwL9AcXSQo" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.Backend [clean].executor": "Run",
+    "Maven.Backend [compile].executor": "Run",
+    "Maven.Backend [deploy].executor": "Run",
+    "Maven.Backend [install].executor": "Run",
+    "Maven.Backend [package].executor": "Run",
+    "Maven.Backend [site].executor": "Run",
+    "Maven.Backend [test].executor": "Run",
+    "Maven.Backend [validate].executor": "Run",
+    "Maven.Backend [verify].executor": "Run",
+    "Node.js.FrontApplication.executor": "Debug",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.BackendApplication.executor": "Debug",
+    "git-widget-placeholder": "ai-service",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/blgsy/OneDrive/Belgeler/GitHub/ceng382/ceng-bitirme/ceng-407-408-2024-2025-Job-Application-and-Matching-Platform/Project408/Backend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "MavenSettings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="Backend.repository" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\blgsy\OneDrive\Belgeler\GitHub\ceng382\ceng-bitirme\ceng-407-408-2024-2025-Job-Application-and-Matching-Platform\Project408\Backend\src\main\resources" />
+      <recent name="C:\Users\blgsy\OneDrive\Belgeler\GitHub\ceng382\ceng-407-408-2024-2025-Job-Application-and-Matching-Platform\Project408\Backend\src\main\resources" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="Backend" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="Backend.BackendApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23339.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23339.11" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="af5e9ab0-f157-44fb-a158-8739b861992b" name="Changes" comment="" />
+      <created>1743242941575</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1743242941575</updated>
+      <workItem from="1743242942691" duration="4403000" />
+      <workItem from="1743248008736" duration="751000" />
+      <workItem from="1743248780054" duration="922000" />
+      <workItem from="1743250021381" duration="146000" />
+      <workItem from="1743250174954" duration="667000" />
+      <workItem from="1743250851109" duration="234000" />
+      <workItem from="1743251091692" duration="151000" />
+      <workItem from="1743251254164" duration="2722000" />
+      <workItem from="1743757861764" duration="28394000" />
+      <workItem from="1743940324894" duration="680000" />
+      <workItem from="1744926215709" duration="966000" />
+      <workItem from="1744927246893" duration="41000" />
+      <workItem from="1744927349593" duration="4869000" />
+      <workItem from="1744970486458" duration="742000" />
+      <workItem from="1745400770504" duration="6808000" />
+      <workItem from="1745418617891" duration="22109000" />
+      <workItem from="1745475239705" duration="12000" />
+      <workItem from="1745654251213" duration="28211000" />
+      <workItem from="1745711443841" duration="3000000" />
+      <workItem from="1745734963827" duration="10845000" />
+      <workItem from="1746106449776" duration="19632000" />
+      <workItem from="1746346274564" duration="10077000" />
+      <workItem from="1746461928630" duration="5813000" />
+      <workItem from="1747473442212" duration="11134000" />
+      <workItem from="1747495472818" duration="340000" />
+      <workItem from="1747504405657" duration="12990000" />
+      <workItem from="1747834324891" duration="10724000" />
+      <workItem from="1748120815100" duration="408000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/entities/user/candidate/JobPreferences.java</url>
+          <line>13</line>
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/JobAdvService.java</url>
+          <line>515</line>
+          <option name="timeStamp" value="121" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/jobAdv/JobOfferController.java</url>
+          <line>32</line>
+          <option name="timeStamp" value="122" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>47</line>
+          <option name="timeStamp" value="136" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>95</line>
+          <option name="timeStamp" value="140" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>116</line>
+          <option name="timeStamp" value="141" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>133</line>
+          <option name="timeStamp" value="143" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AuthenticationService.java</url>
+          <line>159</line>
+          <option name="timeStamp" value="144" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/EmailService.java</url>
+          <line>16</line>
+          <option name="timeStamp" value="145" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/EmployerService.java</url>
+          <line>68</line>
+          <option name="timeStamp" value="154" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/JobAdvService.java</url>
+          <line>798</line>
+          <option name="timeStamp" value="158" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/CandidateController.java</url>
+          <line>324</line>
+          <option name="timeStamp" value="159" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/JobAdvService.java</url>
+          <line>732</line>
+          <option name="timeStamp" value="160" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/CandidateController.java</url>
+          <line>272</line>
+          <option name="timeStamp" value="162" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/CandidateController.java</url>
+          <line>92</line>
+          <option name="timeStamp" value="163" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/CandidateService.java</url>
+          <line>81</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="164" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/EmployerController.java</url>
+          <line>49</line>
+          <option name="timeStamp" value="165" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AIRecommendationService.java</url>
+          <line>97</line>
+          <option name="timeStamp" value="167" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AIRecommendationController.java</url>
+          <line>32</line>
+          <option name="timeStamp" value="168" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/services/AIRecommendationService.java</url>
+          <line>43</line>
+          <option name="timeStamp" value="169" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/controller/AIRecommendationController.java</url>
+          <line>47</line>
+          <option name="timeStamp" value="172" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/Project408/Backend/src/main/java/Backend/repository/CandidateRepository.java</url>
+          <line>71</line>
+          <properties class="Backend.repository.CandidateRepository">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="org.springframework.orm.jpa.JpaSystemException" memberName="depth" />
+      </pinned-members>
+    </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="SpringBootApplicationConfigurationType">
+        <watch expression="candidate" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

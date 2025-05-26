@@ -1,0 +1,243 @@
+package Backend.entities.dto;
+
+import Backend.core.enums.EmploymentType;
+import Backend.core.enums.LanguageLevel;
+import Backend.core.enums.WorkType;
+import Backend.core.location.Country;
+import Backend.entities.common.JobPositions;
+import Backend.entities.common.LanguageProficiency;
+import Backend.entities.jobAdv.Benefit;
+import Backend.entities.jobAdv.SocialSkill;
+import Backend.entities.jobAdv.TechnicalSkill;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.List;
+
+
+public class JobAdvDto {
+    private int id;
+    private String description;
+    private Double minSalary;
+    private Double maxSalary;
+    private LocalDate lastDate;
+    private boolean travelRest;
+    private boolean license;
+    private List<JobPositions> jobPositions;
+    private WorkType workType;
+    private EmploymentType employmentType;
+    private String country;
+    private String city;
+    private Integer minWorkHours;
+    private Integer maxWorkHours;
+    private String degreeType;
+    private String jobExperience;
+    private Integer experienceYears;
+    private String militaryStatus;
+    private List<TechnicalSkill> technicalSkills;
+    private List<SocialSkill> socialSkills;
+    private List<LanguageProficiency> languageProficiencies;
+    private List<Benefit> benefitTypes;
+    private String companyName;
+    private boolean active;
+
+    // Getters and Setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getMinSalary() {
+        return minSalary;
+    }
+
+    public void setMinSalary(Double minSalary) {
+        this.minSalary = minSalary;
+    }
+
+    public Double getMaxSalary() {
+        return maxSalary;
+    }
+
+    public void setMaxSalary(Double maxSalary) {
+        this.maxSalary = maxSalary;
+    }
+
+    public LocalDate getLastDate() {
+        return lastDate;
+    }
+
+    public void setLastDate(LocalDate lastDate) {
+        this.lastDate = lastDate;
+    }
+
+    public boolean isTravelRest() {
+        return travelRest;
+    }
+
+    public void setTravelRest(boolean travelRest) {
+        this.travelRest = travelRest;
+    }
+
+    public boolean isLicense() {
+        return license;
+    }
+
+    public void setLicense(boolean license) {
+        this.license = license;
+    }
+
+
+    public WorkType getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(WorkType workType) {
+        this.workType = workType;
+    }
+
+    public EmploymentType getEmploymentType() {
+        return employmentType;
+    }
+
+    public void setEmploymentType(EmploymentType employmentType) {
+        this.employmentType = employmentType;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public Integer getMinWorkHours() {
+        return minWorkHours;
+    }
+
+    public void setMinWorkHours(Integer minWorkHours) {
+        this.minWorkHours = minWorkHours;
+    }
+
+    public Integer getMaxWorkHours() {
+        return maxWorkHours;
+    }
+
+    public void setMaxWorkHours(Integer maxWorkHours) {
+        this.maxWorkHours = maxWorkHours;
+    }
+
+    public String getDegreeType() {
+        return degreeType;
+    }
+
+    public void setDegreeType(String degreeType) {
+        this.degreeType = degreeType;
+    }
+
+    public String getJobExperience() {
+        return jobExperience;
+    }
+
+    public void setJobExperience(String jobExperience) {
+        this.jobExperience = jobExperience;
+    }
+
+    public Integer getExperienceYears() {
+        return experienceYears;
+    }
+
+    public void setExperienceYears(Integer experienceYears) {
+        this.experienceYears = experienceYears;
+    }
+
+    public String getMilitaryStatus() {
+        return militaryStatus;
+    }
+
+    public void setMilitaryStatus(String militaryStatus) {
+        this.militaryStatus = militaryStatus;
+    }
+
+
+
+    public List<LanguageProficiency> getLanguageProficiencies() {
+        return languageProficiencies;
+    }
+
+    public void setLanguageProficiencies(List<LanguageProficiency> languageProficiencies) {
+        this.languageProficiencies = languageProficiencies;
+    }
+
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+
+    public List<TechnicalSkill> getTechnicalSkills() {
+        return technicalSkills;
+    }
+
+    public void setTechnicalSkills(List<TechnicalSkill> technicalSkills) {
+        this.technicalSkills = technicalSkills;
+    }
+
+    public List<SocialSkill> getSocialSkills() {
+        return socialSkills;
+    }
+
+    public void setSocialSkills(List<SocialSkill> socialSkills) {
+        this.socialSkills = socialSkills;
+    }
+
+    public List<Benefit> getBenefitTypes() {
+        return benefitTypes;
+    }
+
+    public void setBenefitTypes(List<Benefit> benefitTypes) {
+        this.benefitTypes = benefitTypes;
+    }
+
+    public List<JobPositions> getJobPositions() {
+        return jobPositions;
+    }
+
+    public void setJobPositions(List<JobPositions> jobPositions) {
+        this.jobPositions = jobPositions;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+}
